@@ -339,7 +339,7 @@ constant:
 		//CHECK_INVARIANT(($1 != NULL), "Number cannot be null");
 
 		int number = $1;
-		cout << number << endl;
+		//cout << number << endl;
 
 		Ast * number_ast = new Number_Ast<int>(number, int_data_type, get_line_number());
 		$$ = number_ast;
