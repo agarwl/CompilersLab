@@ -9,7 +9,7 @@ void 						{ return Parser::VOID;}
 return						{ return Parser::RETURN;}
 =							{ return Parser::ASSIGN;}
 
-[+-]*[0-9]+					{
+[-]?[0-9]+					{
 								ParserBase::STYPE__ *val = getSval();
 	                			val->integer_value = atoi(matched().c_str());
 	                			//cout << val->integer_value << endl;
