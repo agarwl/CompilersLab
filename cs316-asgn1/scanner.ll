@@ -1,15 +1,25 @@
 %filenames="scanner"
 %lex-source="scanner.cc"
 
+digit [0-9]
+operators [-+*/]
 %%
 //ADD YOUR CODE HERE
 
+float                       { return Parser::FLOAT;}
 int                         { return Parser::INTEGER;}
 void                        { return Parser::VOID;}
 return                      { return Parser::RETURN;}
 =                           { return Parser::ASSIGN;}
 
-[-]?[0-9]+                  {
+[-+]?({digit}*\.{digit}+|{digit}+\.{digit}*)(e[+-]?{digit}+)?     {
+                              ParserBase::STYPE__ *val = getSval();
+                              val->float_value = stof(matched());
+                              cout << "float " << val->float_value << endl;
+                              return Parser::FLOAT_NUMBER;
+                            }
+
+[-]?{digit}+               {
                                 ParserBase::STYPE__ *val = getSval();
                                 val->integer_value = atoi(matched().c_str());
                                 //cout << val->integer_value << endl;

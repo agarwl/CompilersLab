@@ -5,6 +5,7 @@
 %union
 {
 	int integer_value;
+	float float_value;
 	std::string * string_value;
 	pair<Data_Type, string> * decl;
 	Sequence_Ast * sequence_ast;
@@ -16,8 +17,11 @@
 
 %token <integer_value> INTEGER_NUMBER
 %token <string_value> NAME
+%token <float_value> FLOAT_NUMBER
 %token RETURN INTEGER
 %token ASSIGN VOID
+%token FLOAT
+%token OPERATOR
 
 %type <symbol_table> optional_variable_declaration_list
 %type <symbol_table> variable_declaration_list
