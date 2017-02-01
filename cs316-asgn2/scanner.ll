@@ -52,14 +52,12 @@ void                        {
                               return Parser::DOUBLE_NUMBER;
                             }
 
-
 {letters}({letters}|{digit})*    {
                                     store_token_name("NAME");
                                     ParserBase::STYPE__ *val = getSval();
                                     val->string_value = new string(matched());
                                     return Parser::NAME;
                                  }
-
 
 
 \n          |
