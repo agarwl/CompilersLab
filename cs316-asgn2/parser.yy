@@ -328,11 +328,9 @@ assignment_statement:
 
 		Ast* lhs = $1;
 		Ast* rhs = $3;
-		// if (rhs->check_ast()){
-			Ast* assign_ast = new Assignment_Ast(lhs, rhs, get_line_number());
-			// if(assign_ast->check_ast())
-				$$ = assign_ast;
-		// }
+		Ast* assign_ast = new Assignment_Ast(lhs, rhs, get_line_number());
+		assign_ast->check_ast();
+		$$ = assign_ast;
 	}
 	}
 ;
@@ -345,6 +343,7 @@ arith_expression:
 		{
 			CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 			$$ = new Plus_Ast($1, $3, get_line_number());
+			$$->check_ast();
 		}
 		}
 |
@@ -354,6 +353,7 @@ arith_expression:
 		{
 			CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 			$$ = new Minus_Ast($1, $3, get_line_number());
+			$$->check_ast();
 		}
 		}
 |
@@ -363,6 +363,7 @@ arith_expression:
 		{
 			CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 			$$ = new Mult_Ast($1, $3, get_line_number());
+			$$->check_ast();
 		}
 		}
 |
@@ -373,6 +374,7 @@ arith_expression:
 			// $$ = $1/$3;
 			CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 			$$ = new Divide_Ast($1, $3, get_line_number());
+			$$->check_ast();
 		}
 		}
 |
@@ -437,7 +439,6 @@ expression_term:
 		//ADD CODE HERE
 		CHECK_INVARIANT(($1 != NULL), "constant cannot be null");
 		$$ = $1;
-
 
 	}
 	}

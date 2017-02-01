@@ -12,17 +12,23 @@ void                        { return Parser::VOID;}
 return                      { return Parser::RETURN;}
 =                           { return Parser::ASSIGN;}
 
-[-]?{digit}+                {
+{operators}                 {
+                              return matched()[0];
+                            }
+
+[)({};]                     {
+                              return matched()[0];
+                            }
+
+{digit}+                    {
                                 ParserBase::STYPE__ *val = getSval();
                                 val->integer_value = atoi(matched().c_str());
-                                // cout << val->integer_value << endl;
                                 return Parser::INTEGER_NUMBER;
                             }
 
-[-+]?({digit}*\.{digit}+|{digit}+\.{digit}*)(e[+-]?{digit}+)?     {
+({digit}*\.{digit}+|{digit}+\.{digit}*)(e[+-]?{digit}+)?     {
                               ParserBase::STYPE__ *val = getSval();
                               val->double_value = stod(matched());
-                              // cout << val->double_value << endl;
                               return Parser::DOUBLE_NUMBER;
                             }
 
@@ -30,19 +36,10 @@ return                      { return Parser::RETURN;}
 [a-zA-Z_]([a-zA-Z_0-9])*    {
                                 ParserBase::STYPE__ *val = getSval();
                                 val->string_value = new string(matched());
-                                // cout << *(val->string_value) << endl;
                                 return Parser::NAME;
                             }
 
-[(){};]                     {
-                              // cout << matched()[0] << endl;
-                              return matched()[0];
-                            }
 
-{operators}                 {
-                              // cout << matched()[0] << endl;
-                              return matched()[0];
-                            }
 
 \n          |
 ";;".*      |

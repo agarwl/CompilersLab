@@ -93,15 +93,13 @@ bool Assignment_Ast::check_ast()
 void Assignment_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
-	file_buffer << string(NUM_SPACES, ' ') << "Asgn:" << endl;
-	NUM_SPACES += 3;
-	file_buffer << string(NUM_SPACES, ' ') << "LHS (";
+	file_buffer << endl << AST_SPACE << "Asgn:" << endl;
+	file_buffer << AST_NODE_SPACE << "LHS (";
 	lhs->print(file_buffer);
 	file_buffer << ")" << endl;
-	file_buffer << string(NUM_SPACES, ' ') << "RHS (";
+	file_buffer << AST_NODE_SPACE << "RHS (";
 	rhs->print(file_buffer);
-	file_buffer << ")" << endl;
-	NUM_SPACES -= 3;
+	file_buffer << ")";
 }
 
 /////////////////////////////////////////////////////////////////
@@ -230,15 +228,13 @@ Plus_Ast::Plus_Ast(Ast * l, Ast * r, int line)
 void Plus_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
-	file_buffer << endl << string(NUM_SPACES, ' ') << "Arith: PLUS" << endl;
-	NUM_SPACES += 3;
-	file_buffer << string(NUM_SPACES, ' ') << "LHS (";
+	file_buffer << endl << AST_NODE_SPACE << "Arith: PLUS" << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "LHS (";
 	lhs->print(file_buffer);
 	file_buffer << ")" << endl;
-	file_buffer << string(NUM_SPACES, ' ') << "RHS (";
+	file_buffer << AST_SUB_NODE_SPACE << "RHS (";
 	rhs->print(file_buffer);
 	file_buffer << ")";
-	NUM_SPACES -= 3;
 }
 
 /////////////////////////////////////////////////////////////////
@@ -256,15 +252,13 @@ Minus_Ast::Minus_Ast(Ast * l, Ast * r, int line)
 void Minus_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
-	file_buffer << endl << string(NUM_SPACES, ' ') << "Arith: MINUS" << endl;
-	NUM_SPACES += 3;
-	file_buffer << string(NUM_SPACES, ' ') << "LHS (";
+	file_buffer << endl << AST_NODE_SPACE << "Arith: MINUS" << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "LHS (";
 	lhs->print(file_buffer);
 	file_buffer << ")" << endl;
-	file_buffer << string(NUM_SPACES, ' ') << "RHS (";
+	file_buffer << AST_SUB_NODE_SPACE << "RHS (";
 	rhs->print(file_buffer);
 	file_buffer << ")";
-	NUM_SPACES -= 3;
 }
 
 //////////////////////////////////////////////////////////////////
@@ -282,6 +276,13 @@ Mult_Ast::Mult_Ast(Ast * l, Ast * r, int line)
 void Mult_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
+	file_buffer << endl << AST_NODE_SPACE << "Arith: MULT" << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "LHS (";
+	lhs->print(file_buffer);
+	file_buffer << ")" << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "RHS (";
+	rhs->print(file_buffer);
+	file_buffer << ")";
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -299,6 +300,13 @@ Divide_Ast::Divide_Ast(Ast * l, Ast * r, int line)
 void Divide_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
+	file_buffer << endl << AST_NODE_SPACE << "Arith: DIV" << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "LHS (";
+	lhs->print(file_buffer);
+	file_buffer << ")" << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "RHS (";
+	rhs->print(file_buffer);
+	file_buffer << ")";
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -316,6 +324,10 @@ UMinus_Ast::UMinus_Ast(Ast * l, Ast * r, int line)
 void UMinus_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
+	file_buffer << endl << AST_NODE_SPACE << "Arith: UMINUS" << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "LHS (";
+	lhs->print(file_buffer);
+	file_buffer << ")";
 }
 
 
