@@ -3,41 +3,62 @@
 
 digit [0-9]
 operators [-+/\*]
+letters [a-zA-Z_]
+meta_chars [)({};]
 %%
 //ADD YOUR CODE HERE
 
-float                       { return Parser::FLOAT;}
-int                         { return Parser::INTEGER;}
-void                        { return Parser::VOID;}
-return                      { return Parser::RETURN;}
-=                           { return Parser::ASSIGN;}
+float                       {
+                              store_token_name("FLOAT");
+                              return Parser::FLOAT;
+                            }
+
+int                         {
+                              store_token_name("INTEGER");
+                              return Parser::INTEGER;
+                            }
+
+void                        {
+                              store_token_name("VOID");
+                              return Parser::VOID;
+                            }
+
+=                           {
+                              store_token_name("ASSIGN_OP");
+                              return Parser::ASSIGN;
+                            }
 
 {operators}                 {
+                              store_token_name("ARITHOP");
                               return matched()[0];
                             }
 
-[)({};]                     {
+{meta_chars}                {
+                              store_token_name("META CHAR");
                               return matched()[0];
                             }
 
 {digit}+                    {
+                                store_token_name("NUM");
                                 ParserBase::STYPE__ *val = getSval();
                                 val->integer_value = atoi(matched().c_str());
                                 return Parser::INTEGER_NUMBER;
                             }
 
-({digit}*\.{digit}+|{digit}+\.{digit}*)(e[+-]?{digit}+)?     {
+({digit}*\.{digit}+|{digit}+[\.]?{digit}*)(e[+-]?{digit}+)?     {
+                              store_token_name("FNUM");
                               ParserBase::STYPE__ *val = getSval();
                               val->double_value = stod(matched());
                               return Parser::DOUBLE_NUMBER;
                             }
 
 
-[a-zA-Z_]([a-zA-Z_0-9])*    {
-                                ParserBase::STYPE__ *val = getSval();
-                                val->string_value = new string(matched());
-                                return Parser::NAME;
-                            }
+{letters}({letters}|{digit})*    {
+                                    store_token_name("NAME");
+                                    ParserBase::STYPE__ *val = getSval();
+                                    val->string_value = new string(matched());
+                                    return Parser::NAME;
+                                 }
 
 
 
