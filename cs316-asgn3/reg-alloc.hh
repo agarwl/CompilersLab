@@ -1,5 +1,3 @@
-
-
 #ifndef REG_ALLOC_HH
 #define REG_ALLOC_HH
 
@@ -24,6 +22,8 @@ typedef enum
 	t1, t2, t3, t4, t5, t6, t7, t8, t9, 
 	s0,	/* temporary callee-save registers */ 
 	s1, s2, s3, s4, s5, s6, s7,
+	mfc,	/* float register to int register */
+	mtc,	/* int register to float register */
 	f0, 	/* floating point registers */
 	f2, f4, f6, f8,
 	f10, f12, f14, f16, f18,
@@ -97,7 +97,7 @@ class Register_Descriptor
 ////////////////////////////// Lra_Outcome ///////////////////////////////////////
 
 /*   
-    The local register allocation (lra) restricts its attention to a basic block
+    The local register allocation (lra) restricts its attention to a statement list
     and maintains the following two pieces of information
 
     - for each name encountered, the register in which current value of name

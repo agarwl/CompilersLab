@@ -1,25 +1,3 @@
-/*********************************************************************************************
-
-                                cfglp : A CFG Language Processor
-                                --------------------------------
-
-           About:
-
-           Implemented   by  Tanu  Kanvar (tanu@cse.iitb.ac.in) and Uday
-           Khedker    (http://www.cse.iitb.ac.in/~uday)  for the courses
-           cs302+cs306: Language  Processors  (theory and  lab)  at  IIT
-           Bombay.
-
-           Release  date  Jan  15, 2013.  Copyrights  reserved  by  Uday
-           Khedker. This  implemenation  has been made  available purely
-           for academic purposes without any warranty of any kind.
-
-           Documentation (functionality, manual, and design) and related
-           tools are  available at http://www.cse.iitb.ac.in/~uday/cfglp
-
-
-***********************************************************************************************/
-
 #ifndef ICODE_HH
 #define ICODE_HH
 
@@ -30,7 +8,8 @@
 #include <list>
 #include <map>
 
-#include "symbol-table.hh"
+#include"symbol-table.hh"
+
 /* 
 	This file defines classes for intermediate form of the code generated 
 	by our compiler. It also defined classes for machine instructions.
@@ -49,6 +28,8 @@ typedef enum
 	a_op_r_r_o1,	/* r <- r op o1 */
 	a_op_r_o1_o2,	/* r <- o1 op o2 */ 
 	a_op_o1_o2_r,	/* r <- o1 op o2 */
+	a_op_o1_o2_st,	/*for conditional branch*/
+	a_op_st,	/* label instr */
 	a_nsy		/* not specified yet */
 } Assembly_Format;
 
@@ -61,15 +42,22 @@ typedef enum
 	i_op_r_o1,    
 	i_r_op_o1,	/* r <- o1 */
 	i_r_r_op_o1,	/* r <- r op o1 */
-	i_r_o1_op_o2,	/* r <- o1 op o2 */ 
+	i_r_o1_op_o2,	/* r <- o1 op o2 */
+	i_op_o1_o2_st,	/* for conditional branch */
+	i_op_st,	/* label instr */
 	i_nsy		/* not specified yet */
 } Icode_Format;
 
 typedef enum 
 { 
 	load, 
-	imm_load, 
+	imm_load,
+	and_t,
+	or_t,
+	not_t,
 	store, 
+	mfc1,
+	mtc1,
 	mov,
 	add, 
 	sub,
@@ -85,8 +73,22 @@ typedef enum
 	mult_d, 
 	div_d, 
 	uminus_d,
+	slt,
+	sle,
+	sgt,
+	sge,
+	sne,
+	seq,
+	beq,
+	bne,
+	bgtz,
+	bgez,
+	bltz,
+	blez,
+	j,
+	label,
 	ret_inst,
-	nop 
+	nop
 } Tgt_Op;
 
 ///////////////////////// Instruction Descriptor ///////////////////////////////////
@@ -259,6 +261,56 @@ public:
 
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);
+};
+
+class Control_Flow_IC_Stmt: public Icode_Stmt
+{
+	Ics_Opd * opd1;
+	Ics_Opd * opd2;
+	string offset;
+
+public:
+	Control_Flow_IC_Stmt(Tgt_Op op, Ics_Opd * o1, Ics_Opd * o2, string label);
+	~Control_Flow_IC_Stmt() {}
+	
+	Control_Flow_IC_Stmt& operator=(const Control_Flow_IC_Stmt& rhs);
+
+	Instruction_Descriptor & get_inst_op_of_ics();
+
+	Ics_Opd * get_opd1();
+	void set_opd1(Ics_Opd * io);
+
+	Ics_Opd * get_opd2();
+	void set_opd2(Ics_Opd * io);
+ 	
+	string get_Offset();
+	void set_Offset(string label);
+
+	void print_icode(ostream & file_buffer);
+     	void print_assembly(ostream & file_buffer);
+};
+
+class Label_IC_Stmt: public Icode_Stmt
+{
+        Ics_Opd * opd1;
+        string offset;
+
+public:
+        Label_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, string offset);
+        ~Label_IC_Stmt() {}
+
+        Label_IC_Stmt& operator=(const Label_IC_Stmt& rhs);
+
+        Instruction_Descriptor & get_inst_op_of_ics();
+
+        Ics_Opd * get_opd1();
+        void set_opd1(Ics_Opd * io);
+
+        string get_offset();
+        void set_offset(string label);
+
+        void print_icode(ostream & file_buffer);
+        void print_assembly(ostream & file_buffer);
 };
 
 //////////////////////// Intermediate code for Ast statements ////////////////////////

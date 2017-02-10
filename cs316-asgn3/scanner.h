@@ -1,29 +1,25 @@
-
-
 #ifndef Scanner_H_INCLUDED_
 #define Scanner_H_INCLUDED_
 
 /////////////////// Header files of cfglp ///////////////////////////////
 
-#include<cstdlib>
-#include<iostream>
-#include<string>
-#include<fstream>
-#include<string.h>
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <string.h>
 
 using namespace std;
 
-#include"common-classes.hh"
-#include"local-environment.hh"
-#include"user-options.hh"
-#include"error-display.hh"
-#include"icode.hh"
-#include"reg-alloc.hh"
-#include"symbol-table.hh"
-#include"ast.hh"
-#include"sequence-ast.hh"
-#include"procedure.hh"
-#include"program.hh"
+#include "common-classes.hh"
+#include "user-options.hh"
+#include "error-display.hh"
+#include "icode.hh"
+#include "reg-alloc.hh"
+#include "symbol-table.hh"
+#include "ast.hh"
+#include "procedure.hh"
+#include "program.hh"
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -43,7 +39,7 @@ class Scanner: public ScannerBase
     private:
         int lex__();
         int executeAction__(size_t ruleNr);
-        void postCode(PostEnum__ type);
+		void postCode(PostEnum__ type);
         void print();
         void preCode(); 
 

@@ -1,5 +1,3 @@
-
-
 #ifndef Parser_h_included
 #define Parser_h_included
 
@@ -20,10 +18,8 @@ using namespace std;
 #include "common-classes.hh"
 #include "error-display.hh"
 #include "user-options.hh"
-#include "local-environment.hh"
 #include "symbol-table.hh"
 #include "ast.hh"
-#include "sequence-ast.hh"
 #include "procedure.hh"
 #include "program.hh"
 
@@ -32,21 +28,21 @@ using namespace std;
 #undef Parser
 class Parser: public ParserBase
 {
-  Scanner d_scanner;
+	Scanner d_scanner;
 
-  public:
+    public:
     Parser(string input_file_name)
     {
-      d_scanner.switchStreams(input_file_name, "");
-      d_scanner.setSval(&d_val__);
+    	d_scanner.switchStreams(input_file_name, "");
+    	d_scanner.setSval(&d_val__);
 
-      NOT_ONLY_PARSE = command_options.not_only_parse;
+    	NOT_ONLY_PARSE = command_options.not_only_parse;
     }
 
     int parse();
     void print();
 
-    int get_line_number();          // Used for errors
+    int get_line_number();					// Used for errors
 
     bool NOT_ONLY_PARSE;
 
@@ -65,6 +61,4 @@ class Parser: public ParserBase
       ++d_nErrors__;
     }
 };
-
-
 #endif

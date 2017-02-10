@@ -1,26 +1,3 @@
-
-/*********************************************************************************************
-
-                                cfglp : A CFG Language Processor
-                                --------------------------------
-
-           About:
-
-           Implemented   by  Tanu  Kanvar (tanu@cse.iitb.ac.in) and Uday
-           Khedker    (http://www.cse.iitb.ac.in/~uday)  for the courses
-           cs302+cs306: Language  Processors  (theory and  lab)  at  IIT
-           Bombay.
-
-           Release  date  Jan  15, 2013.  Copyrights  reserved  by  Uday
-           Khedker. This  implemenation  has been made  available purely
-           for academic purposes without any warranty of any kind.
-
-           Documentation (functionality, manual, and design) and related
-           tools are  available at http://www.cse.iitb.ac.in/~uday/cfglp
-
-
-***********************************************************************************************/
-
 #ifndef SYMBOL_TABLE_HH
 #define SYMBOL_TABLE_HH
 
@@ -55,6 +32,13 @@ typedef enum
 	not_equalto
 } Relational_Op;
 
+typedef enum
+{
+	boolean_not,
+	boolean_or,
+	boolean_and
+} Boolean_Op;
+
 class Symbol_Table
 {
 	list<Symbol_Table_Entry *> variable_table;
@@ -81,7 +65,7 @@ public:
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 	void global_list_in_proc_check();
 
-	void create(Local_Environment & local_global_variables_table);
+	// void create(Local_Environment & local_global_variables_table);
 
 	// compile
 private:

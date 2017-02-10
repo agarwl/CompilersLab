@@ -1,5 +1,4 @@
 
-
 #ifndef PROCEDURE_HH
 #define PROCEDURE_HH
 
@@ -19,7 +18,7 @@ class Procedure
 	Data_Type return_type;
 	string name;
 	Symbol_Table local_symbol_table;
-  Sequence_Ast * sequence_ast;
+	Sequence_Ast * sequence_ast;
 
 	int lineno;
 
@@ -28,16 +27,13 @@ public:
 	~Procedure();
 
 	string get_proc_name();
-  void set_sequence_ast(Sequence_Ast & sa);
+  	void set_sequence_ast(Sequence_Ast & sa);
 	void set_local_list(Symbol_Table & new_list);
 	Data_Type get_return_type();
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 
 	void print(ostream & file_buffer);
 	void print_sym(ostream & file_buffer);
-
-	void evaluate_print(ostream & fil_buffer);
-	Eval_Result & evaluate(ostream & file_buffer);
 
 	bool variable_in_symbol_list_check(string variable);
 

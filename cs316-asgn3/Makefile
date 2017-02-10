@@ -3,7 +3,7 @@ OBJ_CORE = main.o
 OBJ = $(OBJ_GEN) $(OBJ_CORE) 
 
 
-HEADERS_CORE = error-display.hh user-options.hh local-environment.hh ast.hh symbol-table.hh program.hh procedure.hh sequence-ast.hh common-classes.hh
+HEADERS_CORE = error-display.hh user-options.hh ast.hh symbol-table.hh program.hh procedure.hh common-classes.hh
 HEADERS_GEN = parser.h parser.ih parserbase.h scanner.h scanner.ih scannerbase.h
 
 HEADERS = $(HEADERS_CORE) $(HEADERS_GEN)
@@ -19,7 +19,7 @@ CFLAGS = -g
 #change -lreference to -lreference14 for ubuntu14.04 in the target below
 
 $(TGT): $(OBJ) 
-	$(CPP) --std=c++0x -L. -Wl,-rpath=. $(option) $(OBJ) -o $(TGT) -lreference
+	$(CPP) --std=c++0x -L. -Wl,-rpath=. $(option) $(OBJ) -o $(TGT) -lreference14
 
 %.o: %.cc $(HEADERS)
 	$(CPP) --std=c++0x $(option) $(CFLAGS) -c $<

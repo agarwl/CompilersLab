@@ -1,26 +1,4 @@
 
-/*********************************************************************************************
-
-                                cfglp : A CFG Language Processor
-                                --------------------------------
-
-           About:
-
-           Implemented by Tanu  Kanvar (tanu@cse.iitb.ac.in) and Uday
-           Khedker (http://www.cse.iitb.ac.in/~uday)  for the courses
-           cs302+cs306: Language  Processors (theory and lab)  at IIT
-           Bombay.
-
-           Release  date Jan  15, 2013.  Copyrights reserved  by Uday
-           Khedker. This implemenation has been made available purely
-           for academic purposes without any warranty of any kind.
-
-           A  doxygen   generated  documentation  can  be   found  at
-           http://www.cse.iitb.ac.in/~uday/cfglp
-
-
-***********************************************************************************************/
-
 #ifndef USER_OPTIONS_HH
 #define USER_OPTIONS_HH
 

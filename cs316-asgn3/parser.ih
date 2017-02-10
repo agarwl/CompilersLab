@@ -1,22 +1,21 @@
 
-
 #ifndef PARSER_IH
 #define PARSER_IH
 
 #include <typeinfo>
 
 #include "common-classes.hh"
-#include "local-environment.hh"
 #include "error-display.hh"
 #include "user-options.hh"
+#include "icode.hh"
+#include "reg-alloc.hh"
 #include "symbol-table.hh"
 #include "ast.hh"
-#include "sequence-ast.hh"
 #include "procedure.hh"
 #include "program.hh"
 #include "parser.h"
 
-////////////////////// cfglp Parser functions ///////////////////////
+////////////////////// sclp Parser functions ///////////////////////
 
 Procedure * current_procedure;
 
@@ -34,7 +33,7 @@ inline int Parser::lex()
 
 inline void Parser::print()         
 {
-////////////////// cfglp print tokens ///////////////////////////////
+////////////////// sclp print tokens ///////////////////////////////
 
 	if (command_options.is_show_tokens_selected())
 		d_scanner.display_token(d_token__);

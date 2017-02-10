@@ -7,18 +7,16 @@
 
 using namespace std;
 
-#include"common-classes.hh"
-#include"local-environment.hh"
-#include"error-display.hh"
-#include"user-options.hh"
-#include"symbol-table.hh"
-#include"ast.hh"
-#include"sequence-ast.hh"
-#include"procedure.hh"
-#include"program.hh"
-#include"parser.h"
+#include "common-classes.hh"
+#include "error-display.hh"
+#include "user-options.hh"
+#include "symbol-table.hh"
+#include "ast.hh"
+#include "procedure.hh"
+#include "program.hh"
+#include "parser.h"
 
-#include"dirent.h"
+#include "dirent.h"
 
 int main(int argc, char * argv[]) 
 {
