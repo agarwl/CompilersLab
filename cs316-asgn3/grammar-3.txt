@@ -1,0 +1,164 @@
+program:
+	declaration_list procedure_definition
+;
+
+declaration_list:
+	procedure_declaration
+|
+	variable_declaration_list procedure_declaration
+|
+	procedure_declaration variable_declaration_list
+;
+
+procedure_declaration:
+	VOID NAME '(' ')' ';'
+;
+
+procedure_definition:
+	NAME '(' ')'
+	'{' optional_variable_declaration_list statement_list '}'
+;
+
+optional_variable_declaration_list:
+	/* empty */
+|
+	variable_declaration_list
+;
+
+variable_declaration_list:
+	variable_declaration
+|
+	variable_declaration_list variable_declaration
+;
+
+variable_declaration:
+	declaration ';'
+;
+
+declaration:
+	INTEGER NAME id_list
+|
+	FLOAT NAME id_list
+;
+
+id_list:
+|
+	',' NAME id_list
+
+statement_list:
+|
+	statement_list statement
+|
+	statement_list selection_statement
+;
+
+statement:
+	assignment_statement
+|
+	while_statement
+|
+	do_while_statement
+|
+	';'
+
+assignment_statement:
+	variable ASSIGN arith_expression ';'
+;
+
+selection_statement:
+	matched_statement
+|
+	unmatched_statement
+
+matched_statement:
+	IF '(' boolean_expression ')'
+	matched_statement_block
+	ELSE
+	matched_statement_block
+
+unmatched_statement:
+	IF '(' boolean_expression ')'
+	statement_block
+|
+	IF '(' boolean_expression ')'
+	matched_statement_block
+	ELSE
+	unmatched_statement
+
+
+matched_statement_block:
+	statement
+|
+	matched_statement
+|
+	'{' statement_list '}'
+
+statement_block:
+	statement
+|
+	selection_statement
+|
+	'{' statement_list '}'
+
+while_statement:
+	WHILE '(' boolean_expression ')'
+	statement_block
+
+do_while_statement:
+	DO statement_block WHILE '(' boolean_expression ')' ';'
+
+
+arith_expression:
+	operand '+' operand
+|
+	operand '-' operand
+|
+	operand '*' operand
+|
+	operand '/' operand
+|
+	'-' operand %prec UMINUS
+|
+	'(' operand ')'
+|
+	expression_term
+;
+
+boolean_expression:
+	'!' boolean_expression
+|
+	operand '<' operand
+|
+	operand '<=' operand
+|
+	operand '>' operand
+|
+	operand '>=' operand
+|
+	operand '==' operand
+|
+	operand '!=' operand
+|
+	boolean_expresion '&&' boolean_expresion
+|
+	boolean_expresion '||' boolean_expresion
+
+operand:
+	arith_expression
+;
+
+expression_term:
+	variable
+|
+	constant
+;
+
+variable:
+	NAME
+;
+
+constant:
+	INTEGER_NUMBER
+|
+	DOUBLE_NUMBER
+;

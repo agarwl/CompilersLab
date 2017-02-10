@@ -19,7 +19,7 @@ CFLAGS = -g
 #change -lreference to -lreference14 for ubuntu14.04 in the target below
 
 $(TGT): $(OBJ) 
-	$(CPP) --std=c++0x -L. -Wl,-rpath=. $(option) $(OBJ) -o $(TGT) -lreference14
+	$(CPP) --std=c++0x -L. -Wl,-rpath=. $(option) $(OBJ) -o $(TGT) -lreference
 
 %.o: %.cc $(HEADERS)
 	$(CPP) --std=c++0x $(option) $(CFLAGS) -c $<
