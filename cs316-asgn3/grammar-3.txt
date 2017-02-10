@@ -54,7 +54,7 @@ statement_list:
 ;
 
 statement:
-	if_else_statement
+	selection_statement
 |
 	other_statement
 ;
@@ -62,18 +62,20 @@ statement:
 other_statement:
 	assignment_statement
 |
+	iteration_statement
+;
+
+iteration_statement:
 	while_statement
 |
 	do_while_statement
-|
-	';'
 ;
 
 assignment_statement:
 	variable ASSIGN arith_expression ';'
 ;
 
-if_else_statement:
+selection_statement:
 	matched_statement
 |
 	unmatched_statement
@@ -139,9 +141,7 @@ conditional_expression:
 	bool_expression '?' arith_expression ':' arith_expression ';'
 ;
 
-bool_expression:
-	NOT bool_expression
-|
+relational_expression:
 	operand LT operand
 |
 	operand LE operand
@@ -154,11 +154,19 @@ bool_expression:
 |
 	operand NE operand
 |
+	'(' operand ')'
+;
+
+bool_expression:
+	NOT bool_expression
+|
 	bool_expresion AND bool_expresion
 |
 	bool_expresion OR bool_expresion
 |
 	'(' bool_expresion ')'
+|
+	relational_expression
 ;
 
 operand:

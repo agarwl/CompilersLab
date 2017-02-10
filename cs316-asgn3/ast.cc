@@ -334,9 +334,6 @@ void UMinus_Ast::print(ostream & file_buffer)
 template class Number_Ast<double>;
 template class Number_Ast<int>;
 
-<<<<<<< HEAD
-/////////////////////////////////////////////////////////////////////
-
 
 Relational_Expr_Ast::Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs, int line)
 {
@@ -513,8 +510,6 @@ Conditional_Operator_Ast::Conditional_Operator_Ast(Ast* cond, Ast* l, Ast* r, in
 	this->lineno = line;
 }
 
-Conditional_Operator_Ast::~Conditional_Operator_Ast()
-{}
 
 void Conditional_Operator_Ast::print(ostream & file_buffer)
 {
