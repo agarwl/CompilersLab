@@ -332,3 +332,220 @@ void UMinus_Ast::print(ostream & file_buffer)
 
 template class Number_Ast<double>;
 template class Number_Ast<int>;
+
+/////////////////////////////////////////////////////////////////////
+
+
+Relational_Expr_Ast::Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs, int line)
+{
+	this->lhs_condition = lhs;
+	this->rhs_condition = rhs;
+	this->rel_op = rop;
+	this->ast_num_child = binary_arity;
+	this->node_data_type = lhs->get_data_type();
+	this->lineno = line;
+}
+
+Relational_Expr_Ast::~Relational_Expr_Ast()
+{}
+
+Data_Type Relational_Expr_Ast::get_data_type()
+{
+	return this->node_data_type;
+}
+
+void Relational_Expr_Ast::set_data_type(Data_Type dt)
+{
+	this->node_data_type = dt;
+}
+
+bool Relational_Expr_Ast::check_ast()
+{
+	CHECK_INVARIANT((rhs_condition != NULL), "Rhs of Relational_Expr_Ast cannot be null");
+	CHECK_INVARIANT((lhs_condition != NULL), "Lhs of Relational_Expr_Ast cannot be null");
+
+	// use typeid(), get_data_type()
+	//ADD CODE HERE
+	if(lhs_condition->get_data_type() == rhs_condition->get_data_type())
+		return true;
+
+	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH,
+		"Relational Expression data type not compatible", lineno);
+}
+
+void Relational_Expr_Ast::print(ostream & file_buffer)
+{
+
+}
+
+////////////////////////////////////////////////////////////////////////
+
+
+Boolean_Expr_Ast::Boolean_Expr_Ast(Ast * lhs, Boolean_Op bop, Ast * rhs, int line)
+{
+	this->lhs_op = lhs;
+	this->rhs_op = rhs;
+	this->bool_op = bop;
+	this->ast_num_child = binary_arity;
+	this->node_data_type = lhs->get_data_type();
+	this->lineno = line;
+}
+
+Boolean_Expr_Ast::~Boolean_Expr_Ast()
+{}
+
+Data_Type Boolean_Expr_Ast::get_data_type()
+{
+	return this->node_data_type;
+}
+
+void Boolean_Expr_Ast::set_data_type(Data_Type dt)
+{
+	this->node_data_type = dt;
+}
+
+bool Boolean_Expr_Ast::check_ast()
+{
+	CHECK_INVARIANT((rhs_op != NULL), "Rhs of Boolean_Expr_Ast cannot be null");
+	CHECK_INVARIANT((lhs_op != NULL), "Lhs of Boolean_Expr_Ast cannot be null");
+
+	// use typeid(), get_data_type()
+	//ADD CODE HERE
+	if(lhs_op->get_data_type() == rhs_op->get_data_type())
+		return true;
+
+	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH,
+		"Boolean Expression data type not compatible", lineno);
+}
+
+void Boolean_Expr_Ast::print(ostream & file_buffer)
+{
+
+}
+
+//////////////////////////////////////////////////////////////////////
+
+
+
+Selection_Statement_Ast::Selection_Statement_Ast(Ast * cond,Ast* then_part, Ast* else_part, int line)
+{
+	this->cond = cond;
+	this->then_part = then_part;
+	this->else_part = else_part;
+	this->ast_num_child = binary_arity;
+	this->node_data_type = then_part->get_data_type();
+	this->lineno = line;
+}
+
+Selection_Statement_Ast::~Selection_Statement_Ast()
+{}
+
+Data_Type Selection_Statement_Ast::get_data_type()
+{
+	return this->node_data_type;
+}
+
+void Selection_Statement_Ast::set_data_type(Data_Type dt)
+{
+	this->node_data_type = dt;
+}
+
+bool Selection_Statement_Ast::check_ast()
+{
+	CHECK_INVARIANT((cond != NULL), "Condition of Selection_Statement_Ast cannot be null");
+	CHECK_INVARIANT((then_part != NULL), "If part of Selection_Statement_Ast cannot be null");
+}
+
+void Selection_Statement_Ast::print(ostream & file_buffer)
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+
+Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * cond, Ast* body, int line)
+{
+	this->cond = cond;
+	this->body = body;
+	this->ast_num_child = unary_arity;
+	// What does is_condition_before do in the class
+	this->node_data_type = body->get_data_type();
+	this->lineno = line;
+}
+
+Iteration_Statement_Ast::~Iteration_Statement_Ast()
+{}
+
+Data_Type Iteration_Statement_Ast::get_data_type()
+{
+	return this->node_data_type;
+}
+
+void Iteration_Statement_Ast::set_data_type(Data_Type dt)
+{
+	this->node_data_type = dt;
+}
+
+bool Iteration_Statement_Ast::check_ast()
+{
+	CHECK_INVARIANT((cond != NULL), "Condition of Selection_Statement_Ast cannot be null");
+	CHECK_INVARIANT((body != NULL), "If part of Selection_Statement_Ast cannot be null");
+}
+
+void Iteration_Statement_Ast::print(ostream & file_buffer)
+{
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+
+
+Conditional_Operator_Ast::Conditional_Operator_Ast(Ast* cond, Ast* l, Ast* r, int line)
+{
+	this->cond = cond;
+	this->lhs = l;
+	this->rhs = r;
+	this->ast_num_child = binary_arity;
+	this->node_data_type = lhs->get_data_type();
+	this->lineno = line;
+}
+
+Conditional_Operator_Ast::~Conditional_Operator_Ast()
+{}
+
+void Conditional_Operator_Ast::print(ostream & file_buffer)
+{
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+
+
+Sequence_Ast::Sequence_Ast(int line)
+{
+	this->lineno = line;
+}
+
+Sequence_Ast::~Sequence_Ast()
+{}
+
+void Sequence_Ast::ast_push_back(Ast * ast)
+{
+	statement_list.push_back(ast);
+}
+
+void Sequence_Ast::print(ostream & file_buffer)
+{
+
+}
+
+void Sequence_Ast::print_assembly(ostream & file_buffer)
+{
+
+}
+
+void Sequence_Ast::print_icode(ostream & file_buffer)
+{
+
+}
