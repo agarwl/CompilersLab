@@ -154,17 +154,17 @@ relational_expression:
 |
 	operand NE operand
 |
-	'(' operand ')'
+	'(' relational_expression ')'
 ;
 
 bool_expression:
 	NOT bool_expression
 |
-	bool_expresion AND bool_expresion
+	bool_expression AND bool_expression
 |
-	bool_expresion OR bool_expresion
+	bool_expression OR bool_expression
 |
-	'(' bool_expresion ')'
+	'(' bool_expression ')'
 |
 	relational_expression
 ;

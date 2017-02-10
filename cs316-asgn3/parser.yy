@@ -51,6 +51,14 @@
 %type <ast> operand
 %type <ast> arith_expression
 %type <ast> expression_term
+%type <ast> relational_expression
+%type <ast> bool_expression
+%type <ast> conditional_expression
+%type <ast> other_statement
+%type <ast> iteration_statement
+%type <ast> selection_statement
+%type <ast> while_statement
+%type <ast> do_while_statement
 
 
 %start program
@@ -293,6 +301,12 @@ declaration:
 	}
 ;
 
+// name_list:
+// 	NAME
+// |
+// 	name_list NAME
+// ;
+
 
 statement_list:
 	{
@@ -308,16 +322,35 @@ statement_list:
 	{
 
 		Sequence_Ast * seq = $1;
-		Ast * asnmt = $2;
+		Ast * stmt = $2;
 
 		CHECK_INVARIANT((seq != NULL), "The statement list cannot be null");
-		CHECK_INVARIANT((asnmt != NULL), "The assignment statement cannot be null");
+		CHECK_INVARIANT((stmt != NULL), "The assignment statement cannot be null");
 
-		seq->ast_push_back(asnmt);
+		seq->ast_push_back(stmt);
 		$$ = seq;
 	}
 	}
 ;
+
+statement:
+	selection_statement
+|
+	other_statement
+;
+
+other_statement:
+	assignment_statement
+|
+	iteration_statement
+;
+
+iteration_statement:
+	while_statement
+|
+	do_while_statement
+;
+
 // Make sure to call check_ast in assignment_statement and arith_expression
 // Refer to error_display.hh for displaying semantic errors if any
 assignment_statement:
@@ -335,6 +368,70 @@ assignment_statement:
 	}
 	}
 ;
+
+conditional_expression:
+	bool_expression '?' arith_expression ':' arith_expression ';'
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		// ADD CODE HERE
+	}
+	}
+;
+
+relational_expression:
+	operand LT operand
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+		Relational_Op rop = less_than;
+		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
+		$$->check_ast();
+	}
+	}
+|
+	operand LE operand
+|
+	operand GT operand
+|
+	operand GE operand
+|
+	operand EQ operand
+|
+	operand NE operand
+|
+	'(' relational_expression ')'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($2 != NULL), "relation_expr cannot be null");
+		$$ = $2;
+	}
+	}
+;
+
+// check_ast in boolean_expr with both rhs and lhs
+bool_expression:
+	NOT bool_expression
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		Boolean_Op bop = boolean_not;
+		CHECK_INVARIANT(($2 != NULL), "boolean_expr cannot be null");
+		$$ = new Boolean_Expr_Ast(NULL,bop, $2, get_line_number());
+	}
+	}
+|
+	bool_expression AND bool_expression
+|
+	bool_expression OR bool_expression
+|
+	'(' bool_expression ')'
+|
+	relational_expression
+;
+
 
 arith_expression:
 		//ADD RELEVANT CODE ALONG WITH GRAMMAR RULES HERE
