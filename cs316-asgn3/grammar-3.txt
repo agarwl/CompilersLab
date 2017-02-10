@@ -36,23 +36,30 @@ variable_declaration:
 ;
 
 declaration:
-	INTEGER NAME id_list
+	INTEGER name_list
 |
-	FLOAT NAME id_list
+	FLOAT name_list
 ;
 
-id_list:
+name_list:
+	NAME
 |
-	',' NAME id_list
+	name_list ',' NAME
+;
 
 statement_list:
+	/*empty*/
 |
 	statement_list statement
-|
-	statement_list selection_statement
 ;
 
 statement:
+	if_else_statement
+|
+	other_statement
+;
+
+other_statement:
 	assignment_statement
 |
 	while_statement
@@ -60,53 +67,57 @@ statement:
 	do_while_statement
 |
 	';'
+;
 
 assignment_statement:
 	variable ASSIGN arith_expression ';'
 ;
 
-selection_statement:
+if_else_statement:
 	matched_statement
 |
 	unmatched_statement
+;
 
 matched_statement:
-	IF '(' boolean_expression ')'
+	IF '(' bool_expression ')'
 	matched_statement_block
 	ELSE
 	matched_statement_block
+;
 
 unmatched_statement:
-	IF '(' boolean_expression ')'
+	IF '(' bool_expression ')'
 	statement_block
 |
-	IF '(' boolean_expression ')'
+	IF '(' bool_expression ')'
 	matched_statement_block
 	ELSE
 	unmatched_statement
-
+;
 
 matched_statement_block:
-	statement
+	other_statement
 |
 	matched_statement
 |
 	'{' statement_list '}'
+;
 
 statement_block:
 	statement
 |
-	selection_statement
-|
 	'{' statement_list '}'
+;
 
 while_statement:
-	WHILE '(' boolean_expression ')'
+	WHILE '(' bool_expression ')'
 	statement_block
+;
 
 do_while_statement:
-	DO statement_block WHILE '(' boolean_expression ')' ';'
-
+	DO statement_block WHILE '(' bool_expression ')' ';'
+;
 
 arith_expression:
 	operand '+' operand
@@ -124,24 +135,31 @@ arith_expression:
 	expression_term
 ;
 
-boolean_expression:
-	'!' boolean_expression
+conditional_expression:
+	bool_expression '?' arith_expression ':' arith_expression ';'
+;
+
+bool_expression:
+	NOT bool_expression
 |
-	operand '<' operand
+	operand LT operand
 |
-	operand '<=' operand
+	operand LE operand
 |
-	operand '>' operand
+	operand GT operand
 |
-	operand '>=' operand
+	operand GE operand
 |
-	operand '==' operand
+	operand EQ operand
 |
-	operand '!=' operand
+	operand NE operand
 |
-	boolean_expresion '&&' boolean_expresion
+	bool_expresion AND bool_expresion
 |
-	boolean_expresion '||' boolean_expresion
+	bool_expresion OR bool_expresion
+|
+	'(' bool_expresion ')'
+;
 
 operand:
 	arith_expression

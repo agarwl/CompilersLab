@@ -45,7 +45,6 @@ while                       {
                             }
 
 =                           {
-                              cout << "yeah";
                               store_token_name("ASSIGN_OP");
                               return Parser::ASSIGN;
                             }

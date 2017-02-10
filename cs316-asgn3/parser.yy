@@ -31,7 +31,7 @@
 %left OR
 %left AND
 %left EQ NE
-%left GT GE LT LE 
+%left GT GE LT LE
 %left '+' '-'
 %left '*' '/'
 %right UMINUS
