@@ -10,10 +10,11 @@ using namespace std;
 #include"local-environment.hh"
 #include"symbol-table.hh"
 #include"ast.hh"
-#include"sequence-ast.hh"
+// #include"sequence-ast.hh"
 #include"procedure.hh"
 #include"program.hh"
 
+int Ast::labelCounter=0;
 
 Ast::Ast()
 {}
@@ -332,3 +333,10 @@ void UMinus_Ast::print(ostream & file_buffer)
 
 template class Number_Ast<double>;
 template class Number_Ast<int>;
+
+Sequence_Ast::Sequence_Ast(int line){};
+Sequence_Ast::~Sequence_Ast(){};
+void Sequence_Ast::ast_push_back(Ast * ast){};
+void Sequence_Ast::print(ostream & file_buffer){};
+void  Sequence_Ast::print_assembly(ostream & file_buffer){};
+void Sequence_Ast::print_icode(ostream & file_buffer){};

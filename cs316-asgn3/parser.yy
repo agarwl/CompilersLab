@@ -22,14 +22,20 @@
 //ADD TOKENS HERE
 %token <integer_value> INTEGER_NUMBER
 %token <string_value> NAME
-%token RETURN INTEGER
+%token INTEGER
 %token ASSIGN VOID
 %token <double_value> DOUBLE_NUMBER
 %token FLOAT
+%token DO WHILE IF ELSE
 
+%left OR
+%left AND
+%left EQ NE
+%left GT GE LT LE 
 %left '+' '-'
 %left '*' '/'
 %right UMINUS
+%left NOT
 %nonassoc '('
 
 %type <symbol_table> optional_variable_declaration_list
