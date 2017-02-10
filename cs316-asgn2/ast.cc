@@ -14,7 +14,6 @@ using namespace std;
 #include"procedure.hh"
 #include"program.hh"
 
-int NUM_SPACES = 9;
 
 Ast::Ast()
 {}

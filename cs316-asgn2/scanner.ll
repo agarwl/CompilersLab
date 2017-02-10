@@ -45,10 +45,10 @@ void                        {
                                 return Parser::INTEGER_NUMBER;
                             }
 
-({digit}*\.{digit}+|{digit}+[\.]?{digit}*)(e[+-]?{digit}+)?     {
+({digit}*\.{digit}+|{digit}+[\.]?{digit}*)([eE][+-]?{digit}+)?     {
                               store_token_name("FNUM");
                               ParserBase::STYPE__ *val = getSval();
-                              val->double_value = stod(matched());
+                              val->double_value = atof(matched().c_str());
                               return Parser::DOUBLE_NUMBER;
                             }
 

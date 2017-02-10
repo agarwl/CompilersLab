@@ -292,7 +292,7 @@ statement_list:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		$$ = NULL;
+		$$ = new Sequence_Ast(get_line_number());
 	}
 	}
 |
@@ -303,11 +303,6 @@ statement_list:
 
 		Sequence_Ast * seq = $1;
 		Ast * asnmt = $2;
-
-		if (seq == NULL)
-		{
-			seq = new Sequence_Ast(get_line_number());
-		}
 
 		CHECK_INVARIANT((seq != NULL), "The statement list cannot be null");
 		CHECK_INVARIANT((asnmt != NULL), "The assignment statement cannot be null");
