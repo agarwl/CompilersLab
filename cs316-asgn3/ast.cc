@@ -212,6 +212,12 @@ bool Arithmetic_Expr_Ast::check_ast()
 	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, "Arithmetic statement data type not compatible", lineno);
 }
 
+Arithmetic_Expr_Ast::~Arithmetic_Expr_Ast()
+{
+	delete lhs;
+	delete rhs;
+}
+
 /////////////////////////////////////////////////////////////////////
 
 Plus_Ast::Plus_Ast(Ast * l, Ast * r, int line)
@@ -463,7 +469,7 @@ void Selection_Statement_Ast::print(ostream & file_buffer)
 /////////////////////////////////////////////////////////////////////////////////
 
 
-Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * cond, Ast* body, int line)
+Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * cond, Ast* body, int line, bool do_form)
 {
 	this->cond = cond;
 	this->body = body;
@@ -471,6 +477,7 @@ Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * cond, Ast* body, int line
 	// What does is_condition_before do in the class
 	this->node_data_type = body->get_data_type();
 	this->lineno = line;
+	this->is_do_form = do_form;
 }
 
 Iteration_Statement_Ast::~Iteration_Statement_Ast()

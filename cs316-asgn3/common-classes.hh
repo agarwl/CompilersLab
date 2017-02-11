@@ -10,8 +10,6 @@ class Symbol_Table_Entry;
 
 class Program;
 class Procedure;
-// class Sequence_Ast;
-
 class Ics_Opd;
 class Icode_Stmt;
 class Code_For_Ast;

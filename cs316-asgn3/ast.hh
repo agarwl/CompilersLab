@@ -23,7 +23,8 @@ protected:
 	{
 		zero_arity = 0,
 		unary_arity = 1,
-		binary_arity = 2
+		binary_arity = 2,
+		ternary_arity = 3
 	}Ast_Arity;
 
 	Data_Type node_data_type;
@@ -168,9 +169,9 @@ class Iteration_Statement_Ast: public Ast {
 protected:
 	Ast* cond;
 	Ast* body;
-	bool is_condition_before;
+	bool is_do_form;
 public:
-	Iteration_Statement_Ast(Ast * cond, Ast* body, int line); 
+	Iteration_Statement_Ast(Ast * cond, Ast* body, int line, bool do_form);
 	~Iteration_Statement_Ast();
 
 	Data_Type get_data_type();
@@ -192,7 +193,7 @@ protected:
 
 public:
 	Arithmetic_Expr_Ast() {}
-	~Arithmetic_Expr_Ast() {}
+	~Arithmetic_Expr_Ast();
 
 	Data_Type get_data_type();
 	void set_data_type(Data_Type dt);
@@ -206,7 +207,7 @@ class Plus_Ast:public Arithmetic_Expr_Ast
 {
 public:
 	Plus_Ast(Ast * l, Ast * r, int line);
-	~Plus_Ast() {}
+	~Plus_Ast();
 
 	void print(ostream & file_buffer);
 
@@ -217,7 +218,7 @@ class Minus_Ast:public Arithmetic_Expr_Ast
 {
 public:
 	Minus_Ast(Ast * l, Ast * r, int line);
-	~Minus_Ast() {}
+	~Minus_Ast();
 
 	void print(ostream & file_buffer);
 
@@ -228,7 +229,7 @@ class Divide_Ast:public Arithmetic_Expr_Ast
 {
 public:
 	Divide_Ast(Ast * l, Ast * r, int line);
-	~Divide_Ast() {}
+	~Divide_Ast();
 
 	void print(ostream & file_buffer);
 	Code_For_Ast & compile();
@@ -238,7 +239,7 @@ class Mult_Ast:public Arithmetic_Expr_Ast
 {
 public:
 	Mult_Ast(Ast * l, Ast * r, int line);
-	~Mult_Ast() {}
+	~Mult_Ast();
 
 	void print(ostream & file_buffer);
 
@@ -251,7 +252,7 @@ protected:
 	Ast* cond;
 public:
 	Conditional_Operator_Ast(Ast* cond, Ast* l, Ast* r, int line);
-	~Conditional_Operator_Ast() {}
+	~Conditional_Operator_Ast();
 
 	void print(ostream & file_buffer);
 
@@ -262,7 +263,7 @@ class UMinus_Ast: public Arithmetic_Expr_Ast
 {
 public:
 	UMinus_Ast(Ast * l, Ast * r, int line);
-	~UMinus_Ast() {}
+	~UMinus_Ast();
 	
 	void print(ostream & file_buffer);
 
@@ -275,7 +276,7 @@ class Sequence_Ast: public Ast{
 public:
 	Sequence_Ast(int line);
 	~Sequence_Ast();
-  	void ast_push_back(Ast * ast);
+  void ast_push_back(Ast * ast);
 	void print(ostream & file_buffer);
 	Code_For_Ast & compile();
 	void print_assembly(ostream & file_buffer);
