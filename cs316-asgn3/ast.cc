@@ -10,7 +10,6 @@ using namespace std;
 #include"local-environment.hh"
 #include"symbol-table.hh"
 #include"ast.hh"
-// #include"sequence-ast.hh"
 #include"procedure.hh"
 #include"program.hh"
 
@@ -347,7 +346,7 @@ Relational_Expr_Ast::Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs
 	this->rhs_condition = rhs;
 	this->rel_op = rop;
 	this->ast_num_child = binary_arity;
-	this->node_data_type = lhs->get_data_type();
+	this->node_data_type = int_data_type;
 	this->lineno = line;
 }
 
@@ -438,7 +437,7 @@ Selection_Statement_Ast::Selection_Statement_Ast(Ast * cond,Ast* then_part, Ast*
 	this->then_part = then_part;
 	this->else_part = else_part;
 	this->ast_num_child = binary_arity;
-	this->node_data_type = then_part->get_data_type();
+	this->node_data_type = int_data_type;
 	this->lineno = line;
 }
 
@@ -540,16 +539,6 @@ void Sequence_Ast::ast_push_back(Ast * ast)
 }
 
 void Sequence_Ast::print(ostream & file_buffer)
-{
-
-}
-
-void Sequence_Ast::print_assembly(ostream & file_buffer)
-{
-
-}
-
-void Sequence_Ast::print_icode(ostream & file_buffer)
 {
 
 }
