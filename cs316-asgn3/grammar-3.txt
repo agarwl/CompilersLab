@@ -54,71 +54,52 @@ statement_list:
 ;
 
 statement:
-	selection_statement
+	matched_statement
 |
-	other_statement
+	unmatched_statement
 ;
 
 other_statement:
 	assignment_statement
 |
-	iteration_statement
-;
-
-iteration_statement:
-	while_statement
-|
 	do_while_statement
+|
+	'{' statement_list '}'
 ;
 
 assignment_statement:
 	variable ASSIGN arith_expression ';'
 ;
 
-selection_statement:
-	matched_statement
-|
-	unmatched_statement
-;
 
 matched_statement:
-	IF '(' bool_expression ')'
-	matched_statement_block
-	ELSE
-	matched_statement_block
+	IF '(' bool_expression ')' matched_statement
+	ELSE matched_statement
+|
+	other_statement
+|
+	matched_while_statement
 ;
 
 unmatched_statement:
-	IF '(' bool_expression ')'
-	statement_block
+	IF '(' bool_expression ')' statement
 |
-	IF '(' bool_expression ')'
-	matched_statement_block
-	ELSE
-	unmatched_statement
+	IF '(' bool_expression ')' matched_statement
+	ELSE unmatched_statement
+|
+	while_unmatched_statement
 ;
 
-matched_statement_block:
-	other_statement
-|
-	matched_statement
-|
-	'{' statement_list '}'
+while_unmatched_statement:
+	WHILE '(' bool_expression ')' unmatched_statement
 ;
 
-statement_block:
-	statement
-|
-	'{' statement_list '}'
-;
-
-while_statement:
-	WHILE '(' bool_expression ')'
-	statement_block
+while_matched_statement:
+	WHILE '(' bool_expression ')' matched_statement
 ;
 
 do_while_statement:
-	DO statement_block WHILE '(' bool_expression ')' ';'
+	DO statement WHILE '(' bool_expression ')' ';'
 ;
 
 arith_expression:
@@ -153,8 +134,6 @@ relational_expression:
 	operand EQ operand
 |
 	operand NE operand
-|
-	'(' relational_expression ')'
 ;
 
 bool_expression:
