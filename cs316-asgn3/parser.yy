@@ -583,14 +583,59 @@ relational_expression:
 	}
 |
 	operand LE operand
+	{
+	if (NOT_ONLY_PARSE)
+	{	
+		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+		Relational_Op rop = less_equalto;
+		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
+		$$->check_ast();
+	}
+	}
 |
 	operand GT operand
+	{
+	if (NOT_ONLY_PARSE)
+	{	
+		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+		Relational_Op rop = greater_than;
+		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
+		$$->check_ast();
+	}
+	}
 |
 	operand GE operand
+	{
+	if (NOT_ONLY_PARSE)
+	{	
+		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+		Relational_Op rop = greater_equalto;
+		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
+		$$->check_ast();
+	}
+	}
 |
 	operand EQ operand
+	{
+	if (NOT_ONLY_PARSE)
+	{	
+		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+		Relational_Op rop = equalto;
+		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
+		$$->check_ast();
+	}
+	}
 |
 	operand NE operand
+	{
+	if (NOT_ONLY_PARSE)
+	{	
+		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+		Relational_Op rop = not_equalto;
+		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
+		$$->check_ast();
+	}
+	}
 ;
 
 // check_ast in boolean_expr with both rhs and lhs
@@ -606,8 +651,24 @@ bool_expression:
 	}
 |
 	bool_expression AND bool_expression
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		Boolean_Op bop = boolean_and;
+		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "boolean_expr lhs/rhs cannot be null");
+		$$ = new Boolean_Expr_Ast(NULL, bop, $2, get_line_number());
+	}
+	}
 |
 	bool_expression OR bool_expression
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		Boolean_Op bop = boolean_or;
+		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "boolean_expr lhs/rhs cannot be null");
+		$$ = new Boolean_Expr_Ast(NULL, bop, $2, get_line_number());
+	}
+	}
 |
 	'(' bool_expression ')'
 	{
