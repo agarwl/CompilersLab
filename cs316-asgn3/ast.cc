@@ -379,7 +379,13 @@ bool Relational_Expr_Ast::check_ast()
 
 void Relational_Expr_Ast::print(ostream & file_buffer)
 {
-
+	file_buffer << endl << AST_NODE_SPACE << "Condition: " << this->rel_op << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "LHS (";
+	lhs_condition->print(file_buffer);
+	file_buffer << ")" << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "RHS (";
+	rhs_condition->print(file_buffer);
+	file_buffer << ")";
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -424,7 +430,13 @@ bool Boolean_Expr_Ast::check_ast()
 
 void Boolean_Expr_Ast::print(ostream & file_buffer)
 {
-
+	file_buffer << endl << AST_NODE_SPACE << "Condition: " << this->bool_op << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "LHS (";
+	lhs_op->print(file_buffer);
+	file_buffer << ")" << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "RHS (";
+	rhs_op->print(file_buffer);
+	file_buffer << ")";
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -462,7 +474,16 @@ bool Selection_Statement_Ast::check_ast()
 
 void Selection_Statement_Ast::print(ostream & file_buffer)
 {
-
+	file_buffer << endl << AST_SPACE << "IF : " << endl;
+	file_buffer << AST_SPACE << "CONDITION (";
+	cond->print(file_buffer);
+	file_buffer << ")" << endl;
+	file_buffer << AST_SPACE << "THEN (";
+	then_part->print(file_buffer);
+	file_buffer << ")" << endl;
+	file_buffer << AST_SPACE << "ELSE (";
+	else_part->print(file_buffer);
+	file_buffer << ")" << endl;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -500,7 +521,13 @@ bool Iteration_Statement_Ast::check_ast()
 
 void Iteration_Statement_Ast::print(ostream & file_buffer)
 {
-
+	file_buffer << endl << AST_SPACE << "WHILE : " << endl;
+	file_buffer << AST_SPACE << "CONDITION (";
+	cond->print(file_buffer);
+	file_buffer << ")" << endl;
+	file_buffer << AST_SPACE << "BODY (" << endl;
+	body->print(file_buffer);
+	file_buffer << ")" << endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -513,13 +540,22 @@ Conditional_Operator_Ast::Conditional_Operator_Ast(Ast* cond, Ast* l, Ast* r, in
 	this->rhs = r;
 	this->ast_num_child = binary_arity;
 	this->node_data_type = lhs->get_data_type();
-	this->lineno = line;
-}
+	this->lineno = line
+;}
 
 
 void Conditional_Operator_Ast::print(ostream & file_buffer)
 {
-
+	file_buffer << endl << AST_NODE_SPACE << "Arith: Conditional" << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "COND (";
+	cond->print(file_buffer);
+	file_buffer << ")" << endl;
+	file_buffer << AST_SUB_NODE_SPACE << "LHS (";
+	lhs->print(file_buffer);
+	file_buffer << ")";
+	file_buffer << AST_SUB_NODE_SPACE << "RHS (";
+	rhs->print(file_buffer);
+	file_buffer << ")";
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -540,5 +576,10 @@ void Sequence_Ast::ast_push_back(Ast * ast)
 
 void Sequence_Ast::print(ostream & file_buffer)
 {
-
+	file_buffer << endl << "Sequence Ast:" << endl;
+	// Doubt here. Need to invoke print function of list<*ast>
+	for (std::list<Ast*>::iterator it=statement_list.begin(); it != statement_list.end(); ++it)
+	{
+		(*it)->print(file_buffer);
+	}
 }

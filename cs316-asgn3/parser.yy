@@ -656,7 +656,7 @@ bool_expression:
 	{
 		Boolean_Op bop = boolean_and;
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "boolean_expr lhs/rhs cannot be null");
-		$$ = new Boolean_Expr_Ast(NULL, bop, $2, get_line_number());
+		$$ = new Boolean_Expr_Ast($1, bop, $3, get_line_number());
 	}
 	}
 |
@@ -666,7 +666,7 @@ bool_expression:
 	{
 		Boolean_Op bop = boolean_or;
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "boolean_expr lhs/rhs cannot be null");
-		$$ = new Boolean_Expr_Ast(NULL, bop, $2, get_line_number());
+		$$ = new Boolean_Expr_Ast($1, bop, $3, get_line_number());
 	}
 	}
 |
