@@ -29,6 +29,9 @@
 %token FLOAT
 %token DO WHILE IF ELSE
 
+/* http://stackoverflow.com/questions/12731922/reforming-
+the-grammar-to-remove-shift-reduce-conflict-in-if-then-else */
+// %right THEN ELSE
 %left OR
 %left AND
 %left EQ NE
@@ -56,12 +59,12 @@
 %type <ast> bool_expression
 %type <ast> conditional_expression
 %type <ast> other_statement
-%type <ast> iteration_statement
-%type <ast> selection_statement
-%type <ast> while_statement
 %type <ast> statement
 %type <ast> do_while_statement
-
+%type <ast> matched_statement
+%type <ast> unmatched_statement
+%type <ast> while_unmatched_statement
+%type <ast> while_matched_statement
 
 %start program
 
@@ -229,6 +232,9 @@ variable_declaration_list:
 					"Variable name cannot be same as procedure name", get_line_number());
 			}
 
+			CHECK_INPUT((decl_list->variable_in_symbol_list_check(decl_name) == false),
+					"Variable is declared twice", get_line_number());
+
 			decl_list->push_symbol(decl_stmt);
 		}
 
@@ -388,21 +394,152 @@ statement_list:
 ;
 
 statement:
-	selection_statement
+	matched_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "matched_statement can't be null");
+		$$ = $1;
+	}
+	}
 |
-	other_statement
+	unmatched_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "unmatched_statement can't be null");
+		$$ = $1;
+	}
+	}
 ;
+
 
 other_statement:
 	assignment_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "assignment_statement can't be null");
+		$$ = $1;
+	}
+	}
 |
-	iteration_statement
-;
-
-iteration_statement:
-	while_statement
+	'{' statement_list '}'
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($2 != NULL), "statement_list can't be null");
+		$$ = $2;
+	}
+	}
 |
 	do_while_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "do_while_statement can't be null");
+		$$ = $1;
+	}
+	}
+;
+
+matched_statement:
+	IF '(' bool_expression ')' matched_statement
+	ELSE matched_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		Ast* cond = $3;
+		Ast* then_part = $5;
+		Ast* else_part = $7;
+		CHECK_INVARIANT((cond != NULL) && (then_part != NULL) &&
+				(else_part != NULL), "unmatched_statement can't be null");
+		$$ = new Selection_Statement_Ast(cond, then_part, else_part, get_line_number());
+		$$->check_ast();
+	}
+	}
+|
+	other_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "other_statement can't be null");
+		$$ = $1;
+	}
+	}
+|
+	while_matched_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "while_statement can't be null");
+		$$ = $1;
+	}
+	}
+;
+
+unmatched_statement:
+	IF '(' bool_expression ')' statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		Ast* cond = $3;
+		Ast* then_part = $5;
+		Ast* else_part = new Sequence_Ast(get_line_number());
+		CHECK_INVARIANT((cond != NULL) && (then_part != NULL) &&
+			(else_part != NULL), "unmatched_statement can't be null");
+		$$ = new Selection_Statement_Ast(cond, then_part, else_part, get_line_number());
+	}
+	}
+|
+	IF '(' bool_expression ')' matched_statement
+	ELSE unmatched_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		Ast* cond = $3;
+		Ast* then_part = $5;
+		Ast* else_part = $7;
+		CHECK_INVARIANT((cond != NULL) && (then_part != NULL) &&
+				(else_part != NULL), "unmatched_statement can't be null");
+		$$ = new Selection_Statement_Ast(cond, then_part, else_part, get_line_number());
+		$$->check_ast();
+	}
+	}
+|
+	while_unmatched_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "while_unmatched_statement can't be null");
+		$$ = $1;
+	}
+	}
+;
+
+while_matched_statement:
+	WHILE '(' bool_expression ')' matched_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		// ADD CODE
+	}
+	}
+;
+
+while_unmatched_statement:
+	WHILE '(' bool_expression ')' unmatched_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		// ADD CODE
+	}
+	}
+;
+
+
+do_while_statement:
+	DO statement WHILE '(' bool_expression ')' ';'
 ;
 
 // Make sure to call check_ast in assignment_statement and arith_expression
@@ -454,15 +591,6 @@ relational_expression:
 	operand EQ operand
 |
 	operand NE operand
-|
-	'(' relational_expression ')'
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($2 != NULL), "relation_expr cannot be null");
-		$$ = $2;
-	}
-	}
 ;
 
 // check_ast in boolean_expr with both rhs and lhs
@@ -473,7 +601,7 @@ bool_expression:
 	{
 		Boolean_Op bop = boolean_not;
 		CHECK_INVARIANT(($2 != NULL), "boolean_expr cannot be null");
-		$$ = new Boolean_Expr_Ast(NULL,bop, $2, get_line_number());
+		$$ = new Boolean_Expr_Ast(NULL, bop, $2, get_line_number());
 	}
 	}
 |
@@ -482,8 +610,22 @@ bool_expression:
 	bool_expression OR bool_expression
 |
 	'(' bool_expression ')'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($2 != NULL), "boolean_expr cannot be null");
+		$$ = $2;
+	}
+	}
 |
 	relational_expression
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "Relational_Expr cannot be null");
+		$$ = $1;
+	}
+	}
 ;
 
 
@@ -523,7 +665,6 @@ arith_expression:
 		{
 		if (NOT_ONLY_PARSE)
 		{
-			// $$ = $1/$3;
 			CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 			$$ = new Divide_Ast($1, $3, get_line_number());
 			$$->check_ast();
