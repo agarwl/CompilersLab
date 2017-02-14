@@ -14,6 +14,8 @@
 
 	//ADD CODE HERE
 	Sequence_Ast * sequence_ast;
+	Iteration_Statement_Ast * iteration_ast;
+	Conditional_Operator_Ast * condition_ast;
 	Ast * ast;
 	int integer_value;
 	std::string * string_value;
@@ -32,6 +34,7 @@
 /* http://stackoverflow.com/questions/12731922/reforming-
 the-grammar-to-remove-shift-reduce-conflict-in-if-then-else */
 // %right THEN ELSE
+%right '?' ':'
 %left OR
 %left AND
 %left EQ NE
@@ -57,14 +60,14 @@ the-grammar-to-remove-shift-reduce-conflict-in-if-then-else */
 %type <ast> expression_term
 %type <ast> relational_expression
 %type <ast> bool_expression
-%type <ast> conditional_expression
+%type <condition_ast> conditional_expression
 %type <ast> other_statement
 %type <ast> statement
-%type <ast> do_while_statement
+%type <iteration_ast> do_while_statement
 %type <ast> matched_statement
 %type <ast> unmatched_statement
-%type <ast> while_unmatched_statement
-%type <ast> while_matched_statement
+%type <iteration_ast> while_unmatched_statement
+%type <iteration_ast> while_matched_statement
 
 %start program
 
@@ -73,7 +76,7 @@ the-grammar-to-remove-shift-reduce-conflict-in-if-then-else */
 program:
 	declaration_list procedure_definition
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 
@@ -86,7 +89,7 @@ program:
 declaration_list:
 	procedure_declaration
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		Symbol_Table * global_table = new Symbol_Table();
 		program_object.set_global_table(*global_table);
@@ -96,7 +99,7 @@ declaration_list:
 	variable_declaration_list
 	procedure_declaration
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		Symbol_Table * global_table = $1;
 
@@ -109,7 +112,7 @@ declaration_list:
 	procedure_declaration
 	variable_declaration_list
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		Symbol_Table * global_table = $2;
 
@@ -123,7 +126,7 @@ declaration_list:
 procedure_declaration:
 	VOID NAME '(' ')' ';'
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($2 != NULL), "Procedure name cannot be null");
 		CHECK_INVARIANT((*$2 == "main"), "Procedure name must be main in declaration");
@@ -134,7 +137,7 @@ procedure_declaration:
 procedure_definition:
 	NAME '(' ')'
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($1 != NULL), "Procedure name cannot be null");
 		CHECK_INVARIANT((*$1 == "main"), "Procedure name must be main");
@@ -150,7 +153,7 @@ procedure_definition:
 
 	'{' optional_variable_declaration_list
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 
 
@@ -168,7 +171,7 @@ procedure_definition:
 
 	statement_list '}'
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		Sequence_Ast* seq = $8;
 
@@ -182,7 +185,7 @@ procedure_definition:
 
 optional_variable_declaration_list:
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		$$ = NULL;
 	}
@@ -190,7 +193,7 @@ optional_variable_declaration_list:
 |
 	variable_declaration_list
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 
 
@@ -206,7 +209,7 @@ optional_variable_declaration_list:
 variable_declaration_list:
 	variable_declaration
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 
 
@@ -244,7 +247,7 @@ variable_declaration_list:
 |
 	variable_declaration_list variable_declaration
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		// if declaration is local then no need to check in global list
 		// if declaration is global then this list is global list
@@ -282,7 +285,7 @@ variable_declaration_list:
 variable_declaration:
 	declaration ';'
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		pair<Data_Type, list<string> * > * decl = $1;
 
@@ -307,7 +310,7 @@ variable_declaration:
 declaration:
 	INTEGER name_list
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 
 		CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
@@ -325,7 +328,7 @@ declaration:
 |
 	FLOAT name_list
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
 
@@ -343,7 +346,7 @@ declaration:
 name_list:
 	NAME
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($1 != NULL), "Name cannot be null");
 		list<string> * var_names = new list<string>();
@@ -355,7 +358,7 @@ name_list:
 |
 	name_list ',' NAME
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($1 != NULL) && ($3 != NULL),
 			"Name or Name_list cannot be null");
@@ -370,7 +373,7 @@ name_list:
 
 statement_list:
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 		$$ = new Sequence_Ast(get_line_number());
 	}
@@ -378,7 +381,7 @@ statement_list:
 |
 	statement_list statement
 	{
-	if (NOT_ONLY_PARSE)
+	if(NOT_ONLY_PARSE)
 	{
 
 		Sequence_Ast * seq = $1;
@@ -522,7 +525,10 @@ while_matched_statement:
 	{
 	if(NOT_ONLY_PARSE)
 	{
-		// ADD CODE
+		CHECK_INVARIANT((($3 != NULL) && ($5 != NULL)),
+			"do while cond and do statement block cannot be null");
+		$$ = new Iteration_Statement_Ast($3, $5, get_line_number(), false);
+		$$->check_ast();
 	}
 	}
 ;
@@ -532,7 +538,10 @@ while_unmatched_statement:
 	{
 	if(NOT_ONLY_PARSE)
 	{
-		// ADD CODE
+		CHECK_INVARIANT((($3 != NULL) && ($5 != NULL)),
+			"do while cond and do statement block cannot be null");
+		$$ = new Iteration_Statement_Ast($3, $5, get_line_number(), false);
+		$$->check_ast();
 	}
 	}
 ;
@@ -540,6 +549,15 @@ while_unmatched_statement:
 
 do_while_statement:
 	DO statement WHILE '(' bool_expression ')' ';'
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT((($2 != NULL) && ($5 != NULL)),
+			"do while cond and do statement block cannot be null");
+		$$ = new Iteration_Statement_Ast($5, $2, get_line_number(), true);
+		$$->check_ast();
+	}
+	}
 ;
 
 // Make sure to call check_ast in assignment_statement and arith_expression
@@ -561,11 +579,13 @@ assignment_statement:
 ;
 
 conditional_expression:
-	bool_expression '?' arith_expression ':' arith_expression ';'
+	bool_expression '?' arith_expression ':' arith_expression
 	{
 	if(NOT_ONLY_PARSE)
 	{
-		// ADD CODE HERE
+		CHECK_INVARIANT(($1 != NULL) && ($3 != NULL) && ($5 != NULL),
+			"cond/lhs/rhs cannot be null");
+		$$ = new Conditional_Operator_Ast($1, $3, $5, get_line_number());
 	}
 	}
 ;
@@ -585,7 +605,7 @@ relational_expression:
 	operand LE operand
 	{
 	if (NOT_ONLY_PARSE)
-	{	
+	{
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Relational_Op rop = less_equalto;
 		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
@@ -596,7 +616,7 @@ relational_expression:
 	operand GT operand
 	{
 	if (NOT_ONLY_PARSE)
-	{	
+	{
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Relational_Op rop = greater_than;
 		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
@@ -607,7 +627,7 @@ relational_expression:
 	operand GE operand
 	{
 	if (NOT_ONLY_PARSE)
-	{	
+	{
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Relational_Op rop = greater_equalto;
 		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
@@ -618,7 +638,7 @@ relational_expression:
 	operand EQ operand
 	{
 	if (NOT_ONLY_PARSE)
-	{	
+	{
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Relational_Op rop = equalto;
 		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
@@ -629,7 +649,7 @@ relational_expression:
 	operand NE operand
 	{
 	if (NOT_ONLY_PARSE)
-	{	
+	{
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Relational_Op rop = not_equalto;
 		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
@@ -691,7 +711,6 @@ bool_expression:
 
 
 arith_expression:
-		//ADD RELEVANT CODE ALONG WITH GRAMMAR RULES HERE
 		operand '+' operand
 		{
 		if (NOT_ONLY_PARSE)
@@ -758,9 +777,15 @@ arith_expression:
 			$$ = $1;
 		}
 		}
-                // SUPPORT binary +, -, *, / operations, unary -, and allow parenthesization
-                // i.e. E -> (E)
-                // Connect the rules with the remaining rules given below
+|
+		conditional_expression
+		{
+		if(NOT_ONLY_PARSE)
+		{
+			CHECK_INVARIANT(($1 != NULL), "conditional_expression cannot be null");
+			$$ = $1;
+		}
+		}
 ;
 
 operand:

@@ -339,7 +339,6 @@ void UMinus_Ast::print(ostream & file_buffer)
 template class Number_Ast<double>;
 template class Number_Ast<int>;
 
-
 Relational_Expr_Ast::Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs, int line)
 {
 	this->lhs_condition = lhs;
@@ -379,7 +378,30 @@ bool Relational_Expr_Ast::check_ast()
 
 void Relational_Expr_Ast::print(ostream & file_buffer)
 {
-	file_buffer << endl << AST_NODE_SPACE << "Condition: " << this->rel_op << endl;
+	file_buffer << endl << AST_NODE_SPACE << "Condition: ";
+	string rel_operator;
+	switch(rel_op)
+	{
+	case less_equalto:
+		rel_operator = "LE";
+		break;
+	case less_than:
+		rel_operator = "LT";
+		break;
+	case greater_than:
+		rel_operator = "GT";
+		break;
+	case greater_equalto:
+		rel_operator = "GE";
+		break;
+	case equalto:
+		rel_operator = "EQ";
+		break;
+	case not_equalto:
+		rel_operator = "NE";
+		break;
+	}
+	file_buffer << rel_operator << endl;
 	file_buffer << AST_SUB_NODE_SPACE << "LHS (";
 	lhs_condition->print(file_buffer);
 	file_buffer << ")" << endl;
@@ -397,7 +419,7 @@ Boolean_Expr_Ast::Boolean_Expr_Ast(Ast * lhs, Boolean_Op bop, Ast * rhs, int lin
 	this->rhs_op = rhs;
 	this->bool_op = bop;
 	this->ast_num_child = binary_arity;
-	this->node_data_type = lhs->get_data_type();
+	this->node_data_type = int_data_type;
 	this->lineno = line;
 }
 
@@ -430,7 +452,21 @@ bool Boolean_Expr_Ast::check_ast()
 
 void Boolean_Expr_Ast::print(ostream & file_buffer)
 {
-	file_buffer << endl << AST_NODE_SPACE << "Condition: " << this->bool_op << endl;
+	file_buffer << endl << AST_NODE_SPACE << "Condition: ";
+	string bool_operator;
+	switch(bool_op)
+	{
+		case boolean_not:
+			bool_operator="NOT";
+			break;
+		case boolean_or:
+			bool_operator = "OR";
+			break;
+		case boolean_and:
+			bool_operator = "AND";
+			break;
+	}
+	file_buffer << bool_operator << endl;
 	file_buffer << AST_SUB_NODE_SPACE << "LHS (";
 	lhs_op->print(file_buffer);
 	file_buffer << ")" << endl;
@@ -483,7 +519,7 @@ void Selection_Statement_Ast::print(ostream & file_buffer)
 	file_buffer << ")" << endl;
 	file_buffer << AST_SPACE << "ELSE (";
 	else_part->print(file_buffer);
-	file_buffer << ")" << endl;
+	file_buffer << ")";
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -495,7 +531,7 @@ Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * cond, Ast* body, int line
 	this->body = body;
 	this->ast_num_child = unary_arity;
 	// What does is_condition_before do in the class
-	this->node_data_type = body->get_data_type();
+	this->node_data_type = cond->get_data_type();
 	this->lineno = line;
 	this->is_do_form = do_form;
 }
@@ -525,9 +561,9 @@ void Iteration_Statement_Ast::print(ostream & file_buffer)
 	file_buffer << AST_SPACE << "CONDITION (";
 	cond->print(file_buffer);
 	file_buffer << ")" << endl;
-	file_buffer << AST_SPACE << "BODY (" << endl;
+	file_buffer << AST_SPACE << "BODY (";
 	body->print(file_buffer);
-	file_buffer << ")" << endl;
+	file_buffer << ")";
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -538,10 +574,10 @@ Conditional_Operator_Ast::Conditional_Operator_Ast(Ast* cond, Ast* l, Ast* r, in
 	this->cond = cond;
 	this->lhs = l;
 	this->rhs = r;
-	this->ast_num_child = binary_arity;
-	this->node_data_type = lhs->get_data_type();
-	this->lineno = line
-;}
+	this->ast_num_child = ternary_arity;
+	this->node_data_type = l->get_data_type();
+	this->lineno = line;
+}
 
 
 void Conditional_Operator_Ast::print(ostream & file_buffer)
@@ -576,9 +612,9 @@ void Sequence_Ast::ast_push_back(Ast * ast)
 
 void Sequence_Ast::print(ostream & file_buffer)
 {
-	file_buffer << endl << "Sequence Ast:" << endl;
+	file_buffer << endl << SA_SPACE << "Sequence Ast:" << endl;
 	// Doubt here. Need to invoke print function of list<*ast>
-	for (std::list<Ast*>::iterator it=statement_list.begin(); it != statement_list.end(); ++it)
+	for (auto it=statement_list.begin(); it != statement_list.end(); ++it)
 	{
 		(*it)->print(file_buffer);
 	}
