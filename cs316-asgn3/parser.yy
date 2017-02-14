@@ -31,10 +31,7 @@
 %token FLOAT
 %token DO WHILE IF ELSE
 
-/* http://stackoverflow.com/questions/12731922/reforming-
-the-grammar-to-remove-shift-reduce-conflict-in-if-then-else */
-// %right THEN ELSE
-%right '?' ':'
+%right TERNARY_COND
 %left OR
 %left AND
 %left EQ NE
@@ -579,7 +576,7 @@ assignment_statement:
 ;
 
 conditional_expression:
-	bool_expression '?' arith_expression ':' arith_expression
+	bool_expression '?' arith_expression ':' arith_expression %prec TERNARY_COND
 	{
 	if(NOT_ONLY_PARSE)
 	{

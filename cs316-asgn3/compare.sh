@@ -6,7 +6,7 @@ rm -rf comparison.txt
 
 MIPS='./MIPSCODE/'
 REFER='./REFERCODE/'
-FLAGS='-tokens -ast -symtab -d'
+FLAGS=' -ast -symtab -d'
 # FLAGS='-d'
 mkdir MIPSCODE
 mkdir REFERCODE
