@@ -16,6 +16,7 @@
 	Sequence_Ast * sequence_ast;
 	Iteration_Statement_Ast * iteration_ast;
 	Conditional_Operator_Ast * condition_ast;
+	Relational_Expr_Ast * relational_ast;
 	Ast * ast;
 	int integer_value;
 	std::string * string_value;
@@ -38,8 +39,7 @@
 %left GT GE LT LE
 %left '+' '-'
 %left '*' '/'
-%right UMINUS
-%left NOT
+%right UMINUS NOT
 %nonassoc '('
 
 %type <symbol_table> optional_variable_declaration_list
@@ -55,7 +55,7 @@
 %type <ast> operand
 %type <ast> arith_expression
 %type <ast> expression_term
-%type <ast> relational_expression
+%type <relational_ast> relational_expression
 %type <ast> bool_expression
 %type <condition_ast> conditional_expression
 %type <ast> other_statement
@@ -576,7 +576,7 @@ assignment_statement:
 ;
 
 conditional_expression:
-	bool_expression '?' arith_expression ':' arith_expression %prec TERNARY_COND
+	bool_expression '?' operand ':' operand %prec TERNARY_COND
 	{
 	if(NOT_ONLY_PARSE)
 	{

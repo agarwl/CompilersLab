@@ -1,13 +1,10 @@
 #!/bin/bash
 
-rm -rf MIPSCODE
-rm -rf REFERCODE
-rm -rf comparison.txt
+rm -rf MIPSCODE REFERCODE comparison.txt
 
 MIPS='./MIPSCODE/'
 REFER='./REFERCODE/'
-FLAGS=' -ast -symtab -d'
-# FLAGS='-d'
+FLAGS='-ast -symtab -d'
 mkdir MIPSCODE
 mkdir REFERCODE
 for f in ./testcases/*.c

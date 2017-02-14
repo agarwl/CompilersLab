@@ -588,7 +588,7 @@ void Conditional_Operator_Ast::print(ostream & file_buffer)
 	file_buffer << ")" << endl;
 	file_buffer << AST_SUB_NODE_SPACE << "LHS (";
 	lhs->print(file_buffer);
-	file_buffer << ")";
+	file_buffer << ")" << endl;
 	file_buffer << AST_SUB_NODE_SPACE << "RHS (";
 	rhs->print(file_buffer);
 	file_buffer << ")";
