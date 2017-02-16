@@ -583,6 +583,7 @@ conditional_expression:
 		CHECK_INVARIANT(($1 != NULL) && ($3 != NULL) && ($5 != NULL),
 			"cond/lhs/rhs cannot be null");
 		$$ = new Conditional_Operator_Ast($1, $3, $5, get_line_number());
+		$$->check_ast();
 	}
 	}
 ;

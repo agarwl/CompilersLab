@@ -518,9 +518,12 @@ void Boolean_Expr_Ast::print(ostream & file_buffer)
 			break;
 	}
 	file_buffer << bool_operator << endl;
-	file_buffer << AST_SUB_NODE_SPACE << "LHS (";
-	lhs_op->print(file_buffer);
-	file_buffer << ")" << endl;
+	if(lhs_op != NULL)
+	{
+		file_buffer << AST_SUB_NODE_SPACE << "LHS (";
+		lhs_op->print(file_buffer);
+		file_buffer << ")" << endl;
+	}
 	file_buffer << AST_SUB_NODE_SPACE << "RHS (";
 	rhs_op->print(file_buffer);
 	file_buffer << ")";
