@@ -7,7 +7,7 @@ using namespace std;
 #include"common-classes.hh"
 #include"error-display.hh"
 #include"user-options.hh"
-#include"local-environment.hh"
+// #include"local-environment.hh"
 #include"symbol-table.hh"
 #include"ast.hh"
 #include"procedure.hh"
