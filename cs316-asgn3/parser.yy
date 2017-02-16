@@ -455,7 +455,7 @@ matched_statement:
 		CHECK_INVARIANT((cond != NULL) && (then_part != NULL) &&
 				(else_part != NULL), "unmatched_statement can't be null");
 		$$ = new Selection_Statement_Ast(cond, then_part, else_part, get_line_number());
-		$$->check_ast();
+		//$$->check_ast();
 	}
 	}
 |
@@ -503,7 +503,7 @@ unmatched_statement:
 		CHECK_INVARIANT((cond != NULL) && (then_part != NULL) &&
 				(else_part != NULL), "unmatched_statement can't be null");
 		$$ = new Selection_Statement_Ast(cond, then_part, else_part, get_line_number());
-		$$->check_ast();
+		//$$->check_ast();
 	}
 	}
 |
@@ -525,7 +525,7 @@ while_matched_statement:
 		CHECK_INVARIANT((($3 != NULL) && ($5 != NULL)),
 			"do while cond and do statement block cannot be null");
 		$$ = new Iteration_Statement_Ast($3, $5, get_line_number(), false);
-		$$->check_ast();
+		//$$->check_ast();
 	}
 	}
 ;
@@ -538,7 +538,7 @@ while_unmatched_statement:
 		CHECK_INVARIANT((($3 != NULL) && ($5 != NULL)),
 			"do while cond and do statement block cannot be null");
 		$$ = new Iteration_Statement_Ast($3, $5, get_line_number(), false);
-		$$->check_ast();
+		//$$->check_ast();
 	}
 	}
 ;
@@ -552,7 +552,7 @@ do_while_statement:
 		CHECK_INVARIANT((($2 != NULL) && ($5 != NULL)),
 			"do while cond and do statement block cannot be null");
 		$$ = new Iteration_Statement_Ast($5, $2, get_line_number(), true);
-		$$->check_ast();
+		//$$->check_ast();
 	}
 	}
 ;
@@ -569,7 +569,7 @@ assignment_statement:
 		Ast* lhs = $1;
 		Ast* rhs = $3;
 		Ast* assign_ast = new Assignment_Ast(lhs, rhs, get_line_number());
-		assign_ast->check_ast();
+		//assign_ast->check_ast();
 		$$ = assign_ast;
 	}
 	}
@@ -595,7 +595,7 @@ relational_expression:
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Relational_Op rop = less_than;
 		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
-		$$->check_ast();
+		//$$->check_ast();
 	}
 	}
 |
@@ -606,7 +606,7 @@ relational_expression:
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Relational_Op rop = less_equalto;
 		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
-		$$->check_ast();
+		//$$->check_ast();
 	}
 	}
 |
@@ -617,7 +617,7 @@ relational_expression:
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Relational_Op rop = greater_than;
 		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
-		$$->check_ast();
+		//$$->check_ast();
 	}
 	}
 |
@@ -628,7 +628,7 @@ relational_expression:
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Relational_Op rop = greater_equalto;
 		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
-		$$->check_ast();
+		//$$->check_ast();
 	}
 	}
 |
@@ -639,7 +639,7 @@ relational_expression:
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Relational_Op rop = equalto;
 		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
-		$$->check_ast();
+		//$$->check_ast();
 	}
 	}
 |
@@ -650,7 +650,7 @@ relational_expression:
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Relational_Op rop = not_equalto;
 		$$ = new Relational_Expr_Ast($1, rop, $3, get_line_number());
-		$$->check_ast();
+		//$$->check_ast();
 	}
 	}
 ;

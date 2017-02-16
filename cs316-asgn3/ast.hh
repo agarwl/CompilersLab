@@ -184,7 +184,6 @@ public:
 	Code_For_Ast & compile();
 };
 
-
 class Arithmetic_Expr_Ast:public Ast
 {
 protected:

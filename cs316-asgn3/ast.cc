@@ -65,7 +65,12 @@ Assignment_Ast::Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, int line)
 	this->rhs = temp_rhs;
 	this->lineno = line;
 	this->ast_num_child = binary_arity;
-	this->node_data_type = lhs->get_data_type();
+	if(check_ast()){
+		this->node_data_type = lhs->get_data_type();
+	}
+	else{
+		this->node_data_type = void_data_type;
+	}
 }
 
 Assignment_Ast::~Assignment_Ast()
@@ -205,7 +210,7 @@ bool Arithmetic_Expr_Ast::check_ast()
 {
 	// use get_data_type(), typeid()
 	//ADD CODE HERE
-	if (lhs->get_data_type()== rhs->get_data_type())
+	if (lhs->get_data_type() == rhs->get_data_type())
 		return true;
 
 	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, "Arithmetic statement data type not compatible", lineno);
@@ -226,8 +231,13 @@ Plus_Ast::Plus_Ast(Ast * l, Ast * r, int line)
 	this->lhs = l;
 	this->rhs = r;
 	this->ast_num_child = binary_arity;
-	this->node_data_type = l->get_data_type();
 	this->lineno = line;
+	if(l->get_data_type()==r->get_data_type()){
+		this->node_data_type = l->get_data_type();
+	}
+	else{
+		this->node_data_type = void_data_type;
+	}
 }
 
 void Plus_Ast::print(ostream & file_buffer)
@@ -250,8 +260,13 @@ Minus_Ast::Minus_Ast(Ast * l, Ast * r, int line)
 	this->lhs = l;
 	this->rhs = r;
 	this->ast_num_child = binary_arity;
-	this->node_data_type = l->get_data_type();
 	this->lineno = line;
+	if(l->get_data_type()==r->get_data_type()){
+		this->node_data_type = l->get_data_type();
+	}
+	else{
+		this->node_data_type = void_data_type;
+	}
 }
 
 void Minus_Ast::print(ostream & file_buffer)
@@ -274,8 +289,13 @@ Mult_Ast::Mult_Ast(Ast * l, Ast * r, int line)
 	this->lhs = l;
 	this->rhs = r;
 	this->ast_num_child = binary_arity;
-	this->node_data_type = l->get_data_type();
 	this->lineno = line;
+	if(l->get_data_type()==r->get_data_type()){
+		this->node_data_type = l->get_data_type();
+	}
+	else{
+		this->node_data_type = void_data_type;
+	}
 }
 
 void Mult_Ast::print(ostream & file_buffer)
@@ -298,8 +318,13 @@ Divide_Ast::Divide_Ast(Ast * l, Ast * r, int line)
 	this->lhs = l;
 	this->rhs = r;
 	this->ast_num_child = binary_arity;
-	this->node_data_type = l->get_data_type();
 	this->lineno = line;
+	if(l->get_data_type()==r->get_data_type()){
+		this->node_data_type = l->get_data_type();
+	}
+	else{
+		this->node_data_type = void_data_type;
+	}
 }
 
 void Divide_Ast::print(ostream & file_buffer)
@@ -322,8 +347,8 @@ UMinus_Ast::UMinus_Ast(Ast * l, Ast * r, int line)
 	this->lhs = l;
 	this->rhs = NULL;
 	this->ast_num_child = unary_arity;
-	this->node_data_type = l->get_data_type();
 	this->lineno = line;
+	this->node_data_type = l->get_data_type();
 }
 
 void UMinus_Ast::print(ostream & file_buffer)
@@ -344,13 +369,21 @@ Relational_Expr_Ast::Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs
 	this->lhs_condition = lhs;
 	this->rhs_condition = rhs;
 	this->rel_op = rop;
-	this->ast_num_child = binary_arity;
-	this->node_data_type = int_data_type;
 	this->lineno = line;
+	this->ast_num_child = binary_arity;
+	if(check_ast()){
+		this->node_data_type = int_data_type;
+	}
+	else{
+		this->node_data_type = void_data_type;
+	}
 }
 
 Relational_Expr_Ast::~Relational_Expr_Ast()
-{}
+{
+	delete lhs_condition;
+	delete rhs_condition;
+}
 
 Data_Type Relational_Expr_Ast::get_data_type()
 {
@@ -370,10 +403,12 @@ bool Relational_Expr_Ast::check_ast()
 	// use typeid(), get_data_type()
 	//ADD CODE HERE
 	if(lhs_condition->get_data_type() == rhs_condition->get_data_type())
+	{
 		return true;
+	}
 
 	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH,
-		"Relational Expression data type not compatible", lineno);
+		"Relational statement data type not compatible", lineno);
 }
 
 void Relational_Expr_Ast::print(ostream & file_buffer)
@@ -418,13 +453,27 @@ Boolean_Expr_Ast::Boolean_Expr_Ast(Ast * lhs, Boolean_Op bop, Ast * rhs, int lin
 	this->lhs_op = lhs;
 	this->rhs_op = rhs;
 	this->bool_op = bop;
-	this->ast_num_child = binary_arity;
-	this->node_data_type = int_data_type;
+	if (bop == boolean_not)
+	{
+		this->ast_num_child = unary_arity;
+	}
+	else{
+		this->ast_num_child = binary_arity;
+	}
 	this->lineno = line;
+	if(check_ast()){
+		this->node_data_type = int_data_type;
+	}
+	else{
+		this->node_data_type = void_data_type;
+	}
 }
 
 Boolean_Expr_Ast::~Boolean_Expr_Ast()
-{}
+{
+	delete lhs_op;
+	delete rhs_op;
+}
 
 Data_Type Boolean_Expr_Ast::get_data_type()
 {
@@ -439,11 +488,13 @@ void Boolean_Expr_Ast::set_data_type(Data_Type dt)
 bool Boolean_Expr_Ast::check_ast()
 {
 	CHECK_INVARIANT((rhs_op != NULL), "Rhs of Boolean_Expr_Ast cannot be null");
-	CHECK_INVARIANT((lhs_op != NULL), "Lhs of Boolean_Expr_Ast cannot be null");
+	CHECK_INVARIANT((lhs_op != NULL || ast_num_child == unary_arity), "Lhs of Boolean_Expr_Ast cannot be null");
 
 	// use typeid(), get_data_type()
 	//ADD CODE HERE
-	if(lhs_op->get_data_type() == rhs_op->get_data_type())
+	if(ast_num_child == unary_arity && rhs_op->get_data_type() == int_data_type)
+		return true;
+	else if (lhs_op->get_data_type()==rhs_op->get_data_type() && lhs_op->get_data_type() == int_data_type)
 		return true;
 
 	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH,
@@ -479,18 +530,27 @@ void Boolean_Expr_Ast::print(ostream & file_buffer)
 
 
 
-Selection_Statement_Ast::Selection_Statement_Ast(Ast * cond,Ast* then_part, Ast* else_part, int line)
+Selection_Statement_Ast::Selection_Statement_Ast(Ast * cond, Ast* then_part, Ast* else_part, int line)
 {
 	this->cond = cond;
 	this->then_part = then_part;
 	this->else_part = else_part;
 	this->ast_num_child = binary_arity;
-	this->node_data_type = int_data_type;
 	this->lineno = line;
+	if(check_ast()){
+		this->node_data_type = int_data_type;
+	}
+	else{
+		this->node_data_type = void_data_type;
+	}
 }
 
 Selection_Statement_Ast::~Selection_Statement_Ast()
-{}
+{
+	delete cond;
+	delete then_part;
+	delete else_part;
+}
 
 Data_Type Selection_Statement_Ast::get_data_type()
 {
@@ -530,10 +590,9 @@ Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * cond, Ast* body, int line
 	this->cond = cond;
 	this->body = body;
 	this->ast_num_child = unary_arity;
-	// What does is_condition_before do in the class
-	this->node_data_type = cond->get_data_type();
 	this->lineno = line;
 	this->is_do_form = do_form;
+	this->node_data_type = cond->get_data_type();
 }
 
 Iteration_Statement_Ast::~Iteration_Statement_Ast()
@@ -575,8 +634,16 @@ Conditional_Operator_Ast::Conditional_Operator_Ast(Ast* cond, Ast* l, Ast* r, in
 	this->lhs = l;
 	this->rhs = r;
 	this->ast_num_child = ternary_arity;
-	this->node_data_type = l->get_data_type();
 	this->lineno = line;
+	//CHECK_INPUT(lhs->get_data_type()==rhs->get_data_type(),"Arithmetic statement data type not compatible",lineno);
+	if (lhs->get_data_type()==rhs->get_data_type())
+	{
+		this->node_data_type = l->get_data_type();
+	}
+	else
+	{
+		this->node_data_type = void_data_type;
+	}
 }
 
 
@@ -613,7 +680,6 @@ void Sequence_Ast::ast_push_back(Ast * ast)
 void Sequence_Ast::print(ostream & file_buffer)
 {
 	file_buffer << endl << SA_SPACE << "Sequence Ast:" << endl;
-	// Doubt here. Need to invoke print function of list<*ast>
 	for (auto it=statement_list.begin(); it != statement_list.end(); ++it)
 	{
 		(*it)->print(file_buffer);

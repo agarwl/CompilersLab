@@ -42,7 +42,7 @@ do                          {
 while                       {
                               store_token_name("WHILE");
                               return Parser::WHILE;
-                            }
+                            }                        
 
 =                           {
                               store_token_name("ASSIGN_OP");
