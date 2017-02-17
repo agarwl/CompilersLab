@@ -639,14 +639,14 @@ Conditional_Operator_Ast::Conditional_Operator_Ast(Ast* cond, Ast* l, Ast* r, in
 	this->ast_num_child = ternary_arity;
 	this->lineno = line;
 	//CHECK_INPUT(lhs->get_data_type()==rhs->get_data_type(),"Arithmetic statement data type not compatible",lineno);
-	if (lhs->get_data_type()==rhs->get_data_type())
-	{
-		this->node_data_type = l->get_data_type();
-	}
-	else
-	{
-		this->node_data_type = void_data_type;
-	}
+	// if (lhs->get_data_type()==rhs->get_data_type())
+	// {
+	this->node_data_type = l->get_data_type();
+	// }
+	// else
+	// {
+		// this->node_data_type = void_data_type;
+	// }
 }
 
 

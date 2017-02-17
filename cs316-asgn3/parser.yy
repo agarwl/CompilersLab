@@ -49,8 +49,7 @@
 %type <var_names> name_list
 %type <sequence_ast> statement_list
 %type <ast> assignment_statement
-%type <ast> init_statement
-%type <ast> inc_statement
+%type <ast> for_statement
 %type <ast> variable
 %type <ast> constant
 %type <ast> operand
@@ -552,19 +551,19 @@ while_matched_statement:
 ;
 
 for_matched_statement:
-	FOR '(' init_statement bool_expression ';' inc_statement ')' matched_statement
+	FOR '(' for_statement ';' bool_expression ';' for_statement ')' matched_statement
 	{
 	if(NOT_ONLY_PARSE)
 	{
-		CHECK_INVARIANT((($3 != NULL) && ($4 != NULL) && ($6 != NULL) && ($8 != NULL)),
+		CHECK_INVARIANT((($3 != NULL) && ($5 != NULL) && ($7 != NULL) && ($9 != NULL)),
 			"for init, cond, increment and statement block cannot be null");
 		Sequence_Ast* forLoop = new Sequence_Ast(get_line_number());
 		Ast* init = $3;
 		forLoop->ast_push_back(init);
 		Sequence_Ast* body = new Sequence_Ast(get_line_number());
-		body->ast_push_back($8);
-		body->ast_push_back($6);
-		Ast* loop = new Iteration_Statement_Ast($4, body, get_line_number(), false);
+		body->ast_push_back($9);
+		body->ast_push_back($7);
+		Ast* loop = new Iteration_Statement_Ast($5, body, get_line_number(), false);
 		forLoop->ast_push_back(loop);
 		$$ = forLoop;
 	}
@@ -585,19 +584,19 @@ while_unmatched_statement:
 ;
 
 for_unmatched_statement:
-	FOR '(' init_statement bool_expression ';' inc_statement ')' unmatched_statement
+	FOR '(' for_statement ';' bool_expression ';' for_statement ')' unmatched_statement
 	{
 	if(NOT_ONLY_PARSE)
 	{
-		CHECK_INVARIANT((($3 != NULL) && ($4 != NULL) && ($6 != NULL) && ($8 != NULL)),
+		CHECK_INVARIANT((($3 != NULL) && ($5 != NULL) && ($7 != NULL) && ($9 != NULL)),
 			"for init, cond, increment and statement block cannot be null");
 		Sequence_Ast* forLoop = new Sequence_Ast(get_line_number());
 		Ast* init = $3;
 		forLoop->ast_push_back(init);
 		Sequence_Ast* for_body =  new Sequence_Ast(get_line_number());
-		for_body->ast_push_back($8);
-		for_body->ast_push_back($6);
-		Ast* loop = new Iteration_Statement_Ast($4, for_body, get_line_number(), false);
+		for_body->ast_push_back($9);
+		for_body->ast_push_back($7);
+		Ast* loop = new Iteration_Statement_Ast($5, for_body, get_line_number(), false);
 		forLoop->ast_push_back(loop);
 		$$ = forLoop;
 	}
@@ -618,15 +617,16 @@ do_while_statement:
 	}
 ;
 
-init_statement:
+for_statement:
+	/*empty*/
 	{
 	if(NOT_ONLY_PARSE)
 	{
-		$$ = NULL;
+		$$ = new Sequence_Ast(get_line_number());
 	}
 	}
 |
-	assignment_statement
+	variable ASSIGN arith_expression
 	{
 	if(NOT_ONLY_PARSE)
 	{
@@ -634,28 +634,6 @@ init_statement:
 		$$ = $1;
 	}	
 	}
-;		
-
-inc_statement:
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = NULL;
-	}
-	}
-|
-	variable ASSIGN arith_expression
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
-
-		Ast* lhs = $1;
-		Ast* rhs = $3;
-		Ast* assign_ast = new Assignment_Ast(lhs, rhs, get_line_number());
-		$$ = assign_ast;
-	}
-	}	
 ;	
 
 // Make sure to call check_ast in assignment_statement and arith_expression
