@@ -626,12 +626,13 @@ for_statement:
 	}
 	}
 |
-	variable ASSIGN arith_expression
+	 variable ASSIGN arith_expression
 	{
 	if(NOT_ONLY_PARSE)
 	{
-		CHECK_INVARIANT(($1 != NULL), "assignment_statement can't be null");
-		$$ = $1;
+		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+		Ast* assign_ast = new Assignment_Ast($1, $3, get_line_number());
+		$$ = assign_ast;
 	}	
 	}
 ;	
