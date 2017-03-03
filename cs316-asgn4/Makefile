@@ -3,7 +3,7 @@ OBJ_CORE = main.o
 OBJ = $(OBJ_GEN) $(OBJ_CORE) 
 
 
-HEADERS_CORE = error-display.hh user-options.hh ast.hh symbol-table.hh program.hh procedure.hh common-classes.hh icode.h 
+HEADERS_CORE = error-display.hh user-options.hh ast.hh symbol-table.hh program.hh procedure.hh common-classes.hh icode.hh 
 HEADERS_GEN = parser.h parser.ih parserbase.h scanner.h scanner.ih scannerbase.h
 
 HEADERS = $(HEADERS_CORE) $(HEADERS_GEN)
