@@ -9,11 +9,11 @@ main(){
   a = x;
   b = y;
  
-  while (b != 0) {
+  do {
     t = b;
     b = (a / b) * b;
     a = t;
-  }
+  } while (b != 0)
  
   gcd = a;
   lcm = (x*y)/gcd;
