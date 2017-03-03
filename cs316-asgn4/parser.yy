@@ -30,8 +30,11 @@
 %token ASSIGN VOID
 %token <double_value> DOUBLE_NUMBER
 %token FLOAT
-%token DO WHILE IF ELSE FOR
+%token DO WHILE IF FOR
 
+
+%nonassoc THEN
+%nonassoc ELSE
 %right TERNARY_COND
 %left OR
 %left AND
@@ -61,11 +64,7 @@
 %type <ast> other_statement
 %type <ast> statement
 %type <iteration_ast> do_while_statement
-%type <ast> matched_statement
-%type <ast> unmatched_statement
-%type <iteration_ast> while_unmatched_statement
 %type <iteration_ast> while_matched_statement
-%type <sequence_ast> for_unmatched_statement
 %type <sequence_ast> for_matched_statement
 
 %start program
@@ -395,27 +394,6 @@ statement_list:
 	}
 ;
 
-statement:
-	matched_statement
-	{
-	if(NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($1 != NULL), "matched_statement can't be null");
-		$$ = $1;
-	}
-	}
-|
-	unmatched_statement
-	{
-	if(NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($1 != NULL), "unmatched_statement can't be null");
-		$$ = $1;
-	}
-	}
-;
-
-
 other_statement:
 	assignment_statement
 	{
@@ -445,9 +423,9 @@ other_statement:
 	}
 ;
 
-matched_statement:
-	IF '(' bool_expression ')' matched_statement
-	ELSE matched_statement
+statement:
+	IF '(' bool_expression ')' statement
+	ELSE statement
 	{
 	if(NOT_ONLY_PARSE)
 	{
@@ -455,12 +433,25 @@ matched_statement:
 		Ast* then_part = $5;
 		Ast* else_part = $7;
 		CHECK_INVARIANT((cond != NULL) && (then_part != NULL) &&
-				(else_part != NULL), "unmatched_statement can't be null");
+				(else_part != NULL), "statement can't be null");
 		$$ = new Selection_Statement_Ast(cond, then_part, else_part, get_line_number());
 		//$$->check_ast();
 	}
 	}
 |
+	IF '(' bool_expression ')' statement %prec THEN
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		Ast* cond = $3;
+		Ast* then_part = $5;
+		Ast* else_part = new Sequence_Ast(get_line_number());
+		CHECK_INVARIANT((cond != NULL) && (then_part != NULL) &&
+			(else_part != NULL), "statement can't be null");
+		$$ = new Selection_Statement_Ast(cond, then_part, else_part, get_line_number());
+	}
+	}
+|	
 	other_statement
 	{
 	if(NOT_ONLY_PARSE)
@@ -489,56 +480,8 @@ matched_statement:
 	}
 ;
 
-unmatched_statement:
-	IF '(' bool_expression ')' statement
-	{
-	if(NOT_ONLY_PARSE)
-	{
-		Ast* cond = $3;
-		Ast* then_part = $5;
-		Ast* else_part = new Sequence_Ast(get_line_number());
-		CHECK_INVARIANT((cond != NULL) && (then_part != NULL) &&
-			(else_part != NULL), "unmatched_statement can't be null");
-		$$ = new Selection_Statement_Ast(cond, then_part, else_part, get_line_number());
-	}
-	}
-|
-	IF '(' bool_expression ')' matched_statement
-	ELSE unmatched_statement
-	{
-	if(NOT_ONLY_PARSE)
-	{
-		Ast* cond = $3;
-		Ast* then_part = $5;
-		Ast* else_part = $7;
-		CHECK_INVARIANT((cond != NULL) && (then_part != NULL) &&
-				(else_part != NULL), "unmatched_statement can't be null");
-		$$ = new Selection_Statement_Ast(cond, then_part, else_part, get_line_number());
-		//$$->check_ast();
-	}
-	}
-|
-	while_unmatched_statement
-	{
-	if(NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($1 != NULL), "while_unmatched_statement can't be null");
-		$$ = $1;
-	}
-	}
-|
-	for_unmatched_statement
-	{
-	if(NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($1 != NULL), "for_statement can't be null");
-		$$ = $1;
-	}
-	}	
-;
-
 while_matched_statement:
-	WHILE '(' bool_expression ')' matched_statement
+	WHILE '(' bool_expression ')' statement
 	{
 	if(NOT_ONLY_PARSE)
 	{
@@ -551,7 +494,7 @@ while_matched_statement:
 ;
 
 for_matched_statement:
-	FOR '(' for_statement ';' bool_expression ';' for_statement ')' matched_statement
+	FOR '(' for_statement ';' bool_expression ';' for_statement ')' statement
 	{
 	if(NOT_ONLY_PARSE)
 	{
@@ -564,39 +507,6 @@ for_matched_statement:
 		body->ast_push_back($9);
 		body->ast_push_back($7);
 		Ast* loop = new Iteration_Statement_Ast($5, body, get_line_number(), false);
-		forLoop->ast_push_back(loop);
-		$$ = forLoop;
-	}
-	}
-;	
-
-while_unmatched_statement:
-	WHILE '(' bool_expression ')' unmatched_statement
-	{
-	if(NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT((($3 != NULL) && ($5 != NULL)),
-			"do while cond and do statement block cannot be null");
-		$$ = new Iteration_Statement_Ast($3, $5, get_line_number(), false);
-		//$$->check_ast();
-	}
-	}
-;
-
-for_unmatched_statement:
-	FOR '(' for_statement ';' bool_expression ';' for_statement ')' unmatched_statement
-	{
-	if(NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT((($3 != NULL) && ($5 != NULL) && ($7 != NULL) && ($9 != NULL)),
-			"for init, cond, increment and statement block cannot be null");
-		Sequence_Ast* forLoop = new Sequence_Ast(get_line_number());
-		Ast* init = $3;
-		forLoop->ast_push_back(init);
-		Sequence_Ast* for_body =  new Sequence_Ast(get_line_number());
-		for_body->ast_push_back($9);
-		for_body->ast_push_back($7);
-		Ast* loop = new Iteration_Statement_Ast($5, for_body, get_line_number(), false);
 		forLoop->ast_push_back(loop);
 		$$ = forLoop;
 	}
