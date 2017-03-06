@@ -237,8 +237,81 @@ public:
 	void print_assembly(ostream & file_buffer);
 };
 
+class Compute_IC_Stmt: public Icode_Stmt
+{
+	Ics_Opd * opd1;
+	Ics_Opd * opd2;
+	Ics_Opd * result;
 
-// TODO -> write code for other Icode_Stmt derived classes
+public:
+	Compute_IC_Stmt(Tgt_Op inst_op, Ics_Opd * res, Ics_Opd * o1, Ics_Opd * o2);
+	~Compute_IC_Stmt() {}
+	Compute_IC_Stmt& operator=(const Compute_IC_Stmt& rhs);
+
+	Instruction_Descriptor & get_inst_op_of_ics();
+
+	Ics_Opd * get_opd1();
+	void set_opd1(Ics_Opd * io);
+
+	Ics_Opd * get_opd2();
+	void set_opd2(Ics_Opd * io);
+
+	Ics_Opd * get_result();
+	void set_result(Ics_Opd * io);
+
+	void print_icode(ostream & file_buffer);
+	void print_assembly(ostream & file_buffer);
+};
+
+class Control_Flow_IC_Stmt: public Icode_Stmt
+{
+	Ics_Opd * opd1;
+	Ics_Opd * opd2;
+	string offset;
+
+public:
+	Control_Flow_IC_Stmt(Tgt_Op op, Ics_Opd * o1, Ics_Opd * o2, string label);
+	~Control_Flow_IC_Stmt() {}
+	
+	Control_Flow_IC_Stmt& operator=(const Control_Flow_IC_Stmt& rhs);
+
+	Instruction_Descriptor & get_inst_op_of_ics();
+
+	Ics_Opd * get_opd1();
+	void set_opd1(Ics_Opd * io);
+
+	Ics_Opd * get_opd2();
+	void set_opd2(Ics_Opd * io);
+ 	
+	string get_Offset();
+	void set_Offset(string label);
+
+	void print_icode(ostream & file_buffer);
+     	void print_assembly(ostream & file_buffer);
+};
+
+class Label_IC_Stmt: public Icode_Stmt
+{
+        Ics_Opd * opd1;
+        string offset;
+
+public:
+        Label_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, string offset);
+        ~Label_IC_Stmt() {}
+
+        Label_IC_Stmt& operator=(const Label_IC_Stmt& rhs);
+
+        Instruction_Descriptor & get_inst_op_of_ics();
+
+        Ics_Opd * get_opd1();
+        void set_opd1(Ics_Opd * io);
+
+        string get_offset();
+        void set_offset(string label);
+
+        void print_icode(ostream & file_buffer);
+        void print_assembly(ostream & file_buffer);
+};
 
 //////////////////////// Intermediate code for Ast statements ////////////////////////
 
