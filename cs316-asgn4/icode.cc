@@ -92,7 +92,109 @@ void Register_Addr_Opd::print_ics_opd(ostream & file_buffer)
 void Register_Addr_Opd::print_asm_opd(ostream & file_buffer)
 {
 	//TODO
-	file_buffer << register_description->get_register();
+	string reg_name;
+	Spim_Register reg = register_description->get_register();
+	switch(reg)
+	{
+		case none:
+			reg_name = "none";break;/* dummy to indicate no register */
+		case zero:
+			reg_name = "zero";break;/* constant register */
+		case v0:
+			reg_name = "v0";break;/* expression result register */
+		case v1:
+			reg_name = "v1";break;/* function result register */
+		case a0:
+			reg_name = "a0";break;/* argument register */
+		case a1:
+			reg_name = "a1";break;
+		case a2:
+			reg_name = "a2";break;
+		case a3:
+			reg_name = "a3";break;
+		case t0:
+		    reg_name = "t0";break;  /* temporary caller-save registers */
+		case t1:
+			reg_name = "t1";break;
+		case t2:
+			reg_name = "t2";break;
+		case t3:
+		 	reg_name = "t3";break;
+		case t4:
+		 	reg_name = "t4";break;
+		case t5:
+		 	reg_name = "t5";break;
+		case t6:
+		 	reg_name = "t6";break;
+		case t7:
+		 	reg_name = "t7";break;
+		case t8:
+		 	reg_name = "t8";break;
+		case t9:
+		 	reg_name = "t9";break;
+		case s0:
+			reg_name = "s0";break;/* temporary callee-save registers */
+		case s1:
+			reg_name = "s1";break;
+		case s2:
+			reg_name = "s2";break;
+		case s3:
+			reg_name = "s3";break;
+		case s4:
+			reg_name = "s4";break;
+		case s5:
+			reg_name = "s5";break;
+		case s6:
+			reg_name = "s6";break;
+		case s7:
+			reg_name = "s7";break;
+		case mfc:
+			reg_name = "mfc";break;/* float register to int register */
+		case mtc:
+			reg_name = "mtc";break;/* int register to float register */
+		case f0:
+		 	reg_name = "f0";break;/* floating point registers */
+		case f2:
+			reg_name = "f2";break;
+		case f4:
+			reg_name = "f4";break;
+		case f6:
+			reg_name = "f6";break;
+		case f8:
+			reg_name = "f8";break;
+		case f10:
+			reg_name = "f10";break;
+		case f12:
+			reg_name = "f12";break;
+		case f14:
+			reg_name = "f14";break;
+		case f16:
+			reg_name = "f16";break;
+		case f18:
+			reg_name = "f18";break;
+		case f20:
+			reg_name = "f20";break;
+		case f22:
+			reg_name = "f22";break;
+		case f24:
+			reg_name = "f24";break;
+		case f26:
+			reg_name = "f26";break;
+		case f28:
+			reg_name = "f28";break;
+		case f30:
+			reg_name = "f30";break;
+		case gp:
+			reg_name = "gp";break;	/* global data pointer register */
+		case sp:
+			reg_name = "sp";break;	/* stack pointer register */
+		case fp:
+			reg_name = "fp";break;	/* frame pointer register */
+		case ra:
+			reg_name = "ra";break;	/* return address register */
+		default : break;
+	}
+	file_buffer << "$" << reg_name;
 }
 
 /****************************** Class Const_Opd *****************************/
@@ -219,8 +321,8 @@ void Move_IC_Stmt::print_assembly(ostream & file_buffer)
 	CHECK_INVARIANT (opd1, "Opd1 cannot be NULL for a move IC Stmt");
 	CHECK_INVARIANT (result, "Result cannot be NULL for a move IC Stmt");
 	string op_name = op_desc.get_mnemonic();
-
 	Assembly_Format assem_format = op_desc.get_assembly_format();
+
 	switch (assem_format)
 	{
 	case a_op_r_o1:
@@ -302,41 +404,11 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 				break;
 
 
-
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
 				"Intermediate code format not supported");
 		break;
 	}
 }
-// typedef enum
-// {			/* a: assembly format; r: result; o1: opd1; o2: opd2; op: operator */
-// 	a_op,		/* Only the operator, no operand */
-// 	a_op_o1,	/* Only one operand, no result, eg. goto L */
-// 	a_op_r,		/* Only the result. Operand implicit? */
-// 	a_op_r_o1,	/* r <- o1 */
-// 	a_op_o1_r,	/* r <- o1 */
-// 	a_op_r_r_o1,	/* r <- r op o1 */
-// 	a_op_r_o1_o2,	/* r <- o1 op o2 */
-// 	a_op_o1_o2_r,	/* r <- o1 op o2 */
-// 	a_op_o1_o2_st,	/*for conditional branch*/
-// 	a_op_st,	/* label instr */
-// 	a_nsy		/* not specified yet */
-// } Assembly_Format;
-
-// typedef enum
-// {			/* i: intermediate format; r: result; o1: opd1; o2: opd2; op: operator */
-// 	i_op,		/* Only the operator, no operand */
-// 	i_op_o1,	/* Only one operand, no result, eg. goto L */
-// 	i_r_op,		/* Only the result. Operand implicit? */
-// 	i_op_o1_r,
-// 	i_op_r_o1,
-// 	i_r_op_o1,	/* r <- o1 */
-// 	i_r_r_op_o1,	/* r <- r op o1 */
-// 	i_r_o1_op_o2,	/* r <- o1 op o2 */
-// 	i_op_o1_o2_st,	/* for conditional branch */
-// 	i_op_st,	/* label instr */
-// 	i_nsy		/* not specified yet */
-// } Icode_Format;
 
 void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 {
@@ -350,18 +422,19 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 		case a_op_r_o1_o2:
 				file_buffer << "\t" << op_name << " ";
 				result->print_asm_opd(file_buffer);
-				file_buffer << " ,";
+				file_buffer << ", ";
 				opd1->print_asm_opd(file_buffer);
-				file_buffer << " ,";
+				file_buffer << ", ";
 				opd2->print_asm_opd(file_buffer);
 				file_buffer << "\n";
+				break;
 
 		case a_op_o1_o2_r:
 				file_buffer << "\t" << op_name << " ";
 				opd1->print_asm_opd(file_buffer);
-				file_buffer << " ,";
+				file_buffer << ", ";
 				opd2->print_asm_opd(file_buffer);
-				file_buffer << " ,";
+				file_buffer << ", ";
 				result->print_asm_opd(file_buffer);
 				file_buffer << "\n";
 				break;
@@ -369,7 +442,7 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 		case a_op_r_o1:
 				file_buffer << "\t" << op_name << " ";
 				result->print_asm_opd(file_buffer);
-				file_buffer << " ,";
+				file_buffer << ", ";
 				opd1->print_asm_opd(file_buffer);
 				file_buffer << "\n";
 				break;
@@ -377,9 +450,10 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 		case a_op_o1_r:
 				file_buffer << "\t" << op_name << " ";
 				opd1->print_asm_opd(file_buffer);
-				file_buffer << " ,";
+				file_buffer << ", ";
 				result->print_asm_opd(file_buffer);
 				file_buffer << "\n";
+				break;
 
 		default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
 					"Intermediate code format not supported");
@@ -448,23 +522,22 @@ void Control_Flow_IC_Stmt::print_assembly(ostream & file_buffer)
 {
 	CHECK_INVARIANT (!offset.empty(), "offset cannot be NULL for a control IC Stmt");
 
-	string operation_name = op_desc.get_mnemonic();
+	string op_name = op_desc.get_mnemonic();
+	Assembly_Format assem_format = op_desc.get_assembly_format();
 
-	Icode_Format ic_format = op_desc.get_ic_format();
-
-	switch (ic_format)
+	switch (assem_format)
 	{
-		case i_op_o1_o2_st:
+		case a_op_o1_o2_st:
 				if(opd1 == NULL){
-					file_buffer << "\tgoto " + offset;
+					file_buffer << "\tj " + offset;
 					file_buffer <<"\n";
 				}
 				else{
-					file_buffer << "\t" << operation_name << ":    \t";
-					opd1->print_ics_opd(file_buffer);
-					file_buffer << " , ";
-					opd2->print_ics_opd(file_buffer);
-					file_buffer << " : goto " + offset;
+					file_buffer << "\t" << op_name << " ";
+					opd1->print_asm_opd(file_buffer);
+					file_buffer << ", ";
+					opd2->print_asm_opd(file_buffer);
+					file_buffer << ", " + offset;
 					file_buffer << "\n";
 				}
 				break;
@@ -488,9 +561,7 @@ Label_IC_Stmt::Label_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, string offset)
 
 Label_IC_Stmt& Label_IC_Stmt::operator=(const Label_IC_Stmt& rhs)
 {
-	op_desc = rhs.op_desc;
-	opd1 = rhs.opd1;
-	offset = rhs.offset;
+	*this = rhs;
 	return *this;
 }
 
@@ -523,7 +594,22 @@ void Label_IC_Stmt::print_icode(ostream & file_buffer)
 
 void Label_IC_Stmt::print_assembly(ostream & file_buffer)
 {
+	CHECK_INVARIANT (!offset.empty(), "offset cannot be NULL for a label IC Stmt");
 
+	string op_name = op_desc.get_mnemonic();
+	Assembly_Format assem_format = op_desc.get_assembly_format();
+
+	switch (assem_format)
+	{
+	case a_op_st:
+			file_buffer <<"\n" + offset + ":";
+			file_buffer << "\n";
+			break;
+
+	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
+				"Intermediate code format not supported");
+		break;
+	}
 }
 
 /******************************* Class Code_For_Ast ****************************/

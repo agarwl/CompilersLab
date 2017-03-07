@@ -777,10 +777,10 @@ Code_For_Ast & Sequence_Ast::compile()
 
 void Sequence_Ast::print_assembly(ostream & file_buffer)
 {
-	// for (auto it=statement_list.begin(); it != statement_list.end(); ++it)
-	// {
-	// 	(*it)->print_assembly(file_buffer);
-	// }
+	for (auto it=sa_icode_list.begin(); it != sa_icode_list.end(); ++it)
+	{
+		(*it)->print_assembly(file_buffer);
+	}
 }
 
 void Sequence_Ast::print_icode(ostream & file_buffer)
