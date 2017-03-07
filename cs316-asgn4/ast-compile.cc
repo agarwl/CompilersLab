@@ -373,10 +373,10 @@ Code_For_Ast & Iteration_Statement_Ast::compile()
 	Register_Descriptor * cond_register = cond_stmt.get_reg();
 	CHECK_INVARIANT(cond_register, "cond register cannot be null in Iteration_Statement_Ast");
 
-	Code_For_Ast & body_stmt = body->compile();
 
 	string myLabel1 = "label" + to_string(labelCounter++);
 	string myLabel2 = "label" + to_string(labelCounter++);
+	Code_For_Ast & body_stmt = body->compile();
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
