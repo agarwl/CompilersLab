@@ -2,11 +2,7 @@ void main();
 
 main()
 {
-  int a,b;
-  if (a >= b){
-    a = b;
+  float a,b;
+  b = -b;
+  a = b + 1.0;
   }
-  else{
-    b = a;
-  }
-}

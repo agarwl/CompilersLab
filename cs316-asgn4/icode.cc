@@ -44,6 +44,7 @@ Mem_Addr_Opd & Mem_Addr_Opd::operator=(const Mem_Addr_Opd & rhs)
 void Mem_Addr_Opd::print_ics_opd(ostream & file_buffer) 
 {
 	//TODO
+	file_buffer << symbol_entry->get_variable_name();
 }
 
 void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer) 
@@ -86,6 +87,7 @@ Register_Addr_Opd& Register_Addr_Opd::operator=(const Register_Addr_Opd& rhs)
 void Register_Addr_Opd::print_ics_opd(ostream & file_buffer) 
 {
 	//TODO
+	file_buffer << register_description->get_name();
 }
 
 void Register_Addr_Opd::print_asm_opd(ostream & file_buffer) 
@@ -114,6 +116,7 @@ template <class DATA_TYPE>
 void Const_Opd<DATA_TYPE>::print_ics_opd(ostream & file_buffer) 
 {
 	//TODO
+	file_buffer << num;
 }
 
 template <class DATA_TYPE>
@@ -275,7 +278,39 @@ Compute_IC_Stmt& Compute_IC_Stmt::operator=(const Compute_IC_Stmt& rhs)
 
 void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 {
+	CHECK_INVARIANT (opd1, "Opd1 cannot be NULL for a compute IC Stmt");
+	CHECK_INVARIANT (result, "Result cannot be NULL for a compute IC Stmt");
 
+	string operation_name = op_desc.get_name();
+
+	Icode_Format ic_format = op_desc.get_ic_format();
+
+	switch (ic_format)
+	{
+	case i_r_o1_op_o2: 
+			file_buffer << "\t" << operation_name << ":    \t";
+			result->print_ics_opd(file_buffer);
+			file_buffer << " <- ";
+			opd1->print_ics_opd(file_buffer);
+			file_buffer << " , ";
+			opd2->print_ics_opd(file_buffer);
+			file_buffer << "\n";
+
+			break;
+
+	case i_r_op_o1: 
+			file_buffer << "\t" << operation_name << ":    \t";
+			result->print_ics_opd(file_buffer);
+			file_buffer << " <- ";
+			opd1->print_ics_opd(file_buffer);
+			file_buffer << "\n";
+
+			break;
+					
+	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
+				"Intermediate code format not supported");
+		break;
+	}
 }
 
 void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
@@ -314,7 +349,33 @@ void Control_Flow_IC_Stmt::set_Offset(string label) { offset = label; }
 
 void Control_Flow_IC_Stmt::print_icode(ostream & file_buffer)
 {
+	CHECK_INVARIANT (!offset.empty(), "offset cannot be NULL for a control IC Stmt");
 
+	string operation_name = op_desc.get_name();
+
+	Icode_Format ic_format = op_desc.get_ic_format();
+
+	switch (ic_format)
+	{
+	case i_op_o1_o2_st: 
+			if(opd1 == NULL){
+				file_buffer << "\tgoto " + offset;
+				file_buffer <<"\n";
+			}
+			else{
+				file_buffer << "\t" << operation_name << ":    \t";
+				opd1->print_ics_opd(file_buffer);
+				file_buffer << " , ";
+				opd2->print_ics_opd(file_buffer);
+				file_buffer << " : goto " + offset;
+				file_buffer << "\n";
+			}
+			break;
+					
+	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
+				"Intermediate code format not supported");
+		break;
+	}
 }
 
 void Control_Flow_IC_Stmt::print_assembly(ostream & file_buffer)
@@ -349,7 +410,23 @@ void Label_IC_Stmt::set_offset(string label) { offset = label; }
 
 void Label_IC_Stmt::print_icode(ostream & file_buffer)
 {
+	CHECK_INVARIANT (!offset.empty(), "offset cannot be NULL for a label IC Stmt");
 
+	string operation_name = op_desc.get_name();
+
+	Icode_Format ic_format = op_desc.get_ic_format();
+
+	switch (ic_format)
+	{
+	case i_op_st: 
+			file_buffer <<"\n" + offset + ":";
+			file_buffer << "\n";
+			break;
+					
+	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
+				"Intermediate code format not supported");
+		break;
+	}
 }
 
 void Label_IC_Stmt::print_assembly(ostream & file_buffer)
