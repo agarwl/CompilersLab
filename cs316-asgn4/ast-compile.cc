@@ -51,7 +51,7 @@ Code_For_Ast & Assignment_Ast::compile()
 	Code_For_Ast store_stmt = lhs->create_store_stmt(load_register);
 
 	CHECK_INVARIANT((load_register != NULL), "Load register cannot be null in Assignment_Ast");
-	//load_register->reset_use_for_expr_result();
+	load_register->reset_use_for_expr_result();
 
 	// Store the statement in ic_list
 
@@ -444,7 +444,7 @@ Code_For_Ast & Plus_Ast::compile()
 	Register_Addr_Opd * lhs_operand = new Register_Addr_Opd(lhs_register);
 	Register_Addr_Opd * rhs_operand = new Register_Addr_Opd(rhs_register);
 
-	Compute_IC_Stmt * add_stmt = new Compute_IC_Stmt(stmt_operator, result, lhs_operand, rhs_operand);
+	Compute_IC_Stmt * add_stmt = new Compute_IC_Stmt(stmt_operator, lhs_operand, rhs_operand, result);
 	ic_list.push_back(add_stmt);
 	
 	Code_For_Ast * assign_stmt;
@@ -497,7 +497,7 @@ Code_For_Ast & Minus_Ast::compile()
 	Register_Addr_Opd * lhs_operand = new Register_Addr_Opd(lhs_register);
 	Register_Addr_Opd * rhs_operand = new Register_Addr_Opd(rhs_register);
 
-	Compute_IC_Stmt * add_stmt = new Compute_IC_Stmt(stmt_operator, result, lhs_operand, rhs_operand);
+	Compute_IC_Stmt * add_stmt = new Compute_IC_Stmt(stmt_operator, lhs_operand, rhs_operand, result);
 	ic_list.push_back(add_stmt);
 	
 	Code_For_Ast * assign_stmt;
@@ -549,7 +549,7 @@ Code_For_Ast & Mult_Ast::compile()
 	Register_Addr_Opd * lhs_operand = new Register_Addr_Opd(lhs_register);
 	Register_Addr_Opd * rhs_operand = new Register_Addr_Opd(rhs_register);
 
-	Compute_IC_Stmt * add_stmt = new Compute_IC_Stmt(stmt_operator, result, lhs_operand, rhs_operand);
+	Compute_IC_Stmt * add_stmt = new Compute_IC_Stmt(stmt_operator, lhs_operand, rhs_operand, result);
 	ic_list.push_back(add_stmt);
 	
 	Code_For_Ast * assign_stmt;
@@ -686,7 +686,7 @@ Code_For_Ast & Divide_Ast::compile()
 	Register_Addr_Opd * lhs_operand = new Register_Addr_Opd(lhs_register);
 	Register_Addr_Opd * rhs_operand = new Register_Addr_Opd(rhs_register);
 
-	Compute_IC_Stmt* add_stmt = new Compute_IC_Stmt(stmt_operator, result, lhs_operand, rhs_operand);
+	Compute_IC_Stmt* add_stmt = new Compute_IC_Stmt(stmt_operator, lhs_operand, rhs_operand, result);
 	ic_list.push_back(add_stmt);
 	
 	Code_For_Ast * assign_stmt;
