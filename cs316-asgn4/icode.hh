@@ -10,36 +10,36 @@
 
 #include"symbol-table.hh"
 
-/* 
-	This file defines classes for intermediate form of the code generated 
+/*
+	This file defines classes for intermediate form of the code generated
 	by our compiler. It also defined classes for machine instructions.
 
 	An intermediate code (IC) statement consists of an instruction,
 	possibly two operands and a result.
 */
 
-typedef enum 
+typedef enum
 {			/* a: assembly format; r: result; o1: opd1; o2: opd2; op: operator */
 	a_op,		/* Only the operator, no operand */
 	a_op_o1,	/* Only one operand, no result, eg. goto L */
-	a_op_r,		/* Only the result. Operand implicit? */ 
+	a_op_r,		/* Only the result. Operand implicit? */
 	a_op_r_o1,	/* r <- o1 */
 	a_op_o1_r,	/* r <- o1 */
 	a_op_r_r_o1,	/* r <- r op o1 */
-	a_op_r_o1_o2,	/* r <- o1 op o2 */ 
+	a_op_r_o1_o2,	/* r <- o1 op o2 */
 	a_op_o1_o2_r,	/* r <- o1 op o2 */
 	a_op_o1_o2_st,	/*for conditional branch*/
 	a_op_st,	/* label instr */
 	a_nsy		/* not specified yet */
 } Assembly_Format;
 
-typedef enum 
+typedef enum
 {			/* i: intermediate format; r: result; o1: opd1; o2: opd2; op: operator */
 	i_op,		/* Only the operator, no operand */
 	i_op_o1,	/* Only one operand, no result, eg. goto L */
-	i_r_op,		/* Only the result. Operand implicit? */ 
-	i_op_o1_r,    
-	i_op_r_o1,    
+	i_r_op,		/* Only the result. Operand implicit? */
+	i_op_o1_r,
+	i_op_r_o1,
 	i_r_op_o1,	/* r <- o1 */
 	i_r_r_op_o1,	/* r <- r op o1 */
 	i_r_o1_op_o2,	/* r <- o1 op o2 */
@@ -48,30 +48,30 @@ typedef enum
 	i_nsy		/* not specified yet */
 } Icode_Format;
 
-typedef enum 
-{ 
-	load, 
+typedef enum
+{
+	load,
 	imm_load,
 	and_t,
 	or_t,
 	not_t,
-	store, 
+	store,
 	mfc1,
 	mtc1,
 	mov,
-	add, 
+	add,
 	sub,
-	mult, 
-	divd, 
+	mult,
+	divd,
 	uminus,
-	load_d, 
-	imm_load_d, 
-	store_d, 
+	load_d,
+	imm_load_d,
+	store_d,
 	mov_d,
-	add_d, 
-	sub_d, 
-	mult_d, 
-	div_d, 
+	add_d,
+	sub_d,
+	mult_d,
+	div_d,
 	uminus_d,
 	slt,
 	sle,
@@ -95,7 +95,7 @@ typedef enum
 
 class Instruction_Descriptor
 {
-	/* 
+	/*
 		This class stores objects representing machine instructions
 		which in our case are assembly instructions supported by spim.
 	*/
@@ -118,18 +118,18 @@ public:
 	string get_ic_symbol();
 	Icode_Format get_ic_format();
 	Assembly_Format get_assembly_format();
- 
+
 	void print_instruction_descriptor(ostream & file_buffer);
 };
 
 ///////////////////////////// Icode statement operand ///////////////////////////////////
 
 class Ics_Opd
-{	
-	/* 
-		Abstract base class for ic operands. From this class we 
-		derive classes for three kinds of operands: memory addresses, 
-		constants, and registers 
+{
+	/*
+		Abstract base class for ic operands. From this class we
+		derive classes for three kinds of operands: memory addresses,
+		constants, and registers
 	*/
 
 public:
@@ -189,8 +189,8 @@ public:
 
 class Icode_Stmt
 {
-	/* 
-		Abstract base class for generated ic statements. From this 
+	/*
+		Abstract base class for generated ic statements. From this
 		class, we derive three classes: move, compute, control_Flow.
 		In this version, we need move sub class only
 	*/
@@ -200,7 +200,7 @@ protected:
 
 public:
 	Icode_Stmt() {}
-	~Icode_Stmt() {}  
+	~Icode_Stmt() {}
 
 	Instruction_Descriptor & get_op();
 	virtual Ics_Opd * get_opd1();
@@ -216,13 +216,13 @@ public:
 };
 
 class Move_IC_Stmt: public Icode_Stmt
-{ 
-	Ics_Opd * opd1;   
-	Ics_Opd * result; 
+{
+	Ics_Opd * opd1;
+	Ics_Opd * result;
 
 public:
-	Move_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, Ics_Opd * result); 
-	~Move_IC_Stmt() {} 
+	Move_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, Ics_Opd * result);
+	~Move_IC_Stmt() {}
 	Move_IC_Stmt & operator=(const Move_IC_Stmt & rhs);
 
 	Instruction_Descriptor & get_inst_op_of_ics();
@@ -272,7 +272,7 @@ class Control_Flow_IC_Stmt: public Icode_Stmt
 public:
 	Control_Flow_IC_Stmt(Tgt_Op op, Ics_Opd * o1, Ics_Opd * o2, string label);
 	~Control_Flow_IC_Stmt() {}
-	
+
 	Control_Flow_IC_Stmt& operator=(const Control_Flow_IC_Stmt& rhs);
 
 	Instruction_Descriptor & get_inst_op_of_ics();
@@ -282,7 +282,7 @@ public:
 
 	Ics_Opd * get_opd2();
 	void set_opd2(Ics_Opd * io);
- 	
+
 	string get_Offset();
 	void set_Offset(string label);
 
@@ -317,7 +317,7 @@ public:
 
 class Code_For_Ast
 {
-	/* 
+	/*
 		This class describes the code generated for a given
 		AST in a sequence ast. Note that a single AST would
 		in general need multiple statements to implement it.
