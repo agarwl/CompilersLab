@@ -619,13 +619,23 @@ bool Iteration_Statement_Ast::check_ast()
 
 void Iteration_Statement_Ast::print(ostream & file_buffer)
 {
-	file_buffer << endl << AST_SPACE << "WHILE : " << endl;
-	file_buffer << AST_SPACE << "CONDITION (";
-	cond->print(file_buffer);
-	file_buffer << ")" << endl;
-	file_buffer << AST_SPACE << "BODY (";
-	body->print(file_buffer);
-	file_buffer << ")";
+	if(is_do_form){
+		file_buffer << endl << AST_SPACE << "DO (";
+		body->print(file_buffer);
+		file_buffer << ")";
+		file_buffer << endl << AST_SPACE << "WHILE CONDITION (";
+		cond->print(file_buffer);
+		file_buffer << ")" ;
+	}
+	else{
+		file_buffer << endl << AST_SPACE << "WHILE : " << endl;
+		file_buffer << AST_SPACE << "CONDITION (";
+		cond->print(file_buffer);
+		file_buffer << ")" << endl;
+		file_buffer << AST_SPACE << "BODY (";
+		body->print(file_buffer);
+		file_buffer << ")";
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

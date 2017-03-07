@@ -451,7 +451,7 @@ statement:
 		$$ = new Selection_Statement_Ast(cond, then_part, else_part, get_line_number());
 	}
 	}
-|	
+|
 	other_statement
 	{
 	if(NOT_ONLY_PARSE)
@@ -511,7 +511,7 @@ for_matched_statement:
 		$$ = forLoop;
 	}
 	}
-;	
+;
 
 
 do_while_statement:
@@ -543,9 +543,9 @@ for_statement:
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Ast* assign_ast = new Assignment_Ast($1, $3, get_line_number());
 		$$ = assign_ast;
-	}	
 	}
-;	
+	}
+;
 
 // Make sure to call check_ast in assignment_statement and arith_expression
 // Refer to error_display.hh for displaying semantic errors if any
@@ -565,18 +565,18 @@ assignment_statement:
 	}
 ;
 
-conditional_expression:
-	bool_expression '?' operand ':' operand %prec TERNARY_COND
-	{
-	if(NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($1 != NULL) && ($3 != NULL) && ($5 != NULL),
-			"cond/lhs/rhs cannot be null");
-		$$ = new Conditional_Operator_Ast($1, $3, $5, get_line_number());
-		$$->check_ast();
-	}
-	}
-;
+// conditional_expression:
+// 	bool_expression '?' operand ':' operand %prec TERNARY_COND
+// 	{
+// 	if(NOT_ONLY_PARSE)
+// 	{
+// 		CHECK_INVARIANT(($1 != NULL) && ($3 != NULL) && ($5 != NULL),
+// 			"cond/lhs/rhs cannot be null");
+// 		$$ = new Conditional_Operator_Ast($1, $3, $5, get_line_number());
+// 		$$->check_ast();
+// 	}
+// 	}
+// ;
 
 relational_expression:
 	operand LT operand
@@ -766,15 +766,16 @@ arith_expression:
 		}
 		}
 |
-		conditional_expression
+		bool_expression '?' operand ':' operand %prec TERNARY_COND
 		{
 		if(NOT_ONLY_PARSE)
 		{
-			CHECK_INVARIANT(($1 != NULL), "conditional_expression cannot be null");
-			$$ = $1;
+			CHECK_INVARIANT(($1 != NULL) && ($3 != NULL) && ($5 != NULL),
+				"cond/lhs/rhs cannot be null");
+			$$ = new Conditional_Operator_Ast($1, $3, $5, get_line_number());
+			$$->check_ast();
 		}
-		}
-;
+		};
 
 operand:
 	arith_expression
