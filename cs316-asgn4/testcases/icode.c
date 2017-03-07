@@ -2,7 +2,8 @@ void main();
 
 main()
 {
-  float a,b;
-  b = -b;
-  a = b + 1.0;
-  }
+  int a,b;
+ do{
+  b = a;
+ }while((a<b)&&(a>b));
+}

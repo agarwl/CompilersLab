@@ -234,10 +234,6 @@ Code_For_Ast & Boolean_Expr_Ast::compile()
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 	Register_Addr_Opd * lhs_operand;
 
-	Code_For_Ast & rhs_stmt = rhs_op->compile();
-	Register_Descriptor * rhs_register = rhs_stmt.get_reg();
-	CHECK_INVARIANT(rhs_register, "RHS register cannot be null in Boolean_Expr_Ast");
-
 	Register_Descriptor * lhs_register;
 	if(ast_num_child != unary_arity){
 		Code_For_Ast & lhs_stmt = lhs_op->compile();
@@ -249,6 +245,20 @@ Code_For_Ast & Boolean_Expr_Ast::compile()
 
 	lhs_operand = new Register_Addr_Opd(lhs_register);
 	}
+	else{
+	Const_Opd<int> * variable = new Const_Opd<int>(1);
+
+	Tgt_Op stmt_operator=imm_load;
+	lhs_register = machine_desc_object.get_new_register<gp_data>();
+
+	lhs_operand = new Register_Addr_Opd(lhs_register);
+	Move_IC_Stmt * add_stmt = new Move_IC_Stmt(stmt_operator, variable, lhs_operand);
+	ic_list.push_back(add_stmt);
+	}
+
+	Code_For_Ast & rhs_stmt = rhs_op->compile();
+	Register_Descriptor * rhs_register = rhs_stmt.get_reg();
+	CHECK_INVARIANT(rhs_register, "RHS register cannot be null in Boolean_Expr_Ast");
 
 	if (rhs_stmt.get_icode_list().empty() == false)
 		ic_list.splice(ic_list.end(), rhs_stmt.get_icode_list());
@@ -273,16 +283,14 @@ Code_For_Ast & Boolean_Expr_Ast::compile()
 
 	Register_Addr_Opd * rhs_operand = new Register_Addr_Opd(rhs_register);
 
-	Compute_IC_Stmt * add_stmt = new Compute_IC_Stmt(stmt_operator, result, lhs_operand, rhs_operand);
+	Compute_IC_Stmt * add_stmt = new Compute_IC_Stmt(stmt_operator, lhs_operand, rhs_operand, result);
 	ic_list.push_back(add_stmt);
 	
 	Code_For_Ast * assign_stmt;
 	if (ic_list.empty() == false)
 		assign_stmt = new Code_For_Ast(ic_list, result_register);
 
-	if(ast_num_child != unary_arity){
-		lhs_register->reset_use_for_expr_result();
-	}
+	lhs_register->reset_use_for_expr_result();
 	rhs_register->reset_use_for_expr_result();
 
 	return *assign_stmt;
@@ -293,19 +301,15 @@ Code_For_Ast & Selection_Statement_Ast::compile()
 {
 	CHECK_INVARIANT((cond != NULL), "Condition of Selection_Statement_Ast cannot be null");
 	CHECK_INVARIANT((then_part != NULL), "If part of Selection_Statement_Ast cannot be null");
+	CHECK_INVARIANT((else_part != NULL), "else part(can be empty though) of Selection_Statement_Ast cannot be null");
 
 	Code_For_Ast & cond_stmt = cond->compile();
 	Register_Descriptor * cond_register = cond_stmt.get_reg();
 	CHECK_INVARIANT(cond_register, "cond register cannot be null in Selection_Statement_Ast");
 
 	Code_For_Ast & then_stmt = then_part->compile();
-	Register_Descriptor * then_register = then_stmt.get_reg();
-	CHECK_INVARIANT(then_register, "then register cannot be null in Selection_Statement_Ast");
-
 	Code_For_Ast & else_stmt = else_part->compile();
-	Register_Descriptor * else_register = else_stmt.get_reg();
-	CHECK_INVARIANT(else_register, "else register cannot be null in Selection_Statement_Ast");
-
+	
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 	if (cond_stmt.get_icode_list().empty() == false)
 		ic_list = cond_stmt.get_icode_list();
@@ -337,8 +341,6 @@ Code_For_Ast & Selection_Statement_Ast::compile()
 	ic_list.push_back(label2_stmt);
 
 	cond_register->reset_use_for_expr_result();
-	then_register->reset_use_for_expr_result();
-	else_register->reset_use_for_expr_result();
 
 	Code_For_Ast * assign_stmt;
 	if (ic_list.empty() == false)
@@ -346,6 +348,7 @@ Code_For_Ast & Selection_Statement_Ast::compile()
 	//ambiguity in the above statement
 
 	return *assign_stmt;
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -360,9 +363,7 @@ Code_For_Ast & Iteration_Statement_Ast::compile()
 	CHECK_INVARIANT(cond_register, "cond register cannot be null in Iteration_Statement_Ast");
 
 	Code_For_Ast & body_stmt = body->compile();
-	Register_Descriptor * body_register = body_stmt.get_reg();
-	CHECK_INVARIANT(body_register, "body register cannot be null in Iteration_Statement_Ast");
-
+	
 	string myLabel1 = "label" + to_string(labelCounter++);
 	string myLabel2 = "label" + to_string(labelCounter++);
 
@@ -394,7 +395,6 @@ Code_For_Ast & Iteration_Statement_Ast::compile()
 	ic_list.push_back(while_stmt);
 
 	cond_register->reset_use_for_expr_result();
-	body_register->reset_use_for_expr_result();
 
 	Code_For_Ast * assign_stmt;
 	if (ic_list.empty() == false)
@@ -752,6 +752,10 @@ Code_For_Ast & Sequence_Ast::compile()
 		if (codeForAst.get_icode_list().empty() == false)
 			sa_icode_list.splice(sa_icode_list.end(),codeForAst.get_icode_list());
 	}
+
+	Code_For_Ast * assign_stmt;
+	assign_stmt = new Code_For_Ast(sa_icode_list, NULL);
+	return *assign_stmt;
 }
 
 void Sequence_Ast::print_assembly(ostream & file_buffer)

@@ -278,7 +278,7 @@ Compute_IC_Stmt& Compute_IC_Stmt::operator=(const Compute_IC_Stmt& rhs)
 
 void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 {
-	CHECK_INVARIANT (opd1, "Opd1 cannot be NULL for a compute IC Stmt");
+	CHECK_INVARIANT (opd2, "Opd2 cannot be NULL for a compute IC Stmt");
 	CHECK_INVARIANT (result, "Result cannot be NULL for a compute IC Stmt");
 
 	string operation_name = op_desc.get_name();
