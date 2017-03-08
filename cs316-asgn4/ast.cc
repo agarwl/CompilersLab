@@ -232,12 +232,12 @@ Plus_Ast::Plus_Ast(Ast * l, Ast * r, int line)
 	this->rhs = r;
 	this->ast_num_child = binary_arity;
 	this->lineno = line;
-	if(l->get_data_type()==r->get_data_type()){
-		this->node_data_type = l->get_data_type();
-	}
-	else{
-		this->node_data_type = void_data_type;
-	}
+	this->node_data_type = l->get_data_type();
+	// if(l->get_data_type()==r->get_data_type()){
+	// }
+	// else{
+	// 	this->node_data_type = void_data_type;
+	// }
 }
 
 void Plus_Ast::print(ostream & file_buffer)
@@ -261,12 +261,13 @@ Minus_Ast::Minus_Ast(Ast * l, Ast * r, int line)
 	this->rhs = r;
 	this->ast_num_child = binary_arity;
 	this->lineno = line;
-	if(l->get_data_type()==r->get_data_type()){
-		this->node_data_type = l->get_data_type();
-	}
-	else{
-		this->node_data_type = void_data_type;
-	}
+// 	if(l->get_data_type()==r->get_data_type()){
+// 		this->node_data_type = l->get_data_type();
+// 	}
+// 	else{
+// 		this->node_data_type = void_data_type;
+// 	}
+	this->node_data_type = l->get_data_type();
 }
 
 void Minus_Ast::print(ostream & file_buffer)
@@ -290,12 +291,13 @@ Mult_Ast::Mult_Ast(Ast * l, Ast * r, int line)
 	this->rhs = r;
 	this->ast_num_child = binary_arity;
 	this->lineno = line;
-	if(l->get_data_type()==r->get_data_type()){
-		this->node_data_type = l->get_data_type();
-	}
-	else{
-		this->node_data_type = void_data_type;
-	}
+// 	if(l->get_data_type()==r->get_data_type()){
+// 		this->node_data_type = l->get_data_type();
+// 	}
+// 	else{
+// 		this->node_data_type = void_data_type;
+// 	}
+	this->node_data_type = l->get_data_type();
 }
 
 void Mult_Ast::print(ostream & file_buffer)
@@ -319,12 +321,13 @@ Divide_Ast::Divide_Ast(Ast * l, Ast * r, int line)
 	this->rhs = r;
 	this->ast_num_child = binary_arity;
 	this->lineno = line;
-	if(l->get_data_type()==r->get_data_type()){
-		this->node_data_type = l->get_data_type();
-	}
-	else{
-		this->node_data_type = void_data_type;
-	}
+// 	if(l->get_data_type()==r->get_data_type()){
+// 		this->node_data_type = l->get_data_type();
+// 	}
+// 	else{
+// 		this->node_data_type = void_data_type;
+// 	}
+	this->node_data_type = l->get_data_type();
 }
 
 void Divide_Ast::print(ostream & file_buffer)
