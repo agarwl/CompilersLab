@@ -82,7 +82,6 @@ Code_For_Ast & Name_Ast::compile()
 	Tgt_Op stmt_operator;
 	machine_desc_object.clear_local_register_mappings();
 
-
 	if(node_data_type == int_data_type){
 		stmt_operator = load;
 		result_register = machine_desc_object.get_new_register<gp_data>();
@@ -93,10 +92,10 @@ Code_For_Ast & Name_Ast::compile()
 	}
 
 	Register_Addr_Opd * result = new Register_Addr_Opd(result_register);
-	Move_IC_Stmt * add_stmt = new Move_IC_Stmt(stmt_operator, variable, result);
+	Move_IC_Stmt * move_ic_stmt = new Move_IC_Stmt(stmt_operator, variable, result);
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
-	ic_list.push_back(add_stmt);
+	ic_list.push_back(move_ic_stmt);
 
 	Code_For_Ast * assign_stmt = new Code_For_Ast(ic_list, result_register);
 	return *assign_stmt;
@@ -118,10 +117,10 @@ Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
 		stmt_operator = store_d;
 	}
 
-	Move_IC_Stmt * add_stmt = new Move_IC_Stmt(stmt_operator, variable, variable_name);
+	Move_IC_Stmt * move_ic_stmt = new Move_IC_Stmt(stmt_operator, variable, variable_name);
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
-	ic_list.push_back(add_stmt);
+	ic_list.push_back(move_ic_stmt);
 
 	Code_For_Ast * assign_stmt = new Code_For_Ast(ic_list, store_register);
 	return *assign_stmt;
@@ -169,12 +168,13 @@ Code_For_Ast & Relational_Expr_Ast::compile()
 
 	Code_For_Ast & lhs_stmt = lhs_condition->compile();
 	Register_Descriptor * lhs_register = lhs_stmt.get_reg();
+	lhs_register->set_use_for_expr_result();
 	CHECK_INVARIANT(lhs_register, "LHS register cannot be null in Relational_Expr_Ast");
 
 	Code_For_Ast & rhs_stmt = rhs_condition->compile();
 	Register_Descriptor * rhs_register = rhs_stmt.get_reg();
+	lhs_register->set_use_for_expr_result();
 	CHECK_INVARIANT(rhs_register, "RHS register cannot be null in Relational_Expr_Ast");
-
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 	if (lhs_stmt.get_icode_list().empty() == false)
@@ -234,15 +234,15 @@ Code_For_Ast & Boolean_Expr_Ast::compile()
 	CHECK_INVARIANT((rhs_op != NULL), "Rhs of Boolean_Expr_Ast cannot be null");
 	CHECK_INVARIANT((lhs_op != NULL || ast_num_child == unary_arity), "Lhs of Boolean_Expr_Ast cannot be null");
 
-
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 	Register_Addr_Opd * lhs_operand;
-
 	Register_Descriptor * lhs_register;
+
 	machine_desc_object.clear_local_register_mappings();
 	if(ast_num_child != unary_arity){
 		Code_For_Ast & lhs_stmt = lhs_op->compile();
 		lhs_register = lhs_stmt.get_reg();
+		lhs_register->set_use_for_expr_result();
 		CHECK_INVARIANT(lhs_register, "LHS register cannot be null in Boolean_Expr_Ast");
 
 		if (lhs_stmt.get_icode_list().empty() == false)
@@ -263,6 +263,7 @@ Code_For_Ast & Boolean_Expr_Ast::compile()
 
 	Code_For_Ast & rhs_stmt = rhs_op->compile();
 	Register_Descriptor * rhs_register = rhs_stmt.get_reg();
+	rhs_register->set_use_for_expr_result();
 	CHECK_INVARIANT(rhs_register, "RHS register cannot be null in Boolean_Expr_Ast");
 
 	if (rhs_stmt.get_icode_list().empty() == false)
@@ -583,18 +584,20 @@ Code_For_Ast & Conditional_Operator_Ast::compile()
 	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null in Conditional_Operator_Ast");
 	CHECK_INVARIANT((cond != NULL), "Condition of Conditional_Operator_Ast cannot be null");
 
+	Code_For_Ast & cond_stmt = cond->compile();
+	Register_Descriptor * cond_register = cond_stmt.get_reg();
+	cond_register->set_use_for_expr_result();
+	CHECK_INVARIANT(cond_register, "cond register cannot be null in Iteration_Statement_Ast");
+
 	Code_For_Ast & lhs_stmt = lhs->compile();
 	Register_Descriptor * lhs_register = lhs_stmt.get_reg();
+	lhs_register->set_use_for_expr_result();
 	CHECK_INVARIANT(lhs_register, "LHS register cannot be null in Mult_Ast");
 
 	Code_For_Ast & rhs_stmt = rhs->compile();
 	Register_Descriptor * rhs_register = rhs_stmt.get_reg();
+	rhs_register->set_use_for_expr_result();
 	CHECK_INVARIANT(rhs_register, "RHS register cannot be null in Mult_Ast");
-
-
-	Code_For_Ast & cond_stmt = cond->compile();
-	Register_Descriptor * cond_register = cond_stmt.get_reg();
-	CHECK_INVARIANT(cond_register, "cond register cannot be null in Iteration_Statement_Ast");
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
@@ -621,7 +624,6 @@ Code_For_Ast & Conditional_Operator_Ast::compile()
 	if (node_data_type == int_data_type){
 		result_register = machine_desc_object.get_new_register<gp_data>();
 	}
-
 	else{
 		result_register = machine_desc_object.get_new_register<float_reg>();
 	}
