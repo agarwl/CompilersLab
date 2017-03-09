@@ -91,11 +91,13 @@ Code_For_Ast & Name_Ast::compile()
 		result_register = machine_desc_object.get_new_register<float_reg>();
 	}
 
+	CHECK_INVARIANT((result_register != NULL), "Result register cannot be null in Name_Ast");
+
 	Register_Addr_Opd * result = new Register_Addr_Opd(result_register);
-	Move_IC_Stmt * move_ic_stmt = new Move_IC_Stmt(stmt_operator, variable, result);
+	Move_IC_Stmt * load_stmt = new Move_IC_Stmt(stmt_operator, variable, result);
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
-	ic_list.push_back(move_ic_stmt);
+	ic_list.push_back(load_stmt);
 
 	Code_For_Ast * assign_stmt = new Code_For_Ast(ic_list, result_register);
 	return *assign_stmt;
@@ -104,23 +106,31 @@ Code_For_Ast & Name_Ast::compile()
 Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
 {
 	CHECK_INVARIANT((store_register != NULL), "store_register cannot be null in Name_Ast");
+	CHECK_INVARIANT(variable_symbol_entry, "Variable symbol entry cannot be null in Name_Ast");
+
 	Register_Addr_Opd * variable = new Register_Addr_Opd(store_register);
-
 	Mem_Addr_Opd * variable_name = new Mem_Addr_Opd(*variable_symbol_entry);
-	Tgt_Op stmt_operator;
 
+	Tgt_Op stmt_operator;
 	if (node_data_type == int_data_type){
 		stmt_operator = store;
 	}
-
 	else{
 		stmt_operator = store_d;
 	}
+	Move_IC_Stmt * store_stmt = new Move_IC_Stmt(stmt_operator, variable, variable_name);
 
-	Move_IC_Stmt * move_ic_stmt = new Move_IC_Stmt(stmt_operator, variable, variable_name);
+	CHECK_INVARIANT((store_stmt != NULL), "Store statement cannot be null in Name_Ast");
+	if (command_options.is_do_lra_selected() == false)
+		variable_symbol_entry->free_register(store_register);
+	else
+	{
+		variable_symbol_entry->update_register(store_register);
+		store_register->reset_use_for_expr_result();
+	}
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
-	ic_list.push_back(move_ic_stmt);
+	ic_list.push_back(store_stmt);
 
 	Code_For_Ast * assign_stmt = new Code_For_Ast(ic_list, store_register);
 	return *assign_stmt;
