@@ -60,12 +60,12 @@
 %type <ast> expression_term
 %type <relational_ast> relational_expression
 %type <ast> bool_expression
-%type <condition_ast> conditional_expression
+// %type <condition_ast> conditional_expression
 %type <ast> other_statement
 %type <ast> statement
 %type <iteration_ast> do_while_statement
-%type <iteration_ast> while_matched_statement
-%type <sequence_ast> for_matched_statement
+%type <iteration_ast> while_statement
+%type <sequence_ast> for_loop_statement
 
 %start program
 
@@ -421,6 +421,24 @@ other_statement:
 		$$ = $1;
 	}
 	}
+|
+	while_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "while_statement can't be null");
+		$$ = $1;
+	}
+	}
+|
+	for_loop_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "for_statement can't be null");
+		$$ = $1;
+	}
+	}
 ;
 
 statement:
@@ -460,27 +478,10 @@ statement:
 		$$ = $1;
 	}
 	}
-|
-	while_matched_statement
-	{
-	if(NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($1 != NULL), "while_statement can't be null");
-		$$ = $1;
-	}
-	}
-|
-	for_matched_statement
-	{
-	if(NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($1 != NULL), "for_statement can't be null");
-		$$ = $1;
-	}
-	}
+
 ;
 
-while_matched_statement:
+while_statement:
 	WHILE '(' bool_expression ')' statement
 	{
 	if(NOT_ONLY_PARSE)
@@ -493,7 +494,7 @@ while_matched_statement:
 	}
 ;
 
-for_matched_statement:
+for_loop_statement:
 	FOR '(' for_statement ';' bool_expression ';' for_statement ')' statement
 	{
 	if(NOT_ONLY_PARSE)
