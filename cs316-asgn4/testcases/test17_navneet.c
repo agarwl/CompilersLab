@@ -3,6 +3,7 @@ main()
 {
 	int a;
 	int b;
+	int iftmp0;
 
-	a = b> 0?  a : b;
+	b= (a==b)? b : iftmp0;
 }

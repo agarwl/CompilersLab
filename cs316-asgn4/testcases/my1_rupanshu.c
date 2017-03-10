@@ -1,7 +1,5 @@
 void main();
-// Empty statement in if statement is allowed.
 
-main()
 {
 	int f, g;
 	if(!(f==g))
@@ -14,11 +12,9 @@ main()
 	}
 
 	if (!(f ==0))
-	{
-		f = 1;
-	}
+		if (f==1)
+			f = 1;
 	else
-	{
-		g = 1;
-	}
+		while (g<10)
+			g = g+2;
 }

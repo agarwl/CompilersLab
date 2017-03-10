@@ -12,7 +12,7 @@ main()
 					do{
 						if (f > g)
 							if (g >= f)
-								if (g*2 == f)
+								if (f == 2*g)
 									f = 10;
 								else
 									f = 9;
