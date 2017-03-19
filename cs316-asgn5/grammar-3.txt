@@ -1,0 +1,169 @@
+program:
+	declaration_list procedure_definition
+;
+
+declaration_list:
+	procedure_declaration
+|
+	variable_declaration_list procedure_declaration
+|
+	procedure_declaration variable_declaration_list
+;
+
+procedure_declaration:
+	VOID NAME '(' ')' ';'
+;
+
+procedure_definition:
+	NAME '(' ')'
+	'{' optional_variable_declaration_list statement_list '}'
+;
+
+optional_variable_declaration_list:
+	/* empty */
+|
+	variable_declaration_list
+;
+
+variable_declaration_list:
+	variable_declaration
+|
+	variable_declaration_list variable_declaration
+;
+
+variable_declaration:
+	declaration ';'
+;
+
+declaration:
+	INTEGER name_list
+|
+	FLOAT name_list
+;
+
+name_list:
+	NAME
+|
+	name_list ',' NAME
+;
+
+statement_list:
+	/*empty*/
+|
+	statement_list statement
+;
+
+statement:
+	matched_statement
+|
+	unmatched_statement
+;
+
+other_statement:
+	assignment_statement
+|
+	do_while_statement
+|
+	'{' statement_list '}'
+;
+
+assignment_statement:
+	variable ASSIGN arith_expression ';'
+;
+
+
+matched_statement:
+	IF '(' bool_expression ')' matched_statement
+	ELSE matched_statement
+|
+	other_statement
+|
+	matched_while_statement
+;
+
+unmatched_statement:
+	IF '(' bool_expression ')' statement
+|
+	IF '(' bool_expression ')' matched_statement
+	ELSE unmatched_statement
+|
+	while_unmatched_statement
+;
+
+while_unmatched_statement:
+	WHILE '(' bool_expression ')' unmatched_statement
+;
+
+while_matched_statement:
+	WHILE '(' bool_expression ')' matched_statement
+;
+
+do_while_statement:
+	DO statement WHILE '(' bool_expression ')' ';'
+;
+
+arith_expression:
+	operand '+' operand
+|
+	operand '-' operand
+|
+	operand '*' operand
+|
+	operand '/' operand
+|
+	'-' operand %prec UMINUS
+|
+	'(' operand ')'
+|
+	expression_term
+;
+
+conditional_expression:
+	bool_expression '?' arith_expression ':' arith_expression ';'
+;
+
+relational_expression:
+	operand LT operand
+|
+	operand LE operand
+|
+	operand GT operand
+|
+	operand GE operand
+|
+	operand EQ operand
+|
+	operand NE operand
+;
+
+bool_expression:
+	NOT bool_expression
+|
+	bool_expression AND bool_expression
+|
+	bool_expression OR bool_expression
+|
+	'(' bool_expression ')'
+|
+	relational_expression
+;
+
+operand:
+	arith_expression
+;
+
+expression_term:
+	variable
+|
+	constant
+;
+
+variable:
+	NAME
+;
+
+constant:
+	INTEGER_NUMBER
+|
+	DOUBLE_NUMBER
+;
