@@ -52,7 +52,10 @@ public:
 	void compile();
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);
-	Sequence_Ast * get_sequence_ast();
+	Sequence_Ast * get_sequence_ast()
+	{
+		return this->sequence_ast;
+	}
 
 private:
 	void print_prologue(ostream & file_buffer);
