@@ -263,7 +263,12 @@ void Icode_Stmt::set_opd2(Ics_Opd * ics_opd)
 
 void Icode_Stmt::set_result(Ics_Opd * ics_opd)
 {
-	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "virtual methos set_Result not implemented");
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "virtual method set_Result not implemented");
+}
+
+string Icode_Stmt::get_label()
+{
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "virtual method get_label not implemented");
 }
 
 /*************************** Class Move_IC_Stmt *****************************/
@@ -280,11 +285,6 @@ Move_IC_Stmt::Move_IC_Stmt(Tgt_Op op, Ics_Opd * o1, Ics_Opd * res)
 
 Ics_Opd * Move_IC_Stmt::get_opd1()          { return opd1; }
 Ics_Opd * Move_IC_Stmt::get_result()        { return result; }
-string Move_IC_Stmt::get_label()				
-{
-	string temp;
-	return temp;
-}
 
 void Move_IC_Stmt::set_opd1(Ics_Opd * io)   { opd1 = io; }
 void Move_IC_Stmt::set_result(Ics_Opd * io) { result = io; }
@@ -368,11 +368,7 @@ Compute_IC_Stmt::Compute_IC_Stmt(Tgt_Op op, Ics_Opd * o1, Ics_Opd * o2, Ics_Opd 
 Ics_Opd * Compute_IC_Stmt::get_opd1()          { return opd1; }
 Ics_Opd * Compute_IC_Stmt::get_opd2()          { return opd2; }
 Ics_Opd * Compute_IC_Stmt::get_result()        { return result; }
-string Compute_IC_Stmt::get_label()				
-{
-	string temp;
-	return temp;
-}
+
 
 void Compute_IC_Stmt::set_opd1(Ics_Opd * io)   { opd1 = io; }
 void Compute_IC_Stmt::set_opd2(Ics_Opd * io)   { opd2 = io; }

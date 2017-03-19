@@ -206,6 +206,7 @@ public:
 	virtual Ics_Opd * get_opd1();
 	virtual Ics_Opd * get_opd2();
 	virtual Ics_Opd * get_result();
+	virtual string get_label();
 
 	virtual void set_opd1(Ics_Opd * io);
 	virtual void set_opd2(Ics_Opd * io);
@@ -213,7 +214,6 @@ public:
 
 	virtual void print_icode(ostream & file_buffer) = 0;
 	virtual void print_assembly(ostream & file_buffer) = 0;
-	virtual string get_label() = 0;
 };
 
 class Move_IC_Stmt: public Icode_Stmt
@@ -233,8 +233,6 @@ public:
 
 	Ics_Opd * get_result();
 	void set_result(Ics_Opd * io);
-
-	string get_label();
 
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);
@@ -261,8 +259,6 @@ public:
 
 	Ics_Opd * get_result();
 	void set_result(Ics_Opd * io);
-
-	string get_label();
 
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);
