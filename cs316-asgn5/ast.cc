@@ -706,36 +706,93 @@ void Sequence_Ast::print(ostream & file_buffer)
 
 cfg & Sequence_Ast::buildCFG()
 {
-	cfg cfg;
+	cfg tempCFG;
 	basicBlocks * current = new basicBlocks();
-	cfg.set_head(current);
+	tempCFG.set_head(current);
+	map<string, set<basicBlocks*>>::iterator finder;
 
 	for (auto it = sa_icode_list.begin(); it != sa_icode_list.end(); it++)
 	{
-
-		if (((*it)->get_op()).get_name() == "label")
+		if (((*it)->get_op()).get_name() == "")
 		{
 			basicBlocks * temp = new basicBlocks();
 			current->set_leftBlock(temp);
+			finder = tempCFG.get_futureEdge().find((*it)->get_label());
+			if (finder != tempCFG.get_futureEdge().end())
+			{
+				for(set<basicBlocks*>::iterator allBlocks = finder->second.begin(); allBlocks != finder->second.end(); allBlocks++)
+				{
+					if((*allBlocks)->get_leftBlock() == NULL)
+					{
+						(*allBlocks)->set_leftBlock(temp);
+					}
+					else if ((*allBlocks)->get_rightBlock() == NULL)
+					{
+						(*allBlocks)->set_rightBlock(temp);
+					}
+				}
+				tempCFG.get_futureEdge().erase(finder);
+			}
+			tempCFG.add_labelToBlock(temp, (*it)->get_label());
 			current = temp;
 		}
-		if (((*it)->get_op()).get_name() == "beq" || ((*it)->get_op()).get_name() == "bne")
+		else if (((*it)->get_op()).get_name() == "beq" || ((*it)->get_op()).get_name() == "bne")
 		{
 			if((*it)->get_opd1() != NULL){
 				current->icode_push_back((*it));
 				basicBlocks * temp = new basicBlocks();
-				current->set_leftBlock(temp);
-				cfg.add_futureEdge(current, (*it)->get_label());
+				if(current->get_leftBlock() == NULL)
+				{
+					current->set_leftBlock(temp);
+				}
+				else if(current->get_rightBlock() == NULL)
+				{
+					current->set_rightBlock(temp);
+				}
+				if(tempCFG.get_labelToBlock((*it)->get_label()) == NULL)
+					tempCFG.add_futureEdge(current, (*it)->get_label());
+				else
+				{
+					if(current->get_leftBlock() == NULL)
+					{
+						current->set_leftBlock(tempCFG.get_labelToBlock((*it)->get_label()));
+					}
+					else if (current->get_rightBlock() == NULL)
+					{
+						current->set_rightBlock(tempCFG.get_labelToBlock((*it)->get_label()));
+					}
+				}
 				current = temp;
 			}
 			else
 			{
 				current->icode_push_back((*it));
-				cfg.add_futureEdge(current, (*it)->get_label());
+				if(tempCFG.get_labelToBlock((*it)->get_label()) == NULL)
+					tempCFG.add_futureEdge(current, (*it)->get_label());
+				else
+				{
+					if(current->get_leftBlock() == NULL)
+					{
+						current->set_leftBlock(tempCFG.get_labelToBlock((*it)->get_label()));
+					}
+					else if (current->get_rightBlock() == NULL)
+					{
+						current->set_rightBlock(tempCFG.get_labelToBlock((*it)->get_label()));
+					}
+				}
 				basicBlocks * temp = new basicBlocks();
 				current = temp;
 			}
 		}
+		else
+		{
+			current->icode_push_back((*it));
+		}
 	}
+	tempCFG.printCFG();
+	cfg * returningCFG = new cfg();
+	returningCFG->set_head(tempCFG.get_head());
+	return *returningCFG;
 }
 
+	// New lines in icode posing a problem

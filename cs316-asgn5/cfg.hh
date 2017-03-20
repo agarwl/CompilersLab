@@ -38,12 +38,17 @@ public:
 
 class cfg
 {
-	map<string, basicBlocks *> futureEdge;
+	map<string, set<basicBlocks *>> futureEdge;
+	map<string, basicBlocks*> labelToBlock;
 	basicBlocks * head;
 public:
 	cfg();
 	~cfg();
 	void set_head(basicBlocks * block);
 	basicBlocks * get_head();
+	map<string, set<basicBlocks *>> & get_futureEdge();
 	void add_futureEdge(basicBlocks * block, string label);	
+	basicBlocks * get_labelToBlock(string label);
+	void add_labelToBlock(basicBlocks * block, string label);	
+	void printCFG();
 };

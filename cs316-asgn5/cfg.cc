@@ -3,6 +3,8 @@
 #include <string>
 #include <list>
 #include <map>
+#include <queue>
+#include <algorithm>
 
 using namespace std;
 
@@ -23,11 +25,7 @@ basicBlocks::basicBlocks()
 	rightBlock = NULL;
 }
 
-basicBlocks::~basicBlocks()
-{
-	delete leftBlock;
-	delete rightBlock;
-}
+basicBlocks::~basicBlocks(){}
 
 void basicBlocks::icode_push_back(Icode_Stmt * new_stmt)
 {
@@ -85,10 +83,7 @@ cfg::cfg()
 	head = NULL;
 }
 
-cfg::~cfg()
-{
-	delete head;
-}
+cfg::~cfg(){}
 
 void cfg::set_head(basicBlocks * block)
 {
@@ -102,6 +97,48 @@ basicBlocks * cfg::get_head()
 
 void cfg::add_futureEdge(basicBlocks * block, string label)
 {
-	futureEdge[label] = block;
+	map<string, set<basicBlocks*>>::iterator it;
+	it = futureEdge.find(label);
+	if(it != futureEdge.end())
+		it->second.insert(block);
+	else
+	{
+		set<basicBlocks*> temp;
+		temp.insert(block);
+		futureEdge[label] = temp;
+	}
 }
 
+map<string, set<basicBlocks*>> & cfg::get_futureEdge()
+{
+	return this->futureEdge;
+}
+
+void cfg::add_labelToBlock(basicBlocks * block, string label)
+{
+	labelToBlock[label] = block;
+}
+
+basicBlocks * cfg::get_labelToBlock(string label)
+{
+	map<string, basicBlocks*>::iterator it;
+	it = labelToBlock.find(label);
+	if(it != labelToBlock.end())
+		return it->second;	
+	else
+		return NULL;
+}
+
+void cfg::printCFG()
+{
+	vector<basicBlocks *> visited;
+	visited.push_back(head);
+	for (int i=0; i < visited.size(); i++)
+	{
+		cout<< visited[i] << "\tLeft:" << visited[i]->get_leftBlock() << "\tRight" << visited[i]->get_rightBlock() <<endl;
+		if (visited[i]->get_leftBlock() != NULL && find(visited.begin(), visited.end(), visited[i]->get_leftBlock()) == visited.end())
+			visited.push_back(visited[i]->get_leftBlock());
+		if (visited[i]->get_rightBlock() != NULL && find(visited.begin(), visited.end(), visited[i]->get_rightBlock()) == visited.end())
+			visited.push_back(visited[i]->get_rightBlock());
+	}
+}
