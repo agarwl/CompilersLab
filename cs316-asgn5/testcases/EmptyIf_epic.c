@@ -1,9 +1,22 @@
-// Empty statement in if statement is allowed.
 void main();
 
 main()
 {
-	float f , g;
-	f = -5.5; g = 6.6;	
-	if (f < g){}
+	int i;
+	int a;
+
+	i = -2;
+	a = 2;
+	if (a < 2) {
+		a = 3;
+		if (a == 2) i = 2;
+	}
+	else {
+		i = 3;
+	}
+
+	while (i<10) i=i+1;
+
+	// a = (i>=1)?2:i;
+
 }

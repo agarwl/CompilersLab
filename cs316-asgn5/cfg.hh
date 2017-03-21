@@ -25,30 +25,34 @@ public:
 	basicBlocks();
 	~basicBlocks();
 	void icode_push_back(Icode_Stmt * new_stmt);
-	void put_in_set(set<Ics_Opd *> temp, Ics_Opd * new_reg);
-	set<Ics_Opd *> get_gen();
-	set<Ics_Opd *> get_in();
-	set<Ics_Opd *> get_out();
-	set<Ics_Opd *> get_kill();
+	bool put_in_set(set<Ics_Opd *> & temp, Ics_Opd * new_reg);
+	set<Ics_Opd *> & get_gen();
+	set<Ics_Opd *> & get_in();
+	set<Ics_Opd *> & get_out();
+	set<Ics_Opd *> & get_kill();
 	void set_leftBlock(basicBlocks * block);
 	void set_rightBlock(basicBlocks * block);
+	list<Icode_Stmt *> & get_list();
 	basicBlocks * get_leftBlock();
 	basicBlocks * get_rightBlock();
+	bool presentInKill(Ics_Opd * new_reg);
+	bool checkInKillAndOut(Ics_Opd * opd1, Ics_Opd * opd2);
 };
 
 class cfg
 {
-	map<string, set<basicBlocks *>> futureEdge;
 	map<string, basicBlocks*> labelToBlock;
 	basicBlocks * head;
+	list<basicBlocks *> allBlocks;
 public:
 	cfg();
 	~cfg();
 	void set_head(basicBlocks * block);
-	basicBlocks * get_head();
-	map<string, set<basicBlocks *>> & get_futureEdge();
-	void add_futureEdge(basicBlocks * block, string label);	
+	void add_block(basicBlocks * block);
+	basicBlocks * get_head();	
 	basicBlocks * get_labelToBlock(string label);
 	void add_labelToBlock(basicBlocks * block, string label);	
 	void printCFG();
+	void allOut();
+	bool calcIn(basicBlocks * block);
 };

@@ -25,6 +25,12 @@ Register_Descriptor * Ics_Opd::get_reg()
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
 }
 
+Symbol_Table_Entry * Ics_Opd::get_sym_entry()
+{
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "virtual method get_sym_entry not implemented");
+}
+
+
 /****************************** Class Mem_Addr_Opd *****************************/
 
 Mem_Addr_Opd::Mem_Addr_Opd(Symbol_Table_Entry & se)
@@ -38,6 +44,11 @@ Mem_Addr_Opd & Mem_Addr_Opd::operator=(const Mem_Addr_Opd & rhs)
 	//TODO
 	*this = rhs;
 	return *this;
+}
+
+Symbol_Table_Entry * Mem_Addr_Opd::get_sym_entry()
+{
+	return this->symbol_entry;
 }
 
 void Mem_Addr_Opd::print_ics_opd(ostream & file_buffer)

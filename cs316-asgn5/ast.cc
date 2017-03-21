@@ -13,6 +13,7 @@ using namespace std;
 #include"procedure.hh"
 #include"program.hh"
 #include"icode.hh"
+#include"reg-alloc.hh"
 
 int Ast::labelCounter=0;
 
@@ -710,83 +711,92 @@ cfg & Sequence_Ast::buildCFG()
 	basicBlocks * current = new basicBlocks();
 	tempCFG.set_head(current);
 	map<string, set<basicBlocks*>>::iterator finder;
-
 	for (auto it = sa_icode_list.begin(); it != sa_icode_list.end(); it++)
 	{
 		if (((*it)->get_op()).get_name() == "")
 		{
-			basicBlocks * temp = new basicBlocks();
-			current->set_leftBlock(temp);
-			finder = tempCFG.get_futureEdge().find((*it)->get_label());
-			if (finder != tempCFG.get_futureEdge().end())
-			{
-				for(set<basicBlocks*>::iterator allBlocks = finder->second.begin(); allBlocks != finder->second.end(); allBlocks++)
-				{
-					if((*allBlocks)->get_leftBlock() == NULL)
-					{
-						(*allBlocks)->set_leftBlock(temp);
-					}
-					else if ((*allBlocks)->get_rightBlock() == NULL)
-					{
-						(*allBlocks)->set_rightBlock(temp);
-					}
-				}
-				tempCFG.get_futureEdge().erase(finder);
+			basicBlocks * assignBlock;
+			if(tempCFG.get_labelToBlock((*it)->get_label()) == NULL){
+				assignBlock = new basicBlocks();
+				tempCFG.add_block(assignBlock);
+				tempCFG.add_labelToBlock(assignBlock, (*it)->get_label());
 			}
-			tempCFG.add_labelToBlock(temp, (*it)->get_label());
-			current = temp;
+			else{
+				assignBlock = tempCFG.get_labelToBlock((*it)->get_label());
+			}
+			current->set_leftBlock(assignBlock);
+			current = assignBlock;
 		}
 		else if (((*it)->get_op()).get_name() == "beq" || ((*it)->get_op()).get_name() == "bne")
 		{
 			if((*it)->get_opd1() != NULL){
 				current->icode_push_back((*it));
+				if(!current->presentInKill((*it)->get_opd1()))
+					current->put_in_set(current->get_gen(), (*it)->get_opd1());
+
+				if(!current->presentInKill((*it)->get_opd2()))	
+						current->put_in_set(current->get_gen(), (*it)->get_opd2());
+
 				basicBlocks * temp = new basicBlocks();
-				if(current->get_leftBlock() == NULL)
-				{
-					current->set_leftBlock(temp);
+				tempCFG.add_block(temp);
+				basicBlocks * assignBlock;
+				current->set_leftBlock(temp);
+
+				if(tempCFG.get_labelToBlock((*it)->get_label()) == NULL){
+					assignBlock = new basicBlocks();
+					tempCFG.add_block(assignBlock);
+					tempCFG.add_labelToBlock(assignBlock, (*it)->get_label());
 				}
-				else if(current->get_rightBlock() == NULL)
-				{
-					current->set_rightBlock(temp);
-				}
-				if(tempCFG.get_labelToBlock((*it)->get_label()) == NULL)
-					tempCFG.add_futureEdge(current, (*it)->get_label());
+
 				else
-				{
-					if(current->get_leftBlock() == NULL)
-					{
-						current->set_leftBlock(tempCFG.get_labelToBlock((*it)->get_label()));
-					}
-					else if (current->get_rightBlock() == NULL)
-					{
-						current->set_rightBlock(tempCFG.get_labelToBlock((*it)->get_label()));
-					}
-				}
+					assignBlock = tempCFG.get_labelToBlock((*it)->get_label());
+
+				current->set_rightBlock(assignBlock);
 				current = temp;
 			}
-			else
-			{
+			else{
 				current->icode_push_back((*it));
-				if(tempCFG.get_labelToBlock((*it)->get_label()) == NULL)
-					tempCFG.add_futureEdge(current, (*it)->get_label());
-				else
-				{
-					if(current->get_leftBlock() == NULL)
-					{
-						current->set_leftBlock(tempCFG.get_labelToBlock((*it)->get_label()));
-					}
-					else if (current->get_rightBlock() == NULL)
-					{
-						current->set_rightBlock(tempCFG.get_labelToBlock((*it)->get_label()));
-					}
+				basicBlocks * assignBlock;
+				if(tempCFG.get_labelToBlock((*it)->get_label()) == NULL){	
+					assignBlock = new basicBlocks();
+					tempCFG.add_block(assignBlock);
+					tempCFG.add_labelToBlock(assignBlock, (*it)->get_label());
 				}
+
+				else
+					assignBlock = tempCFG.get_labelToBlock((*it)->get_label());
+				current->set_leftBlock(assignBlock);
 				basicBlocks * temp = new basicBlocks();
+				tempCFG.add_block(temp);
 				current = temp;
 			}
 		}
-		else
-		{
+		else{
 			current->icode_push_back((*it));
+			cout<<(*it)->get_op().get_name()<<endl;
+			if ((*it)->get_op().get_name() == "load" || (*it)->get_op().get_name() == "iLoad" || (*it)->get_op().get_name() == "iLoad.d" || (*it)->get_op().get_name() == "load.d"){
+				current->put_in_set(current->get_kill(), (*it)->get_result());
+				if (!current->presentInKill((*it)->get_opd1()))
+					current->put_in_set(current->get_gen(), (*it)->get_opd1());
+
+			}
+			else if ((*it)->get_op().get_name() == "store" || (*it)->get_op().get_name() == "store.d"){
+				if (!current->presentInKill((*it)->get_opd1()))
+					current->put_in_set(current->get_gen(), (*it)->get_opd1());
+				current->put_in_set(current->get_kill(), (*it)->get_result());
+			}
+			else{
+				if(!current->presentInKill((*it)->get_opd1()))
+					current->put_in_set(current->get_gen(), (*it)->get_opd1());
+
+				if( (*it)->get_op().get_name() != "uminus" && (*it)->get_op().get_name() != "uminus.d")
+				{
+					if(!current->presentInKill((*it)->get_opd2()))	
+						current->put_in_set(current->get_gen(), (*it)->get_opd2());
+				}
+				current->put_in_set(current->get_kill(), (*it)->get_result());
+			}
+			
 		}
 	}
 	tempCFG.printCFG();
