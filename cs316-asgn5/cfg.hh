@@ -18,7 +18,7 @@ using namespace std;
 class basicBlocks
 {
 	list<Icode_Stmt *> bb_icode_list;
-	set<Ics_Opd *> gen, in, out, kill;
+	set<Ics_Opd *> gen, in, out, kill, live;
 	basicBlocks * leftBlock;
 	basicBlocks * rightBlock;
 public:
@@ -30,13 +30,18 @@ public:
 	set<Ics_Opd *> & get_in();
 	set<Ics_Opd *> & get_out();
 	set<Ics_Opd *> & get_kill();
+	set<Ics_Opd *> & get_live();
 	void set_leftBlock(basicBlocks * block);
 	void set_rightBlock(basicBlocks * block);
 	list<Icode_Stmt *> & get_list();
 	basicBlocks * get_leftBlock();
 	basicBlocks * get_rightBlock();
+	bool secondOp(string op);
 	bool presentInKill(Ics_Opd * new_reg);
-	bool checkInKillAndOut(Ics_Opd * opd1, Ics_Opd * opd2);
+	bool presentInSet(set<Ics_Opd *> temp, Ics_Opd * opd1);
+	bool compareTwoIcsOpd(Ics_Opd * opd1, Ics_Opd * opd2);
+	void createGenKill();
+	bool blockKillCode();
 };
 
 class cfg
@@ -55,4 +60,8 @@ public:
 	void printCFG();
 	void allOut();
 	bool calcIn(basicBlocks * block);
+	void initialiseIn();
+	void initLive();
+	void allInOut();
+	void removeDeadCode();
 };

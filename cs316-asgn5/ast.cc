@@ -710,7 +710,7 @@ cfg & Sequence_Ast::buildCFG()
 	cfg tempCFG;
 	basicBlocks * current = new basicBlocks();
 	tempCFG.set_head(current);
-	map<string, set<basicBlocks*>>::iterator finder;
+	tempCFG.add_block(current);
 	for (auto it = sa_icode_list.begin(); it != sa_icode_list.end(); it++)
 	{
 		if (((*it)->get_op()).get_name() == "")
@@ -773,7 +773,6 @@ cfg & Sequence_Ast::buildCFG()
 		}
 		else{
 			current->icode_push_back((*it));
-			cout<<(*it)->get_op().get_name()<<endl;
 			if ((*it)->get_op().get_name() == "load" || (*it)->get_op().get_name() == "iLoad" || (*it)->get_op().get_name() == "iLoad.d" || (*it)->get_op().get_name() == "load.d"){
 				current->put_in_set(current->get_kill(), (*it)->get_result());
 				if (!current->presentInKill((*it)->get_opd1()))
@@ -799,7 +798,10 @@ cfg & Sequence_Ast::buildCFG()
 			
 		}
 	}
-	tempCFG.printCFG();
+	tempCFG.initialiseIn();
+	tempCFG.allInOut();
+	tempCFG.removeDeadCode();
+	//tempCFG.printCFG();
 	cfg * returningCFG = new cfg();
 	returningCFG->set_head(tempCFG.get_head());
 	return *returningCFG;

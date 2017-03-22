@@ -59,6 +59,8 @@ bool basicBlocks::put_in_set(set<Ics_Opd *> & temp, Ics_Opd * new_reg)
 				return false;
 		}
 	}
+	else
+		return false;
 	temp.insert(new_reg);
 	return true;
 }
@@ -81,6 +83,11 @@ set<Ics_Opd *> & basicBlocks::get_out()
 set<Ics_Opd *> & basicBlocks::get_kill()
 {
 	return this->kill;
+}
+
+set<Ics_Opd *> & basicBlocks::get_live()
+{
+	return this->live;
 }
 
 list<Icode_Stmt *> & basicBlocks::get_list()
@@ -106,6 +113,13 @@ basicBlocks * basicBlocks::get_leftBlock()
 basicBlocks * basicBlocks::get_rightBlock()
 {
 	return this->rightBlock;
+}
+
+bool basicBlocks::secondOp(string op)
+{
+	if (op == "load" || op == "iLoad" || op == "store" || op == "load.d" || op == "iLoad.d" || op == "store.d" || op == "uminus")
+		return false;
+	return true;
 }
 
 bool basicBlocks::presentInKill(Ics_Opd * new_reg)
@@ -139,7 +153,7 @@ bool basicBlocks::presentInKill(Ics_Opd * new_reg)
 	return false;
 }
 
-bool basicBlocks::checkInKillAndOut(Ics_Opd * opd1, Ics_Opd * opd2)
+bool basicBlocks::compareTwoIcsOpd(Ics_Opd * opd1, Ics_Opd * opd2)
 {
 	string a = typeid(*opd1).name();
 	string b = typeid(*opd2).name();
@@ -156,6 +170,88 @@ bool basicBlocks::checkInKillAndOut(Ics_Opd * opd1, Ics_Opd * opd2)
 		}
 	}
 	return false;
+}
+
+bool basicBlocks::presentInSet(set<Ics_Opd *> temp, Ics_Opd * opd1){
+	string a, b = typeid(*opd1).name();
+	for (set<Ics_Opd *>::iterator it = temp.begin(); it != temp.end(); ++it)
+	{
+		a = typeid(*(*it)).name();
+		if (a != b)
+			continue;
+		else{
+			if (a == "12Mem_Addr_Opd"){
+			if (opd1->get_sym_entry()->get_variable_name() == (*it)->get_sym_entry()->get_variable_name())
+				return true;
+		}
+		else if(a == "17Register_Addr_Opd"){
+			if (opd1->get_reg()->get_name() == (*it)->get_reg()->get_name())
+				return true;
+		}
+		}
+	}
+	return false;
+}
+
+void basicBlocks::createGenKill()
+{
+	kill.clear();
+	gen.clear();
+	for ( auto it = bb_icode_list.begin(); it != bb_icode_list.end(); it++)
+	{
+		if ((*it)->get_op().get_name() == "beq" || (*it)->get_op().get_name() == "bne"){
+			if((*it)->get_opd1() != NULL){
+				if(!presentInSet(kill, (*it)->get_opd1()))
+					put_in_set(gen, (*it)->get_opd1());
+
+				if(!presentInSet(kill, (*it)->get_opd2()))	
+					put_in_set(gen, (*it)->get_opd2());
+			}
+		}
+		else{
+			put_in_set(kill, (*it)->get_result());
+			if(!presentInSet(kill, (*it)->get_opd1()))
+				put_in_set(gen, (*it)->get_opd1());
+			if(secondOp((*it)->get_op().get_name())){
+				if(!presentInSet(kill, (*it)->get_opd2()))	
+					put_in_set(gen, (*it)->get_opd2());
+			}
+			
+		}
+	}
+}
+
+bool basicBlocks::blockKillCode()
+{
+	bool changed = false;
+	for(auto rit = bb_icode_list.rbegin(); rit != bb_icode_list.rend();++rit)
+	{
+		if ((*rit)->get_op().get_name() == "beq" || (*rit)->get_op().get_name() == "bne")
+		{
+			if ((*rit)->get_opd1() != NULL)
+			{
+				put_in_set(live, (*rit)->get_opd1());
+				put_in_set(live, (*rit)->get_opd2());
+			}
+		}
+		else{
+			if (!presentInSet(live, (*rit)->get_result()))
+			{
+				(*rit)->print_icode(std::cout);
+			//	(*it)->put_in_set((*it)->get_live(), (*rit)->get_opd1());
+			//	if((*it)->secondOp((*rit)->get_op().get_name()))
+			//		(*it)->put_in_set((*it)->get_live(), (*rit)->get_opd2());
+				bb_icode_list.erase( next(rit).base() );
+				changed = true;
+			}
+			else{
+				put_in_set(live, (*rit)->get_opd1());
+				if(secondOp((*rit)->get_op().get_name()))
+					put_in_set(live, (*rit)->get_opd2());
+			}
+		}
+	}
+	return changed;
 }
 
 cfg::cfg()
@@ -209,25 +305,52 @@ void cfg::printCFG()
 		{
 			(*it)->print_icode(std::cout);
 		}
-		cout<< "-------------Kill Set------------\n";
+		cout<< "Kill Set:";
 		for (it = visited[i]->get_kill().begin(); it != visited[i]->get_kill().end(); it++)
 		{
 			string com = typeid(*(*it)).name();
 			if (com == "17Register_Addr_Opd")
-				cout<< "\t\t" <<(*it)->get_reg()->get_name() << endl;
+				cout<< "  " <<(*it)->get_reg()->get_name();
 			else
-				cout<< "\t\t" <<(*it)->get_sym_entry()->get_variable_name() << endl;
+				cout<< "  " <<(*it)->get_sym_entry()->get_variable_name();
 		}
-		cout<< "---------------Gen Set-------------\n";
+		cout<< "\nGen Set:";
 		for (it = visited[i]->get_gen().begin(); it != visited[i]->get_gen().end(); ++it)
 		{
 			string com = typeid(*(*it)).name();
 			if (com == "17Register_Addr_Opd")
-				cout<< "\t\t" << (*it)->get_reg()->get_name() << endl;
+				cout<< "  " << (*it)->get_reg()->get_name();
 			else
-				cout<< "\t\t" <<(*it)->get_sym_entry()->get_variable_name() << endl;
+				cout<< "  " <<(*it)->get_sym_entry()->get_variable_name();
 		}
-		cout<<endl;
+		cout<<"\nOut Set:";
+		for (it = visited[i]->get_out().begin(); it != visited[i]->get_out().end(); ++it)
+		{
+			string com = typeid(*(*it)).name();
+			if (com == "17Register_Addr_Opd")
+				cout<< "  " << (*it)->get_reg()->get_name();
+			else
+				cout<< "  " <<(*it)->get_sym_entry()->get_variable_name();
+		}
+		cout<<"\nIn Set:";
+		for (it = visited[i]->get_in().begin(); it != visited[i]->get_in().end(); ++it)
+		{
+			string com = typeid(*(*it)).name();
+			if (com == "17Register_Addr_Opd")
+				cout<< "  " << (*it)->get_reg()->get_name();
+			else
+				cout<< "  " <<(*it)->get_sym_entry()->get_variable_name();
+		}
+		cout<<"\nLive Set:";
+		for (it = visited[i]->get_live().begin(); it != visited[i]->get_live().end(); ++it)
+		{
+			string com = typeid(*(*it)).name();
+			if (com == "17Register_Addr_Opd")
+				cout<< "  " << (*it)->get_reg()->get_name();
+			else
+				cout<< "  " <<(*it)->get_sym_entry()->get_variable_name();
+		}
+		cout<<"\n\n";
 		if (visited[i]->get_leftBlock() != NULL && find(visited.begin(), visited.end(), visited[i]->get_leftBlock()) == visited.end())
 			visited.push_back(visited[i]->get_leftBlock());
 		if (visited[i]->get_rightBlock() != NULL && find(visited.begin(), visited.end(), visited[i]->get_rightBlock()) == visited.end())
@@ -239,39 +362,90 @@ bool cfg::calcIn(basicBlocks * block){
 	bool pushin, changed = false;
 	set<Ics_Opd*> tempOut;
 	if (block->get_leftBlock() != NULL)
-	{
-		calcIn(block->get_leftBlock());
 		tempOut = block->get_leftBlock()->get_in();
-	}
-	for (auto nextit = tempOut.begin(); nextit != tempOut.end(); ++nextit)
+	for (set<Ics_Opd *>::iterator nextit = tempOut.begin(); nextit != tempOut.end(); ++nextit)
 	{
 		if (block->put_in_set(block->get_out(), (*nextit)))
 			changed = true;
 	}
 	tempOut.clear();
 	if (block->get_rightBlock() != NULL)
-	{
-		calcIn(block->get_rightBlock());
 		tempOut = block->get_rightBlock()->get_in();
-	}	
-	for (auto nextit = tempOut.begin(); nextit != tempOut.end(); ++nextit)
+	for (set<Ics_Opd *>::iterator nextit = tempOut.begin(); nextit != tempOut.end(); ++nextit)
 	{
 		if (block->put_in_set(block->get_out(), (*nextit)))
 			changed = true;
 	}
-	for (auto nextit = block->get_gen().begin(); nextit != block->get_gen().end(); ++nextit)
-	{
-		if (block->put_in_set(block->get_in(), (*nextit)))
-			changed = true;
-	}
-	for (auto nextit = block->get_out().begin(); nextit != block->get_out().end(); ++nextit)
+	for (set<Ics_Opd *>::iterator nextit = block->get_out().begin(); nextit != block->get_out().end(); ++nextit)
 	{
 		pushin = true;
-		for (auto anotherit = block->get_kill().begin(); anotherit != block->get_kill().end(); ++anotherit)
+		for (set<Ics_Opd *>::iterator anotherit = block->get_kill().begin(); anotherit != block->get_kill().end(); ++anotherit)
 		{
-			if (!block->checkInKillAndOut((*nextit), (*anotherit)))
-				block->put_in_set(block->get_in(), (*nextit));
+			if (block->compareTwoIcsOpd((*nextit), (*anotherit)))
+				pushin = false;
 		}
+		if (pushin)
+			block->put_in_set(block->get_in(), (*nextit));
 	}
 	return changed;
+}
+
+void cfg::initialiseIn()
+{
+	for (list<basicBlocks *>::iterator it = allBlocks.begin(); it != allBlocks.end(); ++it)
+	{
+		(*it)->get_in().clear();
+		(*it)->get_out().clear();
+		for (set<Ics_Opd *>::iterator nextit = (*it)->get_gen().begin(); nextit != (*it)->get_gen().end(); ++nextit)
+		{
+		    (*it)->put_in_set((*it)->get_in(), (*nextit));
+		}
+	}
+}
+
+void cfg::initLive()
+{
+	for (list<basicBlocks *>::iterator it = allBlocks.begin(); it != allBlocks.end(); ++it)
+	{
+		(*it)->get_live().clear();
+		for (set<Ics_Opd *>::iterator nextit = (*it)->get_out().begin(); nextit != (*it)->get_out().end(); ++nextit)
+		{
+		    (*it)->put_in_set((*it)->get_live(), (*nextit));
+		}
+	}
+}
+
+void cfg::allInOut(){
+	bool changed = calcIn(head);
+	while(changed){
+		changed = false;
+		for (list<basicBlocks *>::iterator it = allBlocks.begin(); it != allBlocks.end(); ++it){
+			bool ret = calcIn((*it));
+			if (!changed)
+				changed = ret;
+		}
+	}
+}
+
+void cfg::removeDeadCode(){
+	bool changed = true;
+	initLive();
+	while(changed){
+		changed = false;
+		//printCFG();
+		for (list<basicBlocks *>::iterator it = allBlocks.begin(); it != allBlocks.end(); ++it){
+			
+			if((*it)->blockKillCode())
+			{	
+				changed = true;
+				(*it)->createGenKill();
+			}
+		}
+		if (changed){
+			initialiseIn();
+			allInOut();
+			initLive();
+		}
+
+	}
 }

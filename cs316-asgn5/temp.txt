@@ -1,0 +1,544 @@
+  Procedure: main
+  Intermediate Code Statements
+	iLoad:    	v0 <- 2
+	uminus:    	t0 <- v0
+	store:    	i <- t0
+	iLoad:    	v0 <- 2
+	store:    	a <- v0
+	load:    	v0 <- a
+	iLoad:    	t0 <- 2
+	slt:    	t1 <- v0 , t0
+	beq:    	t1 , zero : goto label2
+	iLoad:    	v0 <- 3
+	store:    	a <- v0
+	load:    	v0 <- a
+	iLoad:    	t0 <- 2
+	seq:    	t2 <- v0 , t0
+	beq:    	t2 , zero : goto label0
+	iLoad:    	v0 <- 2
+	store:    	i <- v0
+	goto label1
+
+label0:
+
+label1:
+	goto label3
+
+label2:
+	iLoad:    	v0 <- 3
+	store:    	i <- v0
+
+label3:
+	goto label5
+
+label4:
+	load:    	v0 <- i
+	iLoad:    	t0 <- 1
+	add:    	t2 <- v0 , t0
+	store:    	i <- t2
+
+label5:
+	load:    	v0 <- i
+	iLoad:    	t0 <- 10
+	slt:    	t1 <- v0 , t0
+	bne:    	t1 , zero : goto label4
+	load:    	v0 <- i
+	iLoad:    	t0 <- 1
+	sge:    	t1 <- v0 , t0
+	beq:    	t1 , zero : goto label6
+	iLoad:    	v0 <- 2
+	or:    	t2 <- v0 , zero
+	goto label7
+
+label6:
+	load:    	t0 <- i
+	or:    	t2 <- t0 , zero
+
+label7:
+	store:    	a <- t2
+
+	.text 			# The .text assembler directive indicates
+	.globl main		# The following is the code (as oppose to data)
+main:				# .globl makes main know to the 
+				# outside of the program.
+# Prologue begins 
+	sw $fp, 0($sp)		# Save the frame pointer
+	sub $fp, $sp, 4		# Update the frame pointer
+
+	sub $sp, $sp, 12		# Make space for the locals
+# Prologue ends
+
+	li $v0, 2
+	neg $t0, $v0
+	sw $t0, 0($fp)
+	li $v0, 2
+	sw $v0, -4($fp)
+	lw $v0, -4($fp)
+	li $t0, 2
+	slt $t1, $v0, $t0
+	beq $t1, $zero, label2
+	li $v0, 3
+	sw $v0, -4($fp)
+	lw $v0, -4($fp)
+	li $t0, 2
+	seq $t2, $v0, $t0
+	beq $t2, $zero, label0
+	li $v0, 2
+	sw $v0, 0($fp)
+	j label1
+
+label0:
+
+label1:
+	j label3
+
+label2:
+	li $v0, 3
+	sw $v0, 0($fp)
+
+label3:
+	j label5
+
+label4:
+	lw $v0, 0($fp)
+	li $t0, 1
+	add $t2, $v0, $t0
+	sw $t2, 0($fp)
+
+label5:
+	lw $v0, 0($fp)
+	li $t0, 10
+	slt $t1, $v0, $t0
+	bne $t1, $zero, label4
+	lw $v0, 0($fp)
+	li $t0, 1
+	sge $t1, $v0, $t0
+	beq $t1, $zero, label6
+	li $v0, 2
+	or $t2, $v0, $zero
+	j label7
+
+label6:
+	lw $t0, 0($fp)
+	or $t2, $t0, $zero
+
+label7:
+	sw $t2, -4($fp)
+
+# Epilogue Begins
+	add $sp, $sp, 12
+	lw $fp, 0($sp)  
+	jr        $31		# Jump back to the operating system.
+# Epilogue Ends
+
+Adding to 0x1b35ea0 17Register_Addr_Opd
+Adding to 0x1b35ea0 12Mem_Addr_Opd
+Adding to 0x1b361f0 12Mem_Addr_Opd
+Adding to 0x1b361f0 17Register_Addr_Opd
+Adding to 0x1b36310 12Mem_Addr_Opd
+Adding to 0x1b36310 17Register_Addr_Opd
+Adding to 0x1b36670 12Mem_Addr_Opd
+Adding to 0x1b36670 17Register_Addr_Opd
+Adding to 0x1b36790 12Mem_Addr_Opd
+Adding to 0x1b36790 17Register_Addr_Opd
+Adding to 0x1b369e0 12Mem_Addr_Opd
+Adding to 0x1b369e0 17Register_Addr_Opd
+Adding to 0x1b36b50 12Mem_Addr_Opd
+Adding to 0x1b36b50 17Register_Addr_Opd
+Adding to 0x1b36cb0 12Mem_Addr_Opd
+Adding to 0x1b36cb0 17Register_Addr_Opd
+Adding to 0x1b36e40 17Register_Addr_Opd
+Adding to 0x1b37060 12Mem_Addr_Opd
+Adding to 0x1b37060 17Register_Addr_Opd
+Adding to 0x1b371d0 12Mem_Addr_Opd
+Adding to 0x1b371d0 17Register_Addr_Opd
+Adding to 0x1b37310 12Mem_Addr_Opd
+Adding to 0x1b37310 17Register_Addr_Opd
+Adding to 0x1b377c0 12Mem_Addr_Opd
+Adding to 0x1b377c0 17Register_Addr_Opd
+Adding to 0x1b37a70 17Register_Addr_Opd
+Adding to 0x1b37b90 17Register_Addr_Opd
+Adding to 0x1b37f80 12Mem_Addr_Opd
+Adding to 0x1b37f80 17Register_Addr_Opd
+
+0x1b35ea0Block Number0	Left:0x1b361f0	Right0x1b36310
+--------------Icode List Statements-------------
+	iLoad:    	v0 <- 2
+	uminus:    	t0 <- v0
+	store:    	i <- t0
+	iLoad:    	v0 <- 2
+	store:    	a <- v0
+	load:    	v0 <- a
+	iLoad:    	t0 <- 2
+	slt:    	t1 <- v0 , t0
+	beq:    	t1 , zero : goto label2
+Kill Set:  v0  t0  i  a  t1
+Gen Set:  zero
+Out Set:  zero  i
+In Set:  zero
+Live Set:17Register_Addr_Opd
+  zero12Mem_Addr_Opd
+  i
+
+
+0x1b361f0Block Number1	Left:0x1b36670	Right0x1b36790
+--------------Icode List Statements-------------
+	iLoad:    	v0 <- 3
+	store:    	a <- v0
+	load:    	v0 <- a
+	iLoad:    	t0 <- 2
+	seq:    	t2 <- v0 , t0
+	beq:    	t2 , zero : goto label0
+Kill Set:  v0  a  t0  t2
+Gen Set:  zero
+Out Set:  i  zero
+In Set:  zero  i
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b36310Block Number2	Left:0x1b36cb0	Right0
+--------------Icode List Statements-------------
+	iLoad:    	v0 <- 3
+	store:    	i <- v0
+Kill Set:  v0  i
+Gen Set:
+Out Set:  i  zero
+In Set:  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b36670Block Number3	Left:0x1b369e0	Right0
+--------------Icode List Statements-------------
+	iLoad:    	v0 <- 2
+	store:    	i <- v0
+	goto label1
+Kill Set:  v0  i
+Gen Set:
+Out Set:  i  zero
+In Set:  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b36790Block Number4	Left:0x1b369e0	Right0
+--------------Icode List Statements-------------
+Kill Set:
+Gen Set:
+Out Set:  i  zero
+In Set:  i  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b36cb0Block Number5	Left:0x1b37060	Right0
+--------------Icode List Statements-------------
+	goto label5
+Kill Set:
+Gen Set:
+Out Set:  i  zero
+In Set:  i  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b369e0Block Number6	Left:0x1b36cb0	Right0
+--------------Icode List Statements-------------
+	goto label3
+Kill Set:
+Gen Set:
+Out Set:  i  zero
+In Set:  i  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b37060Block Number7	Left:0x1b377c0	Right0x1b37310
+--------------Icode List Statements-------------
+	load:    	v0 <- i
+	iLoad:    	t0 <- 10
+	slt:    	t1 <- v0 , t0
+	bne:    	t1 , zero : goto label4
+Kill Set:  v0  t0  t1
+Gen Set:  i  zero
+Out Set:  i  zero
+In Set:  i  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b377c0Block Number8	Left:0x1b37a70	Right0x1b37b90
+--------------Icode List Statements-------------
+	load:    	v0 <- i
+	iLoad:    	t0 <- 1
+	sge:    	t1 <- v0 , t0
+	beq:    	t1 , zero : goto label6
+Kill Set:  v0  t0  t1
+Gen Set:  i  zero
+Out Set:  i  zero
+In Set:  i  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b37310Block Number9	Left:0x1b37060	Right0
+--------------Icode List Statements-------------
+	load:    	v0 <- i
+	iLoad:    	t0 <- 1
+	add:    	t2 <- v0 , t0
+	store:    	i <- t2
+Kill Set:  v0  t0  t2  i
+Gen Set:  i
+Out Set:  i  zero
+In Set:  i  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b37a70Block Number10	Left:0x1b37e10	Right0
+--------------Icode List Statements-------------
+	iLoad:    	v0 <- 2
+	or:    	t2 <- v0 , zero
+	goto label7
+Kill Set:  v0  t2
+Gen Set:  zero
+Out Set:  t2
+In Set:  zero
+Live Set:17Register_Addr_Opd
+  t2
+
+
+0x1b37b90Block Number11	Left:0x1b37e10	Right0
+--------------Icode List Statements-------------
+	load:    	t0 <- i
+	or:    	t2 <- t0 , zero
+Kill Set:  t0  t2
+Gen Set:  i  zero
+Out Set:  t2
+In Set:  i  zero
+Live Set:17Register_Addr_Opd
+  t2
+
+
+0x1b37e10Block Number12	Left:0	Right0
+--------------Icode List Statements-------------
+	store:    	a <- t2
+Kill Set:  a
+Gen Set:  t2
+Out Set:
+In Set:  t2
+Live Set:
+
+	store:    	a <- t2
+
+0x1b35ea0Block Number0	Left:0x1b361f0	Right0x1b36310
+--------------Icode List Statements-------------
+	iLoad:    	v0 <- 2
+	uminus:    	t0 <- v0
+	store:    	i <- t0
+	iLoad:    	v0 <- 2
+	store:    	a <- v0
+	load:    	v0 <- a
+	iLoad:    	t0 <- 2
+	slt:    	t1 <- v0 , t0
+	beq:    	t1 , zero : goto label2
+Kill Set:  v0  t0  i  a  t1
+Gen Set:  zero
+Out Set:  zero  i
+In Set:  zero
+Live Set:12Mem_Addr_Opd
+  a17Register_Addr_Opd
+  v017Register_Addr_Opd
+  t017Register_Addr_Opd
+  zero17Register_Addr_Opd
+  t112Mem_Addr_Opd
+  i
+
+
+0x1b361f0Block Number1	Left:0x1b36670	Right0x1b36790
+--------------Icode List Statements-------------
+	iLoad:    	v0 <- 3
+	store:    	a <- v0
+	load:    	v0 <- a
+	iLoad:    	t0 <- 2
+	seq:    	t2 <- v0 , t0
+	beq:    	t2 , zero : goto label0
+Kill Set:  v0  a  t0  t2
+Gen Set:  zero
+Out Set:  i  zero
+In Set:  zero  i
+Live Set:12Mem_Addr_Opd
+  a17Register_Addr_Opd
+  v017Register_Addr_Opd
+  t017Register_Addr_Opd
+  t212Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b36310Block Number2	Left:0x1b36cb0	Right0
+--------------Icode List Statements-------------
+	iLoad:    	v0 <- 3
+	store:    	i <- v0
+Kill Set:  v0  i
+Gen Set:
+Out Set:  i  zero
+In Set:  zero
+Live Set:17Register_Addr_Opd
+  v012Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b36670Block Number3	Left:0x1b369e0	Right0
+--------------Icode List Statements-------------
+	iLoad:    	v0 <- 2
+	store:    	i <- v0
+	goto label1
+Kill Set:  v0  i
+Gen Set:
+Out Set:  i  zero
+In Set:  zero
+Live Set:17Register_Addr_Opd
+  v012Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b36790Block Number4	Left:0x1b369e0	Right0
+--------------Icode List Statements-------------
+Kill Set:
+Gen Set:
+Out Set:  i  zero
+In Set:  i  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b36cb0Block Number5	Left:0x1b37060	Right0
+--------------Icode List Statements-------------
+	goto label5
+Kill Set:
+Gen Set:
+Out Set:  i  zero
+In Set:  i  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b369e0Block Number6	Left:0x1b36cb0	Right0
+--------------Icode List Statements-------------
+	goto label3
+Kill Set:
+Gen Set:
+Out Set:  i  zero
+In Set:  i  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b37060Block Number7	Left:0x1b377c0	Right0x1b37310
+--------------Icode List Statements-------------
+	load:    	v0 <- i
+	iLoad:    	t0 <- 10
+	slt:    	t1 <- v0 , t0
+	bne:    	t1 , zero : goto label4
+Kill Set:  v0  t0  t1
+Gen Set:  i  zero
+Out Set:  i  zero
+In Set:  i  zero
+Live Set:17Register_Addr_Opd
+  v017Register_Addr_Opd
+  t017Register_Addr_Opd
+  t112Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero
+
+
+0x1b377c0Block Number8	Left:0x1b37a70	Right0x1b37b90
+--------------Icode List Statements-------------
+	load:    	v0 <- i
+	iLoad:    	t0 <- 1
+	sge:    	t1 <- v0 , t0
+	beq:    	t1 , zero : goto label6
+Kill Set:  v0  t0  t1
+Gen Set:  i  zero
+Out Set:  i  zero
+In Set:  i  zero
+Live Set:17Register_Addr_Opd
+  v017Register_Addr_Opd
+  t012Mem_Addr_Opd
+  i17Register_Addr_Opd
+  t117Register_Addr_Opd
+  zero
+
+
+0x1b37310Block Number9	Left:0x1b37060	Right0
+--------------Icode List Statements-------------
+	load:    	v0 <- i
+	iLoad:    	t0 <- 1
+	add:    	t2 <- v0 , t0
+	store:    	i <- t2
+Kill Set:  v0  t0  t2  i
+Gen Set:  i
+Out Set:  i  zero
+In Set:  i  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  v017Register_Addr_Opd
+  t017Register_Addr_Opd
+  t217Register_Addr_Opd
+  zero
+
+
+0x1b37a70Block Number10	Left:0x1b37e10	Right0
+--------------Icode List Statements-------------
+	iLoad:    	v0 <- 2
+	or:    	t2 <- v0 , zero
+	goto label7
+Kill Set:  v0  t2
+Gen Set:  zero
+Out Set:  t2
+In Set:  zero
+Live Set:17Register_Addr_Opd
+  zero17Register_Addr_Opd
+  v017Register_Addr_Opd
+  t2
+
+
+0x1b37b90Block Number11	Left:0x1b37e10	Right0
+--------------Icode List Statements-------------
+	load:    	t0 <- i
+	or:    	t2 <- t0 , zero
+Kill Set:  t0  t2
+Gen Set:  i  zero
+Out Set:  t2
+In Set:  i  zero
+Live Set:12Mem_Addr_Opd
+  i17Register_Addr_Opd
+  zero17Register_Addr_Opd
+  t017Register_Addr_Opd
+  t2
+
+
+0x1b37e10Block Number12	Left:0	Right0
+--------------Icode List Statements-------------
+Kill Set:
+Gen Set:
+Out Set:
+In Set:  t2
+Live Set:
+
