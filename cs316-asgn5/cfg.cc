@@ -117,40 +117,9 @@ basicBlocks * basicBlocks::get_rightBlock()
 
 bool basicBlocks::secondOp(string op)
 {
-	if (op == "load" || op == "iLoad" || op == "store" || op == "load.d" || op == "iLoad.d" || op == "store.d" || op == "uminus")
+	if (op == "load" || op == "iLoad" || op == "store" || op == "load.d" || op == "iLoad.d" || op == "store.d" || op == "uminus" || op == "uminus.d")
 		return false;
 	return true;
-}
-
-bool basicBlocks::presentInKill(Ics_Opd * new_reg)
-{
-	set<Ics_Opd *>::iterator it;
-	string com = typeid(*new_reg).name();
-	if (com == "12Mem_Addr_Opd")
-	{
-		for (it = kill.begin(); it != kill.end(); it++)
-		{
-			string comanother = typeid(*(*it)).name();
-			if (comanother != "12Mem_Addr_Opd")
-				continue;
-			if ((*it)->get_sym_entry()->get_variable_name() == new_reg->get_sym_entry()->get_variable_name())
-				return true;
-		}
-	}
-	else if (com == "17Register_Addr_Opd")
-	{
-		for (it = kill.begin(); it != kill.end(); it++)
-		{
-			string comanother = typeid(*(*it)).name();
-			if (comanother !=  "17Register_Addr_Opd")
-				continue;
-			if ((*it)->get_reg()->get_name() == new_reg->get_reg()->get_name())
-				return true;
-		}
-	}
-	else
-		return true;
-	return false;
 }
 
 bool basicBlocks::compareTwoIcsOpd(Ics_Opd * opd1, Ics_Opd * opd2)
@@ -208,6 +177,8 @@ void basicBlocks::createGenKill()
 					put_in_set(gen, (*it)->get_opd2());
 			}
 		}
+		else if((*it)->get_op().get_name() == "")
+			continue;
 		else{
 			put_in_set(kill, (*it)->get_result());
 			if(!presentInSet(kill, (*it)->get_opd1()))
@@ -234,13 +205,11 @@ bool basicBlocks::blockKillCode()
 				put_in_set(live, (*rit)->get_opd2());
 			}
 		}
+		else if ((*rit)->get_op().get_name() == "")
+			continue;
 		else{
 			if (!presentInSet(live, (*rit)->get_result()))
 			{
-				(*rit)->print_icode(std::cout);
-			//	(*it)->put_in_set((*it)->get_live(), (*rit)->get_opd1());
-			//	if((*it)->secondOp((*rit)->get_op().get_name()))
-			//		(*it)->put_in_set((*it)->get_live(), (*rit)->get_opd2());
 				bb_icode_list.erase( next(rit).base() );
 				changed = true;
 			}
@@ -293,68 +262,13 @@ basicBlocks * cfg::get_labelToBlock(string label)
 
 void cfg::printCFG()
 {
-	vector<basicBlocks *> visited;
-	visited.push_back(head);
 	set<Ics_Opd *>::iterator it;
-	for (int i=0; i < visited.size(); i++)
+	for (auto listit = allBlocks.begin(); listit != allBlocks.end(); ++listit)
 	{
-		cout<<endl;
-		cout<< visited[i] << "Block Number" << i << "\tLeft:" << visited[i]->get_leftBlock() << "\tRight" << visited[i]->get_rightBlock() <<endl;
-		cout<< "--------------Icode List Statements-------------\n";
-		for(auto it = visited[i]->get_list().begin(); it != visited[i]->get_list().end(); it++)
+		for(auto it = (*listit)->get_list().begin(); it != (*listit)->get_list().end(); it++)
 		{
 			(*it)->print_icode(std::cout);
 		}
-		cout<< "Kill Set:";
-		for (it = visited[i]->get_kill().begin(); it != visited[i]->get_kill().end(); it++)
-		{
-			string com = typeid(*(*it)).name();
-			if (com == "17Register_Addr_Opd")
-				cout<< "  " <<(*it)->get_reg()->get_name();
-			else
-				cout<< "  " <<(*it)->get_sym_entry()->get_variable_name();
-		}
-		cout<< "\nGen Set:";
-		for (it = visited[i]->get_gen().begin(); it != visited[i]->get_gen().end(); ++it)
-		{
-			string com = typeid(*(*it)).name();
-			if (com == "17Register_Addr_Opd")
-				cout<< "  " << (*it)->get_reg()->get_name();
-			else
-				cout<< "  " <<(*it)->get_sym_entry()->get_variable_name();
-		}
-		cout<<"\nOut Set:";
-		for (it = visited[i]->get_out().begin(); it != visited[i]->get_out().end(); ++it)
-		{
-			string com = typeid(*(*it)).name();
-			if (com == "17Register_Addr_Opd")
-				cout<< "  " << (*it)->get_reg()->get_name();
-			else
-				cout<< "  " <<(*it)->get_sym_entry()->get_variable_name();
-		}
-		cout<<"\nIn Set:";
-		for (it = visited[i]->get_in().begin(); it != visited[i]->get_in().end(); ++it)
-		{
-			string com = typeid(*(*it)).name();
-			if (com == "17Register_Addr_Opd")
-				cout<< "  " << (*it)->get_reg()->get_name();
-			else
-				cout<< "  " <<(*it)->get_sym_entry()->get_variable_name();
-		}
-		cout<<"\nLive Set:";
-		for (it = visited[i]->get_live().begin(); it != visited[i]->get_live().end(); ++it)
-		{
-			string com = typeid(*(*it)).name();
-			if (com == "17Register_Addr_Opd")
-				cout<< "  " << (*it)->get_reg()->get_name();
-			else
-				cout<< "  " <<(*it)->get_sym_entry()->get_variable_name();
-		}
-		cout<<"\n\n";
-		if (visited[i]->get_leftBlock() != NULL && find(visited.begin(), visited.end(), visited[i]->get_leftBlock()) == visited.end())
-			visited.push_back(visited[i]->get_leftBlock());
-		if (visited[i]->get_rightBlock() != NULL && find(visited.begin(), visited.end(), visited[i]->get_rightBlock()) == visited.end())
-			visited.push_back(visited[i]->get_rightBlock());
 	}
 }
 
@@ -432,9 +346,7 @@ void cfg::removeDeadCode(){
 	initLive();
 	while(changed){
 		changed = false;
-		//printCFG();
 		for (list<basicBlocks *>::iterator it = allBlocks.begin(); it != allBlocks.end(); ++it){
-			
 			if((*it)->blockKillCode())
 			{	
 				changed = true;
@@ -446,6 +358,5 @@ void cfg::removeDeadCode(){
 			allInOut();
 			initLive();
 		}
-
 	}
 }

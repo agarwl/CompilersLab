@@ -718,24 +718,21 @@ cfg & Sequence_Ast::buildCFG()
 			basicBlocks * assignBlock;
 			if(tempCFG.get_labelToBlock((*it)->get_label()) == NULL){
 				assignBlock = new basicBlocks();
-				tempCFG.add_block(assignBlock);
 				tempCFG.add_labelToBlock(assignBlock, (*it)->get_label());
 			}
 			else{
 				assignBlock = tempCFG.get_labelToBlock((*it)->get_label());
 			}
+			tempCFG.add_block(assignBlock);
 			current->set_leftBlock(assignBlock);
+			current->createGenKill();
+			current->icode_push_back((*it));
 			current = assignBlock;
 		}
 		else if (((*it)->get_op()).get_name() == "beq" || ((*it)->get_op()).get_name() == "bne")
 		{
 			if((*it)->get_opd1() != NULL){
 				current->icode_push_back((*it));
-				if(!current->presentInKill((*it)->get_opd1()))
-					current->put_in_set(current->get_gen(), (*it)->get_opd1());
-
-				if(!current->presentInKill((*it)->get_opd2()))	
-						current->put_in_set(current->get_gen(), (*it)->get_opd2());
 
 				basicBlocks * temp = new basicBlocks();
 				tempCFG.add_block(temp);
@@ -744,7 +741,6 @@ cfg & Sequence_Ast::buildCFG()
 
 				if(tempCFG.get_labelToBlock((*it)->get_label()) == NULL){
 					assignBlock = new basicBlocks();
-					tempCFG.add_block(assignBlock);
 					tempCFG.add_labelToBlock(assignBlock, (*it)->get_label());
 				}
 
@@ -752,6 +748,7 @@ cfg & Sequence_Ast::buildCFG()
 					assignBlock = tempCFG.get_labelToBlock((*it)->get_label());
 
 				current->set_rightBlock(assignBlock);
+				current->createGenKill();
 				current = temp;
 			}
 			else{
@@ -759,7 +756,6 @@ cfg & Sequence_Ast::buildCFG()
 				basicBlocks * assignBlock;
 				if(tempCFG.get_labelToBlock((*it)->get_label()) == NULL){	
 					assignBlock = new basicBlocks();
-					tempCFG.add_block(assignBlock);
 					tempCFG.add_labelToBlock(assignBlock, (*it)->get_label());
 				}
 
@@ -768,43 +764,19 @@ cfg & Sequence_Ast::buildCFG()
 				current->set_leftBlock(assignBlock);
 				basicBlocks * temp = new basicBlocks();
 				tempCFG.add_block(temp);
+				current->createGenKill();
 				current = temp;
 			}
 		}
-		else{
+		else
 			current->icode_push_back((*it));
-			if ((*it)->get_op().get_name() == "load" || (*it)->get_op().get_name() == "iLoad" || (*it)->get_op().get_name() == "iLoad.d" || (*it)->get_op().get_name() == "load.d"){
-				current->put_in_set(current->get_kill(), (*it)->get_result());
-				if (!current->presentInKill((*it)->get_opd1()))
-					current->put_in_set(current->get_gen(), (*it)->get_opd1());
-
-			}
-			else if ((*it)->get_op().get_name() == "store" || (*it)->get_op().get_name() == "store.d"){
-				if (!current->presentInKill((*it)->get_opd1()))
-					current->put_in_set(current->get_gen(), (*it)->get_opd1());
-				current->put_in_set(current->get_kill(), (*it)->get_result());
-			}
-			else{
-				if(!current->presentInKill((*it)->get_opd1()))
-					current->put_in_set(current->get_gen(), (*it)->get_opd1());
-
-				if( (*it)->get_op().get_name() != "uminus" && (*it)->get_op().get_name() != "uminus.d")
-				{
-					if(!current->presentInKill((*it)->get_opd2()))	
-						current->put_in_set(current->get_gen(), (*it)->get_opd2());
-				}
-				current->put_in_set(current->get_kill(), (*it)->get_result());
-			}
-			
-		}
 	}
+	current->createGenKill();
 	tempCFG.initialiseIn();
 	tempCFG.allInOut();
 	tempCFG.removeDeadCode();
-	//tempCFG.printCFG();
+	tempCFG.printCFG();
 	cfg * returningCFG = new cfg();
 	returningCFG->set_head(tempCFG.get_head());
 	return *returningCFG;
 }
-
-	// New lines in icode posing a problem

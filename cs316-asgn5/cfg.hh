@@ -37,7 +37,6 @@ public:
 	basicBlocks * get_leftBlock();
 	basicBlocks * get_rightBlock();
 	bool secondOp(string op);
-	bool presentInKill(Ics_Opd * new_reg);
 	bool presentInSet(set<Ics_Opd *> temp, Ics_Opd * opd1);
 	bool compareTwoIcsOpd(Ics_Opd * opd1, Ics_Opd * opd2);
 	void createGenKill();
@@ -58,7 +57,6 @@ public:
 	basicBlocks * get_labelToBlock(string label);
 	void add_labelToBlock(basicBlocks * block, string label);	
 	void printCFG();
-	void allOut();
 	bool calcIn(basicBlocks * block);
 	void initialiseIn();
 	void initLive();
