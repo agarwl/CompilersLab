@@ -7,7 +7,6 @@ using namespace std;
 #include"common-classes.hh"
 #include"error-display.hh"
 #include"user-options.hh"
-// #include"local-environment.hh"
 #include"symbol-table.hh"
 #include"ast.hh"
 #include"procedure.hh"
@@ -705,7 +704,7 @@ void Sequence_Ast::print(ostream & file_buffer)
 }
 
 
-cfg & Sequence_Ast::buildCFG()
+void Sequence_Ast::buildCFG(ostream & file_buffer)
 {
 	cfg tempCFG;
 	basicBlocks * current = new basicBlocks();
@@ -731,10 +730,9 @@ cfg & Sequence_Ast::buildCFG()
 		}
 		else if (((*it)->get_op()).get_name() == "beq" || ((*it)->get_op()).get_name() == "bne")
 		{
+			basicBlocks * temp = new basicBlocks();
 			if((*it)->get_opd1() != NULL){
 				current->icode_push_back((*it));
-
-				basicBlocks * temp = new basicBlocks();
 				tempCFG.add_block(temp);
 				basicBlocks * assignBlock;
 				current->set_leftBlock(temp);
@@ -748,25 +746,25 @@ cfg & Sequence_Ast::buildCFG()
 					assignBlock = tempCFG.get_labelToBlock((*it)->get_label());
 
 				current->set_rightBlock(assignBlock);
-				current->createGenKill();
-				current = temp;
+				// current->createGenKill();
+				// current = temp;
 			}
 			else{
 				current->icode_push_back((*it));
 				basicBlocks * assignBlock;
-				if(tempCFG.get_labelToBlock((*it)->get_label()) == NULL){	
+				if(tempCFG.get_labelToBlock((*it)->get_label()) == NULL){
 					assignBlock = new basicBlocks();
 					tempCFG.add_labelToBlock(assignBlock, (*it)->get_label());
 				}
-
-				else
+				else{
 					assignBlock = tempCFG.get_labelToBlock((*it)->get_label());
+				}
 				current->set_leftBlock(assignBlock);
-				basicBlocks * temp = new basicBlocks();
+				// basicBlocks * temp = new basicBlocks();
 				tempCFG.add_block(temp);
-				current->createGenKill();
-				current = temp;
 			}
+			current->createGenKill();
+			current = temp;
 		}
 		else
 			current->icode_push_back((*it));
@@ -775,8 +773,9 @@ cfg & Sequence_Ast::buildCFG()
 	tempCFG.initialiseIn();
 	tempCFG.allInOut();
 	tempCFG.removeDeadCode();
-	tempCFG.printCFG();
-	cfg * returningCFG = new cfg();
-	returningCFG->set_head(tempCFG.get_head());
-	return *returningCFG;
+	tempCFG.printCFG(file_buffer);
+	tempCFG.set_icode_list(sa_icode_list);
+	// cfg * returningCFG = new cfg();
+	// returningCFG->set_head(tempCFG.get_head());
+	// return *returningCFG;
 }

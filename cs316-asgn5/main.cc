@@ -18,7 +18,7 @@ using namespace std;
 
 #include "dirent.h"
 
-int main(int argc, char * argv[]) 
+int main(int argc, char * argv[])
 {
 	string input_file_name = command_options.process_user_command_options(argc, argv);
 
@@ -36,7 +36,7 @@ int main(int argc, char * argv[])
 		#ifdef COMPILE
 			program_object.print_sym();
 		#else
-			CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH, 
+			CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH,
 			"CFGLP is currently in interpretation mode. Select another option or compile CFGLP in compilation mode", -1);
 		#endif
 		}
@@ -49,12 +49,20 @@ int main(int argc, char * argv[])
 		#ifdef COMPILE
 			program_object.compile();
 
-			program_object.get_procedure()->get_sequence_ast()->buildCFG();
+			if(command_options.is_demo_mode_selected()){
+				program_object.get_procedure()->get_sequence_ast()->buildCFG(cout);
+			}
+			else{
+				std::ofstream dce_buffer;
+				dce_buffer.open (command_options.get_file_name() + ".dce", std::ofstream::out | std::ofstream::trunc);
+				program_object.get_procedure()->get_sequence_ast()->buildCFG(dce_buffer);
+				dce_buffer.close();
+			}
 
 			if (command_options.is_show_symtab_selected())
 				program_object.print_sym();
 		#else
-			CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH, 
+			CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH,
 			"CFGLP is currently in interpretation mode. Select another option or compile CFGLP in compilation mode", -1);
 		#endif
 		}

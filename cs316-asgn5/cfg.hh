@@ -9,7 +9,6 @@ using namespace std;
 #include"common-classes.hh"
 #include"error-display.hh"
 #include"user-options.hh"
-// #include"local-environment.hh"
 #include"symbol-table.hh"
 #include"ast.hh"
 #include"program.hh"
@@ -53,13 +52,14 @@ public:
 	~cfg();
 	void set_head(basicBlocks * block);
 	void add_block(basicBlocks * block);
-	basicBlocks * get_head();	
+	basicBlocks * get_head();
 	basicBlocks * get_labelToBlock(string label);
-	void add_labelToBlock(basicBlocks * block, string label);	
-	void printCFG();
+	void add_labelToBlock(basicBlocks * block, string label);
+	void printCFG(ostream & file_buffer);
 	bool calcIn(basicBlocks * block);
 	void initialiseIn();
 	void initLive();
 	void allInOut();
 	void removeDeadCode();
+	void set_icode_list(list<Icode_Stmt *> & sa_icode_list);
 };

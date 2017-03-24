@@ -266,7 +266,7 @@ class UMinus_Ast: public Arithmetic_Expr_Ast
 public:
 	UMinus_Ast(Ast * l, Ast * r, int line);
 	~UMinus_Ast();
-	
+
 	void print(ostream & file_buffer);
 
 	Code_For_Ast & compile();
@@ -283,7 +283,7 @@ public:
 	Code_For_Ast & compile();
 	void print_assembly(ostream & file_buffer);
 	void print_icode(ostream & file_buffer);
-	cfg & buildCFG();
+	void buildCFG(ostream & file_buffer);
 };
 
 #endif

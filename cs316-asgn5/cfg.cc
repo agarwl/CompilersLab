@@ -12,13 +12,15 @@ using namespace std;
 #include"common-classes.hh"
 #include"error-display.hh"
 #include"user-options.hh"
-// #include"local-environment.hh"
 #include"symbol-table.hh"
 #include"ast.hh"
 #include"procedure.hh"
 #include"program.hh"
 #include"icode.hh"
 #include"reg-alloc.hh"
+
+const string MEM_ADDR_OPD_NAME = typeid(Mem_Addr_Opd).name();
+const string REG_ADDR_OPD_NAME = typeid(Register_Addr_Opd).name();
 
 basicBlocks::basicBlocks()
 {
@@ -37,23 +39,23 @@ bool basicBlocks::put_in_set(set<Ics_Opd *> & temp, Ics_Opd * new_reg)
 {
 	set<Ics_Opd *>::iterator it;
 	string com = typeid(*new_reg).name();
-	if (com == "12Mem_Addr_Opd")
+	if (com == MEM_ADDR_OPD_NAME)
 	{
 		for (it = temp.begin(); it != temp.end(); it++)
 		{
 			string comanother = typeid(*(*it)).name();
-			if (comanother != "12Mem_Addr_Opd")
+			if (comanother != MEM_ADDR_OPD_NAME)
 				continue;
 			if ((*it)->get_sym_entry()->get_variable_name() == new_reg->get_sym_entry()->get_variable_name())
 				return false;
 		}
 	}
-	else if (com == "17Register_Addr_Opd")
+	else if (com == REG_ADDR_OPD_NAME)
 	{
 		for (it = temp.begin(); it != temp.end(); it++)
 		{
 			string comanother = typeid(*(*it)).name();
-			if (comanother !=  "17Register_Addr_Opd")
+			if (comanother !=  REG_ADDR_OPD_NAME)
 				continue;
 			if ((*it)->get_reg()->get_name() == new_reg->get_reg()->get_name())
 				return false;
@@ -129,11 +131,11 @@ bool basicBlocks::compareTwoIcsOpd(Ics_Opd * opd1, Ics_Opd * opd2)
 	if (a != b)
 		return false;
 	else{
-		if (a == "12Mem_Addr_Opd"){
+		if (a == MEM_ADDR_OPD_NAME){
 			if (opd1->get_sym_entry()->get_variable_name() == opd2->get_sym_entry()->get_variable_name())
 				return true;
 		}
-		else if(a == "17Register_Addr_Opd"){
+		else if(a == REG_ADDR_OPD_NAME){
 			if (opd1->get_reg()->get_name() == opd2->get_reg()->get_name())
 				return true;
 		}
@@ -149,11 +151,11 @@ bool basicBlocks::presentInSet(set<Ics_Opd *> temp, Ics_Opd * opd1){
 		if (a != b)
 			continue;
 		else{
-			if (a == "12Mem_Addr_Opd"){
+			if (a == MEM_ADDR_OPD_NAME){
 			if (opd1->get_sym_entry()->get_variable_name() == (*it)->get_sym_entry()->get_variable_name())
 				return true;
 		}
-		else if(a == "17Register_Addr_Opd"){
+		else if(a == REG_ADDR_OPD_NAME){
 			if (opd1->get_reg()->get_name() == (*it)->get_reg()->get_name())
 				return true;
 		}
@@ -173,7 +175,7 @@ void basicBlocks::createGenKill()
 				if(!presentInSet(kill, (*it)->get_opd1()))
 					put_in_set(gen, (*it)->get_opd1());
 
-				if(!presentInSet(kill, (*it)->get_opd2()))	
+				if(!presentInSet(kill, (*it)->get_opd2()))
 					put_in_set(gen, (*it)->get_opd2());
 			}
 		}
@@ -184,10 +186,10 @@ void basicBlocks::createGenKill()
 			if(!presentInSet(kill, (*it)->get_opd1()))
 				put_in_set(gen, (*it)->get_opd1());
 			if(secondOp((*it)->get_op().get_name())){
-				if(!presentInSet(kill, (*it)->get_opd2()))	
+				if(!presentInSet(kill, (*it)->get_opd2()))
 					put_in_set(gen, (*it)->get_opd2());
 			}
-			
+
 		}
 	}
 }
@@ -210,7 +212,9 @@ bool basicBlocks::blockKillCode()
 		else{
 			if (!presentInSet(live, (*rit)->get_result()))
 			{
-				bb_icode_list.erase( next(rit).base() );
+				// bb_icode_list.erase( next(rit).base() );
+				++rit;
+				rit = list<Icode_Stmt* >::reverse_iterator(bb_icode_list.erase(rit.base()));
 				changed = true;
 			}
 			else{
@@ -255,20 +259,29 @@ basicBlocks * cfg::get_labelToBlock(string label)
 	map<string, basicBlocks*>::iterator it;
 	it = labelToBlock.find(label);
 	if(it != labelToBlock.end())
-		return it->second;	
+		return it->second;
 	else
 		return NULL;
 }
 
-void cfg::printCFG()
+void cfg::printCFG(ostream & file_buffer)
 {
 	set<Ics_Opd *>::iterator it;
 	for (auto listit = allBlocks.begin(); listit != allBlocks.end(); ++listit)
 	{
 		for(auto it = (*listit)->get_list().begin(); it != (*listit)->get_list().end(); it++)
 		{
-			(*it)->print_icode(std::cout);
+			(*it)->print_icode(file_buffer);
 		}
+	}
+}
+
+void cfg::set_icode_list(list<Icode_Stmt *> & sa_icode_list)
+{
+	sa_icode_list.clear();
+	for (auto listit = allBlocks.begin(); listit != allBlocks.end(); ++listit)
+	{
+		sa_icode_list.insert(sa_icode_list.end(), (*listit)->get_list().begin(), (*listit)->get_list().end());
 	}
 }
 
@@ -348,7 +361,7 @@ void cfg::removeDeadCode(){
 		changed = false;
 		for (list<basicBlocks *>::iterator it = allBlocks.begin(); it != allBlocks.end(); ++it){
 			if((*it)->blockKillCode())
-			{	
+			{
 				changed = true;
 				(*it)->createGenKill();
 			}
