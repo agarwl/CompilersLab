@@ -121,13 +121,13 @@ Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
 	Move_IC_Stmt * store_stmt = new Move_IC_Stmt(stmt_operator, variable, variable_name);
 
 	CHECK_INVARIANT((store_stmt != NULL), "Store statement cannot be null in Name_Ast");
-	if (command_options.is_do_lra_selected() == false)
-		variable_symbol_entry->free_register(store_register);
-	else
-	{
-		variable_symbol_entry->update_register(store_register);
-		store_register->reset_use_for_expr_result();
-	}
+	// if (command_options.is_do_lra_selected() == false)
+	// 	variable_symbol_entry->free_register(store_register);
+	// else
+	// {
+	variable_symbol_entry->update_register(store_register);
+	store_register->reset_use_for_expr_result();
+	// }
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 	ic_list.push_back(store_stmt);

@@ -60,7 +60,7 @@
 %type <ast> expression_term
 %type <relational_ast> relational_expression
 %type <ast> bool_expression
-%type <condition_ast> conditional_expression
+// %type <condition_ast> conditional_expression
 %type <ast> other_statement
 %type <ast> statement
 %type <iteration_ast> do_while_statement

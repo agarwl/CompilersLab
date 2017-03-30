@@ -1,9 +1,9 @@
-OBJ_GEN = scanner.o parser.o ast.o ast-compile.o icode.o
+OBJ_GEN = scanner.o parser.o ast.o ast-compile.o icode.o program.o procedure.o program-compile.o procedure-compile.o
 OBJ_CORE = main.o
-OBJ = $(OBJ_GEN) $(OBJ_CORE) 
+OBJ = $(OBJ_GEN) $(OBJ_CORE)
 
 
-HEADERS_CORE = error-display.hh user-options.hh ast.hh symbol-table.hh program.hh procedure.hh common-classes.hh icode.hh 
+HEADERS_CORE = error-display.hh user-options.hh ast.hh symbol-table.hh program.hh procedure.hh common-classes.hh icode.hh
 HEADERS_GEN = parser.h parser.ih parserbase.h scanner.h scanner.ih scannerbase.h
 
 HEADERS = $(HEADERS_CORE) $(HEADERS_GEN)
@@ -18,7 +18,7 @@ CFLAGS = -g
 
 #change -lreference to -lreference14 for ubuntu14.04 in the target below
 
-$(TGT): $(OBJ) 
+$(TGT): $(OBJ)
 	$(CPP) --std=c++0x -L. -Wl,-rpath=. $(option) $(OBJ) -o $(TGT) -lreference
 
 %.o: %.cc $(HEADERS)
@@ -34,7 +34,5 @@ parser.cc: parser.yy parser.ih parser.h
 
 
 clean :
-	rm -rf test_files test_files_output
 	rm -f *.o scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output
-	rm -f sclp
-	rm -f cscope.out tags a.out
+	rm -f sclp gmon.out

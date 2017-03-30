@@ -16,4 +16,3 @@ class Code_For_Ast;
 class Register_Descriptor;
 class Instruction_Descriptor;
 class Machine_Descriptor;
-class Lra_Outcome;

@@ -33,6 +33,7 @@ public:
 	bool variable_proc_name_check(string symbol);
 	bool variable_in_symbol_list_check(string variable);
 	void global_list_in_proc_check();
+	bool variable_in_proc_map_check(string symbol);
 
 	// compile
 	void compile();

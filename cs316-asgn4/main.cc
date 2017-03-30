@@ -22,9 +22,9 @@ int main(int argc, char * argv[])
 {
 	string input_file_name = command_options.process_user_command_options(argc, argv);
 
-	Parser cfglp_parser(input_file_name);
+	Parser sclp_parser(input_file_name);
 
-	CHECK_INPUT((!cfglp_parser.parse()), "Cannot parse the input program", NO_FILE_LINE);
+	CHECK_INPUT((!sclp_parser.parse()), "Cannot parse the input program", NO_FILE_LINE);
 
 	if (command_options.not_only_parse)
 	{
@@ -37,14 +37,11 @@ int main(int argc, char * argv[])
 			program_object.print_sym();
 		#else
 			CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH, 
-			"CFGLP is currently in interpretation mode. Select another option or compile CFGLP in compilation mode", -1);
+			"SCLP is currently in interpretation mode. Select another option or compile SCLP in compilation mode", -1);
 		#endif
 		}
 
-		// if ((error_status() == false) && (command_options.is_do_eval_selected()))
-		// 	program_object.evaluate();
-
-		if ((error_status() == false) && (command_options.is_do_eval_selected() == false))
+		if (error_status() == false)
 		{
 		#ifdef COMPILE
 			program_object.compile();
@@ -53,7 +50,7 @@ int main(int argc, char * argv[])
 				program_object.print_sym();
 		#else
 			CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH, 
-			"CFGLP is currently in interpretation mode. Select another option or compile CFGLP in compilation mode", -1);
+			"SCLP is currently in interpretation mode. Select another option or compile SCLP in compilation mode", -1);
 		#endif
 		}
 

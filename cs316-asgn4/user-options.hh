@@ -22,11 +22,9 @@ class User_Options
 
 	bool show_tokens_selected;
 	bool show_ast_selected;
-	bool do_eval_selected;
 	bool demo_mode_selected;
 	bool show_symtab_selected;
 	bool show_ic_selected;
-	bool do_lra_selected;
 	bool do_compile_selected;
 
 	ostream * tokens_buffer;
@@ -51,11 +49,9 @@ public:
 
 	bool is_show_tokens_selected();
 	bool is_show_ast_selected();
-	bool is_do_eval_selected();
 	bool is_demo_mode_selected();
 	bool is_show_symtab_selected();
 	bool is_show_ic_selected();
-	bool is_do_lra_selected();
 	bool is_do_compile_selected();
 
 	string process_user_command_options(int argc, char * argv[]);

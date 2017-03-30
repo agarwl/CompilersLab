@@ -1,8 +1,8 @@
 #ifndef SYMBOL_TABLE_HH
 #define SYMBOL_TABLE_HH
 
-#include<string>
-#include<list>
+#include <string>
+#include <list>
 
 using namespace std;
 
@@ -14,12 +14,14 @@ typedef enum
 	void_data_type,
 	int_data_type,
 	double_data_type,
+	string_data_type
 } Data_Type;
 
 typedef enum
 {
 	global,
-	local
+	local,
+	formal
 } Table_Scope;
 
 typedef enum
@@ -39,6 +41,15 @@ typedef enum
 	boolean_and
 } Boolean_Op;
 
+// Compile
+typedef enum
+{
+	fp_ref,
+	sp_ref
+} Offset_With_Ref_To;
+
+//////////////////////////////////////////////////////////////
+
 class Symbol_Table
 {
 	list<Symbol_Table_Entry *> variable_table;
@@ -53,6 +64,7 @@ public:
 	~Symbol_Table();
 
 	bool is_empty();
+	void operator==(Symbol_Table & list);
 
 	Table_Scope get_table_scope();
 	void set_table_scope(Table_Scope list_scope);
@@ -62,10 +74,14 @@ public:
 	void push_symbol(Symbol_Table_Entry * variable);
 
 	bool variable_in_symbol_list_check(string variable);
-	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
-	void global_list_in_proc_check();
+	bool variable_in_formal_list_check(string variable);
 
-	// void create(Local_Environment & local_global_variables_table);
+	string get_variable_in_formal_list(int position);
+	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
+	void global_list_in_proc_map_check();
+
+	list<Symbol_Table_Entry *> & get_table();
+
 
 	// compile
 private:
@@ -77,6 +93,7 @@ public:
 
 	void assign_offsets();
 	int get_size();
+	void set_size(int n);
 
 	void print_assembly(ostream & file_buffer);
 };
@@ -93,11 +110,14 @@ class Symbol_Table_Entry
 	int start_offset;
 	int end_offset;
 	Register_Descriptor * register_description;
+	Offset_With_Ref_To ref_off;
 
 public:
 	Symbol_Table_Entry();
-	Symbol_Table_Entry(string & name, Data_Type new_data_type, int line);
+	Symbol_Table_Entry(string & name, Data_Type new_data_type, int line, Offset_With_Ref_To ro = fp_ref);
 	~Symbol_Table_Entry();
+
+	Offset_With_Ref_To get_ref_offset();
 
 	int get_lineno();
 
