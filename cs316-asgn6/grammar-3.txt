@@ -10,13 +10,56 @@ declaration_list:
 	procedure_declaration variable_declaration_list
 ;
 
-procedure_declaration:
-	VOID NAME '(' ')' ';'
+T:
+	INTEGER
+|
+	FLOAT
 ;
 
+return_type:
+	T
+|
+	VOID
+;
+
+optional_argument_list:
+	T NAME
+|
+	T NAME ',' optional_argument_list
+;
+
+// procedure_declaration:
+// 	VOID NAME '(' ')' ';'
+// ;
+
+procedure_declaration:
+	return_type NAME '(' optional_argument_list ')' ';'
+;
+
+argument_list:
+	T NAME
+|
+	T NAME ',' argument_list
+;
+
+optional_argument_list:
+	/*empty*/
+|
+	argument_list
+;
+
+// procedure_definition:
+// 	NAME '(' ')'
+// 	'{' optional_variable_declaration_list statement_list '}'
+// ;
+
 procedure_definition:
-	NAME '(' ')'
+	NAME '(' optional_argument_list ')'
 	'{' optional_variable_declaration_list statement_list '}'
+;
+
+print_func:
+	PRINT '(' STRING ')' ';'
 ;
 
 optional_variable_declaration_list:

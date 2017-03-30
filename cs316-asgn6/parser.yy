@@ -27,7 +27,7 @@
 %token <integer_value> INTEGER_NUMBER
 %token <string_value> NAME
 %token INTEGER
-%token ASSIGN VOID
+%token ASSIGN VOID RETURN PRINT STRING
 %token <double_value> DOUBLE_NUMBER
 %token FLOAT
 %token DO WHILE IF FOR

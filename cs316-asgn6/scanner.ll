@@ -42,12 +42,22 @@ do                          {
 while                       {
                               store_token_name("WHILE");
                               return Parser::WHILE;
-                            }   
+                            }
 
 for                         {
                               store_token_name("FOR");
                               return Parser::FOR;
-                            }                     
+                            }
+
+return                      {
+                              store_token_name("RETURN");
+                              return Parser::RETURN;
+                            }
+
+print                       {
+                              store_token_name("PRINT");
+                              return Parser::PRINT;
+                            }
 
 =                           {
                               store_token_name("ASSIGN_OP");
@@ -129,6 +139,14 @@ for                         {
                                     val->string_value = new string(matched());
                                     return Parser::NAME;
                                  }
+
+\"([^"])*\"                     {
+                                    store_token_name("STRING");
+                                    ParserBase::STYPE__ *val = getSval();
+                                    string str = matched();
+                                    val->string_value = new string(str.begin()+1, str.end()-1);
+                                    return Parser::STRING;
+                                }
 
 
 \n          |
