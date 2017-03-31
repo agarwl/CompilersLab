@@ -1,13 +1,25 @@
 program:
-	declaration_list procedure_definition
+	declaration_list procedure_definition_list
 ;
 
 declaration_list:
+	procedure_declaration_list
+|
+	variable_declaration_list procedure_declaration_list
+|
+	procedure_declaration_list variable_declaration_list
+;
+
+procedure_declaration_list:
 	procedure_declaration
 |
-	variable_declaration_list procedure_declaration
+	procedure_declaration procedure_declaration_list
+;
+
+procedure_definition_list:
+	procedure_definition
 |
-	procedure_declaration variable_declaration_list
+	procedure_definition procedure_definition_list
 ;
 
 T:
