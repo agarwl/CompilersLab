@@ -5,8 +5,8 @@
 #include "reg-alloc.hh"
 #include "symbol-table.hh"
 #include "ast.hh"
-#include "procedure.hh"
 #include "program.hh"
+#include "procedure.hh"
 
 Procedure::Procedure(Data_Type proc_return_type, string proc_name, int line)
 {
@@ -47,8 +47,12 @@ Data_Type Procedure::get_return_type()
 };
 Symbol_Table_Entry & Procedure::get_symbol_table_entry(string variable_name)
 {
-	return local_symbol_table.get_symbol_table_entry(variable_name);
+	if(variable_in_symbol_list_check(variable_name))
+		return local_symbol_table.get_symbol_table_entry(variable_name);
+	else if(variable_in_formal_list_check(variable_name))
+		return formal_symbol_table.get_symbol_table_entry(variable_name);
 };
+
 
 void Procedure:: print(ostream & file_buffer)
 {

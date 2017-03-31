@@ -50,10 +50,10 @@ void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer)
 {
 	Table_Scope symbol_scope = symbol_entry->get_symbol_scope();
 
-	CHECK_INVARIANT(((symbol_scope == local) || (symbol_scope == global)),
+	CHECK_INVARIANT(((symbol_scope == local) || (symbol_scope == global) ||(symbol_scope == formal)),
 			"Wrong scope value");
 
-	if (symbol_scope == local)
+	if (symbol_scope == local || symbol_scope == formal)
 	{
 		int offset = symbol_entry->get_start_offset();
 		file_buffer << offset << "($fp)";

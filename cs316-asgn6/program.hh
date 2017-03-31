@@ -26,6 +26,7 @@ public:
 
 	void set_procedure(Procedure * proc, int line);
 	void add_procedure(Procedure * proc, int line);
+	bool procedure_in_proc_map(Procedure * proc);
 	void set_global_table(Symbol_Table & new_global_table);
 
 	Symbol_Table_Entry & get_symbol_table_entry(string variable);
@@ -34,9 +35,11 @@ public:
 	void print();
 
 	bool variable_proc_name_check(string symbol);
+	bool variable_in_proc_map_check(string symbol);
 	bool variable_in_symbol_list_check(string variable);
 	void global_list_in_proc_check();
-	bool variable_in_proc_map_check(string symbol);
+	bool procedure_in_proc_map(string & proc_name);
+	Procedure* get_procedure(string proc_name);
 
 	// compile
 	void compile();

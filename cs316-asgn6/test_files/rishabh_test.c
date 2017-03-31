@@ -1,14 +1,19 @@
 
-void main(int a, int b);
-// void main(int a);
-float f(int a);
-int z;
+// void main(int a, int b);
+void main(int a);
+// float f(int a);
+// int z;
 main(int a)
 {
-	// int a;
-	// a = 1;
-	z = 2;
-	f(1);
+	int b,c;
+	b = 1;
+	c = 1;
+	a = b;
+	// f(1);
 	return;
 }
 
+// f(int a)
+// {
+// 	return 1.0;
+// }

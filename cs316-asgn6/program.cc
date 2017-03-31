@@ -40,7 +40,6 @@ void Program::print(){};
 
 bool Program::variable_proc_name_check(string symbol)
 {
-	// cout << procedure->get_proc_name() << endl;
 	if(procedure == NULL)
 		return false;
 	return symbol.compare(procedure->get_proc_name()) == 0;
@@ -67,19 +66,34 @@ bool Program::variable_in_proc_map_check(string symbol)
 
 void Program::add_procedure(Procedure * procedure, int line)
 {
-	string proc_name = procedure->get_proc_name();
-	CHECK_INPUT(!(proc_map.count(proc_name)), "Overloading of the procedure is not allowed", line);
-	proc_map[proc_name] =  procedure;
+	if(procedure != NULL){
+		string proc_name = procedure->get_proc_name();
+		CHECK_INPUT_AND_ABORT(!(proc_map.count(proc_name)), "Overloading of the procedure is not allowed", line);
+		proc_map[proc_name] =  procedure;
+	}
 }
 
+bool Program::procedure_in_proc_map(string & proc_name)
+{
+	return proc_map.count(proc_name);
+};
+
+Procedure* Program::get_procedure(string proc_name)
+{
+	if(procedure_in_proc_map(proc_name))
+		return proc_map[proc_name];
+	return NULL;
+}
 // compile
 void Program::compile()
 {
-	procedure->compile();
+	Procedure * main_procedure = get_procedure("main");
+	main_procedure->compile();
 	print_assembly();
 };
 void Program::print_assembly()
 {
+	Procedure * main_procedure = get_procedure("main");
 	global_symbol_table.print_assembly(command_options.get_output_buffer());
-	procedure->print_assembly(command_options.get_output_buffer());
+	main_procedure->print_assembly(command_options.get_output_buffer());
 };
