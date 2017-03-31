@@ -8,7 +8,7 @@ main()
 	return;
 }
 
-fn(int a, int b)	// No function prototype for function 'fn'
+fn(int a, int b)	
 {
 	a = a + b;
 	return;

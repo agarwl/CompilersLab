@@ -1,7 +1,7 @@
 #ifndef Scanner_H_INCLUDED_
 #define Scanner_H_INCLUDED_
 
-/////////////////// Header files of cfglp ///////////////////////////////
+/////////////////// Header files of sclp ///////////////////////////////
 
 #include <cstdlib>
 #include <iostream>
@@ -81,7 +81,7 @@ inline int Scanner::lex()
 
 inline void Scanner::preCode() 
 {
-////////////////////////// Command options for cfglp ////////////////////////
+////////////////////////// Command options for sclp ////////////////////////
 #ifndef TOKENS
 #define TOKENS
 

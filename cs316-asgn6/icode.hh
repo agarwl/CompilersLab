@@ -18,60 +18,63 @@
 	possibly two operands and a result.
 */
 
-typedef enum
+typedef enum 
 {			/* a: assembly format; r: result; o1: opd1; o2: opd2; op: operator */
 	a_op,		/* Only the operator, no operand */
 	a_op_o1,	/* Only one operand, no result, eg. goto L */
-	a_op_r,		/* Only the result. Operand implicit? */
+	a_op_r,		/* Only the result. Operand implicit? */ 
 	a_op_r_o1,	/* r <- o1 */
 	a_op_o1_r,	/* r <- o1 */
 	a_op_r_r_o1,	/* r <- r op o1 */
-	a_op_r_o1_o2,	/* r <- o1 op o2 */
+	a_op_r_o1_o2,	/* r <- o1 op o2 */ 
 	a_op_o1_o2_r,	/* r <- o1 op o2 */
 	a_op_o1_o2_st,	/*for conditional branch*/
 	a_op_st,	/* label instr */
-	a_nsy		/* not specified yet */
+	a_nsy,		/* not specified yet */
+	a_o1_op_o2,
+	a_op_o1_o2
 } Assembly_Format;
 
-typedef enum
+typedef enum 
 {			/* i: intermediate format; r: result; o1: opd1; o2: opd2; op: operator */
 	i_op,		/* Only the operator, no operand */
 	i_op_o1,	/* Only one operand, no result, eg. goto L */
-	i_r_op,		/* Only the result. Operand implicit? */
-	i_op_o1_r,
-	i_op_r_o1,
+	i_r_op,		/* Only the result. Operand implicit? */ 
+	i_op_o1_r,    
+	i_op_r_o1,    
 	i_r_op_o1,	/* r <- o1 */
 	i_r_r_op_o1,	/* r <- r op o1 */
 	i_r_o1_op_o2,	/* r <- o1 op o2 */
 	i_op_o1_o2_st,	/* for conditional branch */
 	i_op_st,	/* label instr */
-	i_nsy		/* not specified yet */
+	i_nsy,		/* not specified yet */
+	i_o1_op_o2
 } Icode_Format;
 
-typedef enum
-{
-	load,
+typedef enum 
+{ 
+	load, 
 	imm_load,
 	and_t,
 	or_t,
 	not_t,
-	store,
+	store, 
 	mfc1,
 	mtc1,
 	mov,
-	add,
+	add, 
 	sub,
-	mult,
-	divd,
+	mult, 
+	divd, 
 	uminus,
-	load_d,
-	imm_load_d,
-	store_d,
+	load_d, 
+	imm_load_d, 
+	store_d, 
 	mov_d,
-	add_d,
-	sub_d,
-	mult_d,
-	div_d,
+	add_d, 
+	sub_d, 
+	mult_d, 
+	div_d, 
 	uminus_d,
 	slt,
 	sle,
@@ -88,7 +91,17 @@ typedef enum
 	j,
 	label,
 	ret_inst,
-	nop
+	nop,
+	la,
+	imm_add,
+	move_d,
+	jal,
+	syscall,
+	seq_d,
+	slt_d,
+	sle_d,
+	bc1t,
+	bc1f
 } Tgt_Op;
 
 ///////////////////////// Instruction Descriptor ///////////////////////////////////

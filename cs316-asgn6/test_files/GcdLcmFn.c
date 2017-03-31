@@ -1,8 +1,7 @@
-
 int gcd(int x, int y);
 int main();
  
-int main() {
+main() {
   int x, y, hcf, lcm;
   x = 14;
   y = 36; 
@@ -13,7 +12,7 @@ int main() {
   return 0;
 }
  
-int gcd(int x, int y) {
+gcd(int x, int y) {
   if (x == 0) {
     return y;
   }

@@ -109,6 +109,12 @@ public:
 	void initialize_instruction_table();
 	void initialize_register_table();
 
+	Machine_Description()
+	{
+		initialize_register_table();
+		initialize_instruction_table();
+	}
+
 	void validate_init_local_register_mapping_before_fn_call();
 	void validate_init_local_register_mapping();
 	void clear_local_register_mappings();

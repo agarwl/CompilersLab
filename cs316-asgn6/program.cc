@@ -8,6 +8,9 @@
 #include "procedure.hh"
 #include "program.hh"
 
+#include <iostream>
+using namespace std;
+
 
 	// Symbol_Table global_symbol_table;
 	// Procedure * procedure;
@@ -21,7 +24,8 @@ void Program::delete_all(){};
 
 void Program::set_procedure(Procedure * proc, int line)
 {
-	// procedure = 
+	procedure = proc;
+	// procedure = new Procedure(proc->get_return_type(), proc->get_proc_name(), line);
 };
 void Program::set_global_table(Symbol_Table & new_global_table)
 {
@@ -38,18 +42,31 @@ void Program::print(){};
 
 bool Program::variable_proc_name_check(string symbol)
 {
+	// cout << procedure->get_proc_name() << endl;
+	if(procedure == NULL)
+		return false;
+	return symbol.compare(procedure->get_proc_name()) == 0;
 
 };
 bool Program::variable_in_symbol_list_check(string variable)
 {
-	// return  
+	return global_symbol_table.variable_in_symbol_list_check(variable);
 };
 void Program::global_list_in_proc_check()
 {
 	global_symbol_table.global_list_in_proc_map_check();
 };
-bool Program::variable_in_proc_map_check(string symbol){};
+bool Program::variable_in_proc_map_check(string symbol)
+{
+	return false;
+};
 
 // compile
-void Program::compile(){};
-void Program::print_assembly(){};
+void Program::compile()
+{
+	procedure->compile();
+};
+void Program::print_assembly()
+{
+	procedure->print_assembly(command_options.get_output_buffer());
+};

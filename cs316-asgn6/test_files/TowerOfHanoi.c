@@ -8,8 +8,10 @@ main()
  int n,k;
  n = 5; k = n-1;
  TOH(k,10,20,30);
+ return;
 }
-void TOH(int n,int x,int  y,int z)
+
+TOH(int n,int x,int  y,int z)
 {
  int k;
  if(n>0)
@@ -20,4 +22,5 @@ void TOH(int n,int x,int  y,int z)
   to_tower = y;
   TOH(k,z,y,x);
  }
+ return ;
 }

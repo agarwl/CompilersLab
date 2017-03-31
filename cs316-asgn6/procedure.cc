@@ -18,7 +18,7 @@ Procedure::Procedure(Data_Type proc_return_type, string proc_name, int line)
 };
 Procedure::~Procedure()
 {
-	delete sequence_ast;
+	// delete sequence_ast;
 };
 
 string Procedure::get_proc_name()
@@ -51,9 +51,15 @@ bool Procedure::variable_in_symbol_list_check(string variable)
 };
 
 // compile
-// void Procedure:: compile(){};
-// void Procedure:: print_icode(ostream & file_buffer){};
-// void Procedure:: print_assembly(ostream & file_buffer){};
+void Procedure:: compile()
+{
+	sequence_ast->compile();
+};
+void Procedure:: print_icode(ostream & file_buffer){};
+void Procedure:: print_assembly(ostream & file_buffer)
+{
+	sequence_ast->print_assembly(file_buffer);
+};
 
 // void Procedure:: print_prologue(ostream & file_buffer){};
 // void Procedure:: print_epilogue(ostream & file_buffer){};

@@ -1,4 +1,3 @@
-
 void nonrecurfn(int n);
 void recurfn(int number);
 int recurfactorial(int n);
@@ -6,7 +5,6 @@ int nonrecurfactorial(int n);
 void main(); 
 
 main()
-
 {
   int number;
   int fact;
@@ -66,6 +64,5 @@ nonrecurfn(int n)
   {
    f = nonrecurfactorial(n);
   }
- 
   return ;
 }
