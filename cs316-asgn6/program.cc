@@ -8,14 +8,6 @@
 #include "procedure.hh"
 #include "program.hh"
 
-#include <iostream>
-using namespace std;
-
-
-	// Symbol_Table global_symbol_table;
-	// Procedure * procedure;
-
-
 Program program_object;
 
 Program::Program(){};
@@ -25,19 +17,25 @@ void Program::delete_all(){};
 void Program::set_procedure(Procedure * proc, int line)
 {
 	procedure = proc;
-	// procedure = new Procedure(proc->get_return_type(), proc->get_proc_name(), line);
 };
 void Program::set_global_table(Symbol_Table & new_global_table)
 {
 	global_symbol_table = new_global_table;
+	global_symbol_table.set_table_scope(global);
 };
 
 Symbol_Table_Entry & Program::get_symbol_table_entry(string variable)
 {
-	return procedure->get_symbol_table_entry(variable);
+	if(procedure != NULL && procedure->variable_in_symbol_list_check(variable))
+		return procedure->get_symbol_table_entry(variable);
+	else if(variable_in_symbol_list_check(variable))
+		return global_symbol_table.get_symbol_table_entry(variable);
 };
 
-void Program::print_sym(){};
+void Program::print_sym()
+{
+	procedure->print_sym(command_options.get_symtab_buffer());
+};
 void Program::print(){};
 
 bool Program::variable_proc_name_check(string symbol)
@@ -58,15 +56,30 @@ void Program::global_list_in_proc_check()
 };
 bool Program::variable_in_proc_map_check(string symbol)
 {
+	for(auto it =  proc_map.begin(); it != proc_map.end(); it++)
+	{
+		if(symbol == it->first)
+			return true;
+	}
+
 	return false;
 };
+
+void Program::add_procedure(Procedure * procedure, int line)
+{
+	string proc_name = procedure->get_proc_name();
+	CHECK_INPUT(!(proc_map.count(proc_name)), "Overloading of the procedure is not allowed", line);
+	proc_map[proc_name] =  procedure;
+}
 
 // compile
 void Program::compile()
 {
 	procedure->compile();
+	print_assembly();
 };
 void Program::print_assembly()
 {
+	global_symbol_table.print_assembly(command_options.get_output_buffer());
 	procedure->print_assembly(command_options.get_output_buffer());
 };

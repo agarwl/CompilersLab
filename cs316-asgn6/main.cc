@@ -18,7 +18,7 @@ using namespace std;
 
 #include "dirent.h"
 
-int main(int argc, char * argv[]) 
+int main(int argc, char * argv[])
 {
 	string input_file_name = command_options.process_user_command_options(argc, argv);
 
@@ -36,7 +36,7 @@ int main(int argc, char * argv[])
 		#ifdef COMPILE
 			program_object.print_sym();
 		#else
-			CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH, 
+			CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH,
 			"SCLP is currently in interpretation mode. Select another option or compile SCLP in compilation mode", -1);
 		#endif
 		}
@@ -49,7 +49,7 @@ int main(int argc, char * argv[])
 			if (command_options.is_show_symtab_selected())
 				program_object.print_sym();
 		#else
-			CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH, 
+			CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH,
 			"SCLP is currently in interpretation mode. Select another option or compile SCLP in compilation mode", -1);
 		#endif
 		}

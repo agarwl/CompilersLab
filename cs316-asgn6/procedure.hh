@@ -18,6 +18,7 @@ class Procedure
 	Data_Type return_type;
 	string name;
 	Symbol_Table local_symbol_table;
+	Symbol_Table formal_symbol_table;
 	Sequence_Ast * sequence_ast;
 
 	int lineno;
@@ -29,6 +30,7 @@ public:
 	string get_proc_name();
   	void set_sequence_ast(Sequence_Ast & sa);
 	void set_local_list(Symbol_Table & new_list);
+	void set_formal_list(Symbol_Table & formal_list);
 	Data_Type get_return_type();
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 
@@ -36,6 +38,7 @@ public:
 	void print_sym(ostream & file_buffer);
 
 	bool variable_in_symbol_list_check(string variable);
+	bool variable_in_formal_list_check(string variable);
 
 	// compile
 	void compile();

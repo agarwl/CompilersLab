@@ -34,7 +34,7 @@ return_type:
 	VOID
 ;
 
-optional_argument_list:
+argument_list:
 	T NAME
 |
 	T NAME ',' optional_argument_list
