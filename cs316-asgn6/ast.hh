@@ -264,7 +264,7 @@ class UMinus_Ast: public Arithmetic_Expr_Ast
 public:
 	UMinus_Ast(Ast * l, Ast * r, int line);
 	~UMinus_Ast();
-	
+
 	void print(ostream & file_buffer);
 
 	Code_For_Ast & compile();
@@ -283,4 +283,25 @@ public:
 	void print_icode(ostream & file_buffer);
 };
 
+class Call_Ast: public Ast
+{
+	Procedure * procedure;
+	// Symbol_Table formal_symbol_table;
+	list<Ast* > argument_list;
+	Register_Descriptor * result_reg;
+	list<Icode_Stmt*> sa_icode_list;
+public:
+	Call_Ast(string fn_name, int line);
+	~Call_Ast();
+	bool check_actual_formal_param(Symbol_Table & symbol_table);
+	Data_Type get_data_type();
+	void print(ostream & file_buffer);
+	Code_For_Ast & compile();
+	void set_actual_param_list(list<Ast*> arguments);
+	void set_register(Register_Descriptor* reg);
+	void print_assembly(ostream & file_buffer);
+	void print_icode(ostream & file_buffer);
+};
+
 #endif
+

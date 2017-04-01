@@ -13,10 +13,12 @@
 	list<Symbol_Table_Entry* > * symbol_entry_list;
 	Procedure * procedure;
 	Data_Type data_type;
+	list<Ast*> * ast_list;
 	// list<Procedure*> * proc_list;
 
 	//ADD CODE HERE
 	Sequence_Ast * sequence_ast;
+	Call_Ast * call_ast;
 	Iteration_Statement_Ast * iteration_ast;
 	Conditional_Operator_Ast * condition_ast;
 	Relational_Expr_Ast * relational_ast;
@@ -74,6 +76,8 @@
 %type <iteration_ast> do_while_statement
 %type <iteration_ast> while_matched_statement
 %type <sequence_ast> for_matched_statement
+%type <call_ast> function_call_statement
+%type <ast_list> function_argument_list
 
 %start program
 
@@ -180,8 +184,8 @@ procedure_declaration:
 
 		string proc_name = *$2;
 		Procedure * procedure = new Procedure(void_data_type, proc_name, get_line_number());
-		if(proc_name == "main")
-			current_procedure = procedure;
+		// if(proc_name == "main")
+		// 	current_procedure = procedure;
 
 		CHECK_INPUT ((program_object.variable_in_symbol_list_check(proc_name) == false),
 			"Procedure name cannot be same as global variable", get_line_number());
@@ -229,8 +233,6 @@ procedure_definition:
 	{
 	if(NOT_ONLY_PARSE)
 	{
-
-
 		CHECK_INVARIANT((current_procedure != NULL), "Procedure prototype cannot be null");
 
 		Symbol_Table * local_table = $7;
@@ -248,7 +250,6 @@ procedure_definition:
 	if(NOT_ONLY_PARSE)
 	{
 		Sequence_Ast* seq = $9;
-
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 		CHECK_INVARIANT((seq != NULL), "statement list cannot be null");
 
@@ -574,6 +575,14 @@ return_statement:
 
 	}
 	}
+|
+	RETURN expression_term ';'
+	{
+	if(NOT_ONLY_PARSE)
+	{
+
+	}
+	}
 ;
 
 print_statement:
@@ -610,6 +619,15 @@ other_statement:
 	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($1 != NULL), "do_while_statement can't be null");
+		$$ = $1;
+	}
+	}
+|
+	function_call_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "function_call_statement can't be null");
 		$$ = $1;
 	}
 	}
@@ -755,20 +773,63 @@ assignment_statement:
 		$$ = assign_ast;
 	}
 	}
+|
+	variable ASSIGN function_call_statement ';'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+
+		Ast* lhs = $1;
+		Ast* rhs = $3;
+		Ast* assign_ast = new Assignment_Ast(lhs, rhs, get_line_number());
+		$$ = assign_ast;
+	}
+	}
 ;
 
-// conditional_expression:
-// 	bool_expression '?' operand ':' operand %prec TERNARY_COND
-// 	{
-// 	if(NOT_ONLY_PARSE)
-// 	{
-// 		CHECK_INVARIANT(($1 != NULL) && ($3 != NULL) && ($5 != NULL),
-// 			"cond/lhs/rhs cannot be null");
-// 		$$ = new Conditional_Operator_Ast($1, $3, $5, get_line_number());
-// 		$$->check_ast();
-// 	}
-// 	}
-// ;
+function_call_statement:
+	NAME '(' function_argument_list ')' ';'
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		string fn_name = *$1;
+		// CHECK_INVARIANT()
+		Call_Ast * function_call = new Call_Ast(fn_name, get_line_number());
+
+		list<Ast*> *argument_list = $3;
+		if(argument_list == NULL)
+			argument_list = new list<Ast*>();
+		function_call->set_actual_param_list(*argument_list);
+		$$ = function_call;
+	}
+	}
+;
+
+function_argument_list:
+	expression_term
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		list<Ast*> *argument_list = new list<Ast*>();
+		CHECK_INVARIANT(($1 != NULL), "Argument of a function can't be null");
+		argument_list->push_front($1);
+		$$ = argument_list;
+	}
+	}
+|
+	function_argument_list ',' expression_term
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL),"argument_list of a function can't be null");
+		CHECK_INVARIANT(($3 != NULL), "Argument of a function can't be null");
+		list<Ast*> * argument_list = $1;
+		argument_list->push_front($3);
+		$$ = argument_list;
+	}
+	}
+;
 
 relational_expression:
 	operand LT operand

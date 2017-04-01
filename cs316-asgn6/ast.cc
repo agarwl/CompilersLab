@@ -701,3 +701,40 @@ void Sequence_Ast::print(ostream & file_buffer)
 		(*it)->print(file_buffer);
 	}
 }
+
+Call_Ast::Call_Ast(string fn_name, int line)
+{
+	this->procedure = program_object.get_procedure(fn_name);
+	this->lineno = line;
+	this->node_data_type = procedure->get_return_type();
+}
+
+Call_Ast::~Call_Ast()
+{
+
+}
+
+bool Call_Ast::check_actual_formal_param(Symbol_Table & symbol_table)
+{
+	// procedure->check_formal_table(symbol_table);
+	return true;
+}
+
+Data_Type Call_Ast::get_data_type()
+{
+	return node_data_type;
+}
+// void Call_Ast::print(ostream & file_buffer)
+// {
+
+// };
+
+void Call_Ast::set_actual_param_list(list<Ast*> arguments)
+{
+	argument_list = arguments;
+}
+void Call_Ast::set_register(Register_Descriptor* reg)
+{
+	result_reg = reg;
+	return;
+}

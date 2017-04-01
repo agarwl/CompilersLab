@@ -33,13 +33,13 @@ public:
 	void set_formal_list(Symbol_Table & formal_list);
 	Data_Type get_return_type();
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
+	void check_formal_table(Symbol_Table & table);
 
 	void print(ostream & file_buffer);
 	void print_sym(ostream & file_buffer);
 
 	bool variable_in_symbol_list_check(string variable);
 	bool variable_in_formal_list_check(string variable);
-
 	// compile
 	void compile();
 	void print_icode(ostream & file_buffer);

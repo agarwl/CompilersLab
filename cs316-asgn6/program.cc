@@ -12,7 +12,12 @@ Program program_object;
 
 Program::Program(){};
 Program::~Program(){};
-void Program::delete_all(){};
+void Program::delete_all()
+{
+	for(auto it=proc_map.begin(); it != proc_map.end(); it++)
+		delete it->second;
+	command_options.remove_files();
+};
 
 void Program::set_procedure(Procedure * proc, int line)
 {
@@ -60,7 +65,6 @@ bool Program::variable_in_proc_map_check(string symbol)
 		if(symbol == it->first)
 			return true;
 	}
-
 	return false;
 };
 
@@ -84,16 +88,3 @@ Procedure* Program::get_procedure(string proc_name)
 		return proc_map[proc_name];
 	return NULL;
 }
-// compile
-void Program::compile()
-{
-	Procedure * main_procedure = get_procedure("main");
-	main_procedure->compile();
-	print_assembly();
-};
-void Program::print_assembly()
-{
-	Procedure * main_procedure = get_procedure("main");
-	global_symbol_table.print_assembly(command_options.get_output_buffer());
-	main_procedure->print_assembly(command_options.get_output_buffer());
-};

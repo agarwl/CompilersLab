@@ -803,6 +803,88 @@ void Sequence_Ast::print_icode(ostream & file_buffer)
 	}
 }
 
+
+Code_For_Ast & Call_Ast::compile()
+{
+
+	int sp_offset = 0;
+	string name = "sp";
+	for(auto it = argument_list.begin(); it != argument_list.end(); it++)
+	{
+
+		Data_Type node_data_type = (*it)->get_data_type();
+		Code_For_Ast & load_stmt = (*it)->compile();
+
+		Register_Descriptor * load_register = load_stmt.get_reg();
+		CHECK_INVARIANT(load_register, "Load register cannot be null in Call_Ast");
+		load_register->set_use_for_expr_result();
+
+		Register_Addr_Opd * variable = new Register_Addr_Opd(load_register);
+
+		Symbol_Table_Entry * symbol_entry = new Symbol_Table_Entry(name, void_data_type, 0, sp_ref);
+		symbol_entry->set_symbol_scope(local);
+		symbol_entry->set_data_type(node_data_type);
+		symbol_entry->set_start_offset(sp_offset);
+		Mem_Addr_Opd * variable_name = new Mem_Addr_Opd(*symbol_entry);
+		Tgt_Op stmt_operator;
+		if (node_data_type == int_data_type){
+			stmt_operator = store;
+		}
+		else{
+			stmt_operator = store_d;
+		}
+		Move_IC_Stmt * store_stmt = new Move_IC_Stmt(stmt_operator, variable, variable_name);
+		sp_offset -= 4;
+		CHECK_INVARIANT((store_stmt != NULL), "Store statement cannot be null");
+
+		CHECK_INVARIANT((load_register != NULL), "Load register cannot be null in Call_Ast");
+		load_register->reset_use_for_expr_result();
+
+		list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+		if (load_stmt.get_icode_list().empty() == false)
+			ic_list = load_stmt.get_icode_list();
+
+		ic_list.push_back(store_stmt);
+
+		if (ic_list.empty() == false)
+			sa_icode_list.splice(sa_icode_list.end(), ic_list);
+	}
+	Register_Addr_Opd * sp_reg = new Register_Addr_Opd(machine_desc_object.spim_register_table[sp]);
+	Const_Opd<int> * rhs_operand = new Const_Opd<int>(-sp_offset);
+	Compute_IC_Stmt * sub_stmt =  new Compute_IC_Stmt(sub, sp_reg , rhs_operand, sp_reg);
+	if(sub_stmt != NULL)
+		sa_icode_list.push_back(sub_stmt);
+	sa_icode_list.push_back(new Call_IC_stmt(procedure->get_proc_name()));
+	sa_icode_list.push_back(new Compute_IC_Stmt(add, sp_reg, rhs_operand , sp_reg));
+
+
+		Code_For_Ast * assign_stmt;
+		assign_stmt = new Code_For_Ast(sa_icode_list, result_reg);
+		return *assign_stmt;
+};
+
+void Call_Ast::print(ostream & file_buffer)
+{
+	return;
+}
+
+void Call_Ast::print_assembly(ostream & file_buffer)
+{
+	for (auto it=sa_icode_list.begin(); it != sa_icode_list.end(); ++it)
+	{
+		(*it)->print_assembly(file_buffer);
+	}
+}
+
+void Call_Ast::print_icode(ostream & file_buffer)
+{
+	for (auto it=sa_icode_list.begin(); it != sa_icode_list.end(); ++it)
+	{
+		(*it)->print_icode(file_buffer);
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 template class Number_Ast<double>;

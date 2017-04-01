@@ -8,17 +8,18 @@
 #include "program.hh"
 #include "procedure.hh"
 
+#define OFFSET_FOR_RA_AND_FP 8
+
 Procedure::Procedure(Data_Type proc_return_type, string proc_name, int line)
 {
 	return_type = proc_return_type;
 	name = proc_name;
 	lineno = line;
-	// sequence_ast = new Sequence_Ast(line);
 
 };
 Procedure::~Procedure()
 {
-	delete sequence_ast;
+	// delete sequence_ast;
 };
 
 string Procedure::get_proc_name()
@@ -33,12 +34,15 @@ void Procedure::set_local_list(Symbol_Table & new_list)
 {
 	local_symbol_table = new_list;
 	local_symbol_table.set_table_scope(local);
+	local_symbol_table.assign_offsets();
 };
 
 void Procedure::set_formal_list(Symbol_Table & formal_list)
 {
 	formal_symbol_table = formal_list;
 	formal_symbol_table.set_table_scope(formal);
+	formal_symbol_table.set_start_offset_of_first_symbol(OFFSET_FOR_RA_AND_FP);
+	formal_symbol_table.assign_offsets();
 }
 
 Data_Type Procedure::get_return_type()
@@ -73,10 +77,10 @@ bool Procedure::variable_in_formal_list_check(string variable)
 	return formal_symbol_table.variable_in_formal_list_check(variable);
 }
 
-// Symbol_Table & get_formal_table()
-// {
-// 	return formal_symbol_table;
-// }
+void check_formal_table(Symbol_Table & table)
+{
+	return;
+}
 
 // compile
 void Procedure:: compile()
@@ -86,10 +90,38 @@ void Procedure:: compile()
 void Procedure:: print_icode(ostream & file_buffer){};
 void Procedure:: print_assembly(ostream & file_buffer)
 {
-	// print_prologue(file_buffer);
-	local_symbol_table.print_assembly(file_buffer);
+	print_prologue(file_buffer);
+	// local_symbol_table.print_assembly(file_buffer);
+	// formal_symbol_table.print_assembly(file_buffer);
 	sequence_ast->print_assembly(file_buffer);
+	print_epilogue(file_buffer);
 };
 
-// void Procedure:: print_prologue(ostream & file_buffer){};
-// void Procedure:: print_epilogue(ostream & file_buffer){};
+void Procedure:: print_prologue(ostream & file_buffer)
+{
+	file_buffer << "\n\t" << ".text" << "\t\t" << "# The .text assembler directive indicates\n";
+	file_buffer << "\t" << ".globl " << name << "\t" << "# The following is the code (as oppose to data)\n";
+	file_buffer << name << ":\t\t" << "# .globl makes main know to the\n";
+	file_buffer << "\t\t"  << "# outside of the program.\n";
+	file_buffer << "\n# Prologue begins\n" ;
+	file_buffer << "\t" << "sw $ra, 0($sp)"	<< "\t\t" << "# Save the return address\n";
+	file_buffer << "\t" << "sw $fp, -4($sp)" << "\t\t" << "# Save the frame pointer\n";
+	file_buffer << "\t" << "sub $fp, $sp, 8"  << "\t\t" << "# Update the frame pointer\n";
+	file_buffer << "\t" << "\n";
+	file_buffer << "\t" << "sub $sp, $sp, 8" << "\t\t" << "# Make space for the locals\n";
+	file_buffer << "# Prologue ends\n\n";
+
+};
+
+void Procedure:: print_epilogue(ostream & file_buffer)
+{
+	string label = "epilogue_" + name;
+	file_buffer << "\t" << "j " << label << '\n';
+	file_buffer << "\n# Epilogue Begins\n";
+	file_buffer << label << ":\n";
+	file_buffer << "\t" << "add $sp, $sp, 16" << "\n";
+	file_buffer << "\t" << "lw $fp, -4($sp)" << "\n";
+	file_buffer << "\t" << "lw $ra, 0($sp)" << "\n";
+	file_buffer << "\t" << "jr" << "\t  " << "$31" << "\t\t" << "# Jump back to the called procedure" "\n";
+	file_buffer << "# Epilogue Ends\n\n";
+};

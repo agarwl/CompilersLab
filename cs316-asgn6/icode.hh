@@ -355,4 +355,15 @@ public:
 	Code_For_Ast & operator=(const Code_For_Ast & rhs);
 };
 
+class Call_IC_stmt: public Icode_Stmt
+{
+	string fn_name;
+public:
+	Call_IC_stmt (string name);
+	~Call_IC_stmt() {}
+
+	void print_assembly(ostream & file_buffer);
+	void print_icode(ostream & file_buffer);
+};
+
 #endif

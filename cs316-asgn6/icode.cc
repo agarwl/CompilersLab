@@ -56,7 +56,12 @@ void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer)
 	if (symbol_scope == local || symbol_scope == formal)
 	{
 		int offset = symbol_entry->get_start_offset();
-		file_buffer << offset << "($fp)";
+		if(symbol_entry->get_ref_offset() == fp_ref){
+			file_buffer << offset << "($fp)";
+		}
+		else{
+			file_buffer << offset << "($sp)";
+		}
 	}
 	else
 		file_buffer << symbol_entry->get_variable_name();
@@ -91,110 +96,7 @@ void Register_Addr_Opd::print_ics_opd(ostream & file_buffer)
 
 void Register_Addr_Opd::print_asm_opd(ostream & file_buffer)
 {
-	//TODO
-	string reg_name;
-	Spim_Register reg = register_description->get_register();
-	switch(reg)
-	{
-		case none:
-			reg_name = "none";break;/* dummy to indicate no register */
-		case zero:
-			reg_name = "zero";break;/* constant register */
-		case v0:
-			reg_name = "v0";break;/* expression result register */
-		case v1:
-			reg_name = "v1";break;/* function result register */
-		case a0:
-			reg_name = "a0";break;/* argument register */
-		case a1:
-			reg_name = "a1";break;
-		case a2:
-			reg_name = "a2";break;
-		case a3:
-			reg_name = "a3";break;
-		case t0:
-		    reg_name = "t0";break;  /* temporary caller-save registers */
-		case t1:
-			reg_name = "t1";break;
-		case t2:
-			reg_name = "t2";break;
-		case t3:
-		 	reg_name = "t3";break;
-		case t4:
-		 	reg_name = "t4";break;
-		case t5:
-		 	reg_name = "t5";break;
-		case t6:
-		 	reg_name = "t6";break;
-		case t7:
-		 	reg_name = "t7";break;
-		case t8:
-		 	reg_name = "t8";break;
-		case t9:
-		 	reg_name = "t9";break;
-		case s0:
-			reg_name = "s0";break;/* temporary callee-save registers */
-		case s1:
-			reg_name = "s1";break;
-		case s2:
-			reg_name = "s2";break;
-		case s3:
-			reg_name = "s3";break;
-		case s4:
-			reg_name = "s4";break;
-		case s5:
-			reg_name = "s5";break;
-		case s6:
-			reg_name = "s6";break;
-		case s7:
-			reg_name = "s7";break;
-		case mfc:
-			reg_name = "mfc";break;/* float register to int register */
-		case mtc:
-			reg_name = "mtc";break;/* int register to float register */
-		case f0:
-		 	reg_name = "f0";break;/* floating point registers */
-		case f2:
-			reg_name = "f2";break;
-		case f4:
-			reg_name = "f4";break;
-		case f6:
-			reg_name = "f6";break;
-		case f8:
-			reg_name = "f8";break;
-		case f10:
-			reg_name = "f10";break;
-		case f12:
-			reg_name = "f12";break;
-		case f14:
-			reg_name = "f14";break;
-		case f16:
-			reg_name = "f16";break;
-		case f18:
-			reg_name = "f18";break;
-		case f20:
-			reg_name = "f20";break;
-		case f22:
-			reg_name = "f22";break;
-		case f24:
-			reg_name = "f24";break;
-		case f26:
-			reg_name = "f26";break;
-		case f28:
-			reg_name = "f28";break;
-		case f30:
-			reg_name = "f30";break;
-		case gp:
-			reg_name = "gp";break;	/* global data pointer register */
-		case sp:
-			reg_name = "sp";break;	/* stack pointer register */
-		case fp:
-			reg_name = "fp";break;	/* frame pointer register */
-		case ra:
-			reg_name = "ra";break;	/* return address register */
-		default : break;
-	}
-	file_buffer << "$" << reg_name;
+	file_buffer << "$" << register_description->get_name();
 }
 
 /****************************** Class Const_Opd *****************************/
@@ -228,6 +130,23 @@ void Const_Opd<DATA_TYPE>::print_asm_opd(ostream & file_buffer)
 	//TODO
 	file_buffer << num;
 }
+
+
+Call_IC_stmt::Call_IC_stmt (string name)
+{
+	fn_name = name;
+}
+
+void Call_IC_stmt::print_icode(ostream & file_buffer)
+{
+	file_buffer << "\t" << "call " << fn_name << endl;
+
+}
+void Call_IC_stmt::print_assembly(ostream & file_buffer)
+{
+	file_buffer << "\t" <<  "jal " << fn_name << endl;
+}
+
 
 /****************************** Class Icode_Stmt *****************************/
 
