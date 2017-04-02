@@ -14,6 +14,7 @@ using namespace std;
 #include"program.hh"
 
 int Ast::labelCounter=0;
+int String_Ast::stringCounter = 0;
 
 Ast::Ast()
 {}
@@ -750,4 +751,45 @@ Return_Ast::Return_Ast(Ast * return_val, int line, Data_Type dt)
 Data_Type Return_Ast::get_data_type()
 {
 	return node_data_type;
+}
+
+// String_Ast
+String_Ast::String_Ast(string & symbol, string label,  int line)
+{
+	this->value = symbol;
+	this->lineno = line;
+	this->node_data_type = string_data_type;
+	this->label = label + to_string(stringCounter++);
+}
+
+Data_Type String_Ast::get_data_type()
+{
+	return node_data_type;
+}
+string String_Ast::get_value()
+{
+	return value;
+}
+void String_Ast::print(ostream & file_buffer)
+{
+	file_buffer << value << endl;
+	return;
+}
+void String_Ast::set_data_type(Data_Type dt)
+{
+	node_data_type = dt;
+}
+
+// Print_Ast
+Print_Ast::Print_Ast(Ast* ast_to_print)
+{
+	this->ast_to_print = ast_to_print;
+}
+Print_Ast::~Print_Ast()
+{
+	delete ast_to_print;
+}
+void Print_Ast::print_assembly(ostream & file_buffer)
+{
+
 }

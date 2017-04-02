@@ -933,6 +933,27 @@ void Return_Ast::print(ostream & file_buffer)
 	return;
 }
 
+Code_For_Ast & Print_Ast::compile()
+{
+	list<Icode_Stmt*> sa_icode_list;
+	Code_For_Ast * assign_stmt;
+	assign_stmt = new Code_For_Ast(sa_icode_list, NULL);
+	return *assign_stmt;
+}
+
+void Print_Ast::print(ostream & file_buffer)
+{
+
+}
+
+Code_For_Ast & String_Ast::compile()
+{
+	list<Icode_Stmt*> sa_icode_list;
+	Code_For_Ast * assign_stmt;
+	assign_stmt = new Code_For_Ast(sa_icode_list, NULL);
+	return *assign_stmt;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 template class Number_Ast<double>;

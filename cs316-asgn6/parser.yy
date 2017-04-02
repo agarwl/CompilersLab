@@ -24,6 +24,7 @@
 	Relational_Expr_Ast * relational_ast;
 	Ast * ast;
 	Return_Ast * return_ast;
+	Print_Ast * print_ast;
 	int integer_value;
 	std::string * string_value;
 	double double_value;
@@ -31,9 +32,10 @@
 
 //ADD TOKENS HERE
 %token <integer_value> INTEGER_NUMBER
+%token <string_value> STRING
 %token <string_value> NAME
 %token INTEGER
-%token ASSIGN VOID RETURN PRINT STRING
+%token ASSIGN VOID RETURN PRINT
 %token <double_value> DOUBLE_NUMBER
 %token FLOAT
 %token DO WHILE IF FOR
@@ -80,6 +82,7 @@
 %type <call_ast> function_call_statement
 %type <ast_list> function_argument_list
 %type <return_ast> return_statement
+%type <print_ast> print_statement
 
 %start program
 
@@ -595,7 +598,18 @@ print_statement:
 	{
 	if(NOT_ONLY_PARSE)
 	{
-
+		CHECK_INVARIANT(($3 != NULL),"String can't be null");
+		String_Ast* str_ast = new String_Ast(*$3, "string", get_line_number());
+		$$ = new Print_Ast(str_ast);
+	}
+	}
+|
+	PRINT '(' arith_expression ')' ';'
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($3 != NULL),"String can't be null");
+		$$ = new Print_Ast($3);
 	}
 	}
 ;
@@ -642,6 +656,15 @@ other_statement:
 	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($1 != NULL), "return_statement can't be null");
+		$$ = $1;
+	}
+	}
+|
+	print_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "print_statement can't be null");
 		$$ = $1;
 	}
 	}

@@ -300,7 +300,7 @@ public:
 	void set_actual_param_list(list<Ast*> arguments);
 	void set_register(Register_Descriptor* reg);
 	void print_assembly(ostream & file_buffer);
-	void print_icode(ostream & file_buffer);
+	void print_icode(ostream & file_abuffer);
 };
 
 class Return_Ast: public Ast
@@ -317,7 +317,29 @@ public:
 	void print_assembly(ostream & file_buffer);
 };
 
+class String_Ast: public Ast{
+ 	string value;
+ 	string label;
+ 	static int stringCounter;
+ public:
+ 	String_Ast(string & symbol, string label,  int line);
+ 	~String_Ast(){};
+	Data_Type get_data_type();
+	string get_value();
+	void print(ostream & file_buffer);
+	Code_For_Ast & compile();
+	void set_data_type(Data_Type dt);
+};
 
+class Print_Ast: public Ast{
+	Ast* ast_to_print;
+public:
+	Print_Ast(Ast* ast_to_print);
+	~Print_Ast();
+	void print(ostream & file_buffer);
+	void print_assembly(ostream & file_buffer);
+	Code_For_Ast & compile();
+};
 
 #endif
 
