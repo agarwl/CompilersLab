@@ -23,7 +23,7 @@
 	Conditional_Operator_Ast * condition_ast;
 	Relational_Expr_Ast * relational_ast;
 	Ast * ast;
-	pair<Ast*, int> * return_ast;
+	Return_Ast * return_ast;
 	int integer_value;
 	std::string * string_value;
 	double double_value;
@@ -255,10 +255,8 @@ procedure_definition:
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 		CHECK_INVARIANT((seq != NULL), "statement list cannot be null");
 
-		pair<Ast*, int> * return_stmt = $10;
-		Return_Ast* return_ast_stmt = new Return_Ast(return_stmt->first,return_stmt->second,
-			current_procedure->get_return_type());
-		seq->ast_push_back(return_ast_stmt);
+		Return_Ast * return_stmt = $10;
+		seq->ast_push_back(return_stmt);
 		current_procedure->set_sequence_ast(*seq);
 	}
 	}
@@ -578,7 +576,7 @@ return_statement:
 	{
 	if(NOT_ONLY_PARSE)
 	{
-		$$ = new pair<Ast*, int>(NULL, get_line_number());
+		$$ = new Return_Ast(NULL, get_line_number(), current_procedure->get_return_type());
 	}
 	}
 |
@@ -587,7 +585,7 @@ return_statement:
 	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($2 != NULL), "return argument can't be NULL")
-		$$ = new pair<Ast*, int>($2, get_line_number());
+		$$ = new Return_Ast($2, get_line_number(), current_procedure->get_return_type());
 	}
 	}
 ;
@@ -635,6 +633,15 @@ other_statement:
 	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($1 != NULL), "function_call_statement can't be null");
+		$$ = $1;
+	}
+	}
+|
+	return_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "return_statement can't be null");
 		$$ = $1;
 	}
 	}

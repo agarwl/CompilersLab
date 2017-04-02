@@ -10,7 +10,8 @@ main(int a)
 	c = 1;
 	a = b;
 	// f(1);
-	return;
+	if(2 == 3) return 1;
+	return ;
 }
 
 // f(int a)
