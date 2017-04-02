@@ -303,5 +303,21 @@ public:
 	void print_icode(ostream & file_buffer);
 };
 
+class Return_Ast: public Ast
+{
+	Ast* ret_val;
+	list<Icode_Stmt*> sa_icode_list;
+	Data_Type fn_return_type;
+public:
+	Return_Ast(Ast * return_val, int line, Data_Type dt);
+	~Return_Ast(){};
+	Data_Type get_data_type();
+	Code_For_Ast & compile();
+	void print(ostream & file_buffer);
+	void print_assembly(ostream & file_buffer);
+};
+
+
+
 #endif
 

@@ -724,10 +724,6 @@ Data_Type Call_Ast::get_data_type()
 {
 	return node_data_type;
 }
-// void Call_Ast::print(ostream & file_buffer)
-// {
-
-// };
 
 void Call_Ast::set_actual_param_list(list<Ast*> arguments)
 {
@@ -737,4 +733,21 @@ void Call_Ast::set_register(Register_Descriptor* reg)
 {
 	result_reg = reg;
 	return;
+}
+
+Return_Ast::Return_Ast(Ast * return_val, int line, Data_Type dt)
+{
+	lineno = line;
+	fn_return_type = dt;
+	if(return_val == NULL)
+		node_data_type = void_data_type;
+	else
+		node_data_type = return_val->get_data_type();
+	CHECK_INPUT_AND_ABORT(fn_return_type == node_data_type, "Two or more types of return values", lineno);
+	ret_val = return_val;
+}
+
+Data_Type Return_Ast::get_data_type()
+{
+	return node_data_type;
 }

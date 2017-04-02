@@ -70,7 +70,6 @@ typedef enum
 	load_d,
 	imm_load_d,
 	store_d,
-	mov_d,
 	add_d,
 	sub_d,
 	mult_d,

@@ -858,10 +858,9 @@ Code_For_Ast & Call_Ast::compile()
 	sa_icode_list.push_back(new Call_IC_stmt(procedure->get_proc_name()));
 	sa_icode_list.push_back(new Compute_IC_Stmt(add, sp_reg, rhs_operand , sp_reg));
 
-
-		Code_For_Ast * assign_stmt;
-		assign_stmt = new Code_For_Ast(sa_icode_list, result_reg);
-		return *assign_stmt;
+	Code_For_Ast * assign_stmt;
+	assign_stmt = new Code_For_Ast(sa_icode_list, result_reg);
+	return *assign_stmt;
 };
 
 void Call_Ast::print(ostream & file_buffer)
@@ -883,6 +882,55 @@ void Call_Ast::print_icode(ostream & file_buffer)
 	{
 		(*it)->print_icode(file_buffer);
 	}
+}
+
+Code_For_Ast & Return_Ast::compile()
+{
+	if(node_data_type != void_data_type){
+		Code_For_Ast & load_stmt = ret_val->compile();
+
+		Register_Descriptor * load_register = load_stmt.get_reg();
+		CHECK_INVARIANT(load_register, "Load register cannot be null in Call_Ast");
+		load_register->set_use_for_expr_result();
+
+		Register_Addr_Opd * variable = new Register_Addr_Opd(load_register);
+		Register_Addr_Opd * variable_name = new Register_Addr_Opd(machine_desc_object.spim_register_table[v1]);
+		Tgt_Op stmt_operator;
+		if (node_data_type == int_data_type){
+			stmt_operator = mov;
+		}
+		else{
+			stmt_operator = move_d;
+		}
+		Move_IC_Stmt * store_stmt = new Move_IC_Stmt(stmt_operator, variable, variable_name);
+		CHECK_INVARIANT((store_stmt != NULL), "Store statement cannot be null");
+
+		CHECK_INVARIANT((load_register != NULL), "Load register cannot be null in Call_Ast");
+		load_register->reset_use_for_expr_result();
+
+		if (load_stmt.get_icode_list().empty() == false)
+			sa_icode_list = load_stmt.get_icode_list();
+
+		sa_icode_list.push_back(store_stmt);
+	}
+
+	Code_For_Ast * assign_stmt;
+	assign_stmt = new Code_For_Ast(sa_icode_list, NULL);
+	return *assign_stmt;
+}
+
+
+void Return_Ast::print_assembly(ostream & file_buffer)
+{
+	for (auto it=sa_icode_list.begin(); it != sa_icode_list.end(); ++it)
+	{
+		(*it)->print_assembly(file_buffer);
+	}
+}
+
+void Return_Ast::print(ostream & file_buffer)
+{
+	return;
 }
 
 //////////////////////////////////////////////////////////////////////////////
