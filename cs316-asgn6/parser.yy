@@ -81,6 +81,7 @@
 %type <sequence_ast> for_matched_statement
 %type <call_ast> function_call_statement
 %type <ast_list> function_argument_list
+%type <ast_list> optional_function_argument_list
 %type <return_ast> return_statement
 %type <print_ast> print_statement
 
@@ -811,7 +812,7 @@ assignment_statement:
 	}
 	}
 |
-	variable ASSIGN function_call_statement ';'
+	variable ASSIGN function_call_statement
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -826,7 +827,7 @@ assignment_statement:
 ;
 
 function_call_statement:
-	NAME '(' function_argument_list ')' ';'
+	NAME '(' optional_function_argument_list ')' ';'
 	{
 	if(NOT_ONLY_PARSE)
 	{
@@ -864,6 +865,25 @@ function_argument_list:
 		list<Ast*> * argument_list = $1;
 		argument_list->push_front($3);
 		$$ = argument_list;
+	}
+	}
+;
+
+optional_function_argument_list:
+	/*empty*/
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		$$ = NULL;
+	}
+	}
+|
+	function_argument_list
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "function_argument_list cannot be null");
+		$$ = $1;
 	}
 	}
 ;

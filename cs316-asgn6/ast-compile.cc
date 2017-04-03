@@ -804,6 +804,18 @@ void Sequence_Ast::print_icode(ostream & file_buffer)
 }
 
 
+Call_Ast::Call_Ast(string fn_name, int line)
+{
+	this->procedure = program_object.get_procedure(fn_name);
+	this->lineno = line;
+	this->node_data_type = procedure->get_return_type();
+	if(node_data_type == int_data_type)
+		set_register(machine_desc_object.spim_register_table[v1]);
+	else if (node_data_type == double_data_type)
+		set_register(machine_desc_object.spim_register_table[f0]);
+
+}
+
 Code_For_Ast & Call_Ast::compile()
 {
 
@@ -886,7 +898,14 @@ void Call_Ast::print_icode(ostream & file_buffer)
 
 Code_For_Ast & Return_Ast::compile()
 {
+
+	Register_Descriptor * return_reg = NULL;
 	if(node_data_type != void_data_type){
+		if(node_data_type == int_data_type)
+			return_reg = machine_desc_object.spim_register_table[v1];
+		else if (node_data_type == double_data_type)
+			return_reg = machine_desc_object.spim_register_table[f0];
+
 		Code_For_Ast & load_stmt = ret_val->compile();
 
 		Register_Descriptor * load_register = load_stmt.get_reg();
@@ -894,7 +913,7 @@ Code_For_Ast & Return_Ast::compile()
 		load_register->set_use_for_expr_result();
 
 		Register_Addr_Opd * variable = new Register_Addr_Opd(load_register);
-		Register_Addr_Opd * variable_name = new Register_Addr_Opd(machine_desc_object.spim_register_table[v1]);
+		Register_Addr_Opd * variable_name = new Register_Addr_Opd(return_reg);
 		Tgt_Op stmt_operator;
 		if (node_data_type == int_data_type){
 			stmt_operator = mov;
@@ -915,7 +934,7 @@ Code_For_Ast & Return_Ast::compile()
 	}
 
 	Code_For_Ast * assign_stmt;
-	assign_stmt = new Code_For_Ast(sa_icode_list, NULL);
+	assign_stmt = new Code_For_Ast(sa_icode_list, return_reg);
 	return *assign_stmt;
 }
 

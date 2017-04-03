@@ -703,12 +703,6 @@ void Sequence_Ast::print(ostream & file_buffer)
 	}
 }
 
-Call_Ast::Call_Ast(string fn_name, int line)
-{
-	this->procedure = program_object.get_procedure(fn_name);
-	this->lineno = line;
-	this->node_data_type = procedure->get_return_type();
-}
 
 Call_Ast::~Call_Ast()
 {
@@ -733,7 +727,6 @@ void Call_Ast::set_actual_param_list(list<Ast*> arguments)
 void Call_Ast::set_register(Register_Descriptor* reg)
 {
 	result_reg = reg;
-	return;
 }
 
 Return_Ast::Return_Ast(Ast * return_val, int line, Data_Type dt)

@@ -28,7 +28,7 @@ void Program::print_assembly()
 	if (main_procedure == NULL)
 		return;
 	if(!global_symbol_table.is_empty()){
-		file_buffer << "\t" << ".data" << "\n";
+		file_buffer << "\n\t" << ".data" << "\n";
 		global_symbol_table.print_assembly(file_buffer);
 	}
 	for(auto it = proc_map.begin(); it != proc_map.end(); it++)
