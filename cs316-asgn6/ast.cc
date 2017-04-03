@@ -763,6 +763,11 @@ string String_Ast::get_value()
 {
 	return value;
 }
+
+string String_Ast::get_label()
+{
+	return label;
+}
 void String_Ast::print(ostream & file_buffer)
 {
 	file_buffer << value << endl;
@@ -782,7 +787,7 @@ Print_Ast::~Print_Ast()
 {
 	delete ast_to_print;
 }
-void Print_Ast::print_assembly(ostream & file_buffer)
-{
+// void Print_Ast::print_assembly(ostream & file_buffer)
+// {
 
-}
+// }

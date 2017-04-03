@@ -601,6 +601,7 @@ print_statement:
 	{
 		CHECK_INVARIANT(($3 != NULL),"String can't be null");
 		String_Ast* str_ast = new String_Ast(*$3, "string", get_line_number());
+		program_object.add_string(str_ast);
 		$$ = new Print_Ast(str_ast);
 	}
 	}
@@ -845,7 +846,7 @@ function_call_statement:
 ;
 
 function_argument_list:
-	expression_term
+	arith_expression
 	{
 	if(NOT_ONLY_PARSE)
 	{
@@ -856,7 +857,7 @@ function_argument_list:
 	}
 	}
 |
-	function_argument_list ',' expression_term
+	function_argument_list ',' arith_expression
 	{
 	if(NOT_ONLY_PARSE)
 	{

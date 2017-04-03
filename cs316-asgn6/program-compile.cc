@@ -27,9 +27,10 @@ void Program::print_assembly()
 	Procedure * main_procedure = get_procedure("main");
 	if (main_procedure == NULL)
 		return;
-	if(!global_symbol_table.is_empty()){
+	if(!global_symbol_table.is_empty() || !string_vars.empty()){
 		file_buffer << "\n\t" << ".data" << "\n";
 		global_symbol_table.print_assembly(file_buffer);
+		print_string_vars(file_buffer);
 	}
 	for(auto it = proc_map.begin(); it != proc_map.end(); it++)
 	{

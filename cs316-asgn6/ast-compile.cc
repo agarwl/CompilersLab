@@ -14,6 +14,11 @@ using namespace std;
 #include "procedure.hh"
 #include "program.hh"
 
+const string String_Ast_Type = typeid(String_Ast).name();
+const string Name_Ast_Type = typeid(Name_Ast).name();
+const string Number_Ast_Double_Type = typeid(Number_Ast<double>).name();
+const string Number_Ast_Int_Type = typeid(Number_Ast<int>).name();
+
 Code_For_Ast & Ast::create_store_stmt(Register_Descriptor * store_register)
 {
 	stringstream msg;
@@ -80,7 +85,7 @@ Code_For_Ast & Name_Ast::compile()
 
 	Register_Descriptor * result_register;
 	Tgt_Op stmt_operator;
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 
 	if(node_data_type == int_data_type){
 		stmt_operator = load;
@@ -112,6 +117,7 @@ Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
 	Mem_Addr_Opd * variable_name = new Mem_Addr_Opd(*variable_symbol_entry);
 
 	Tgt_Op stmt_operator;
+	// machine_desc_object.clear_local_register_mappings();
 	if (node_data_type == int_data_type){
 		stmt_operator = store;
 	}
@@ -121,13 +127,6 @@ Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
 	Move_IC_Stmt * store_stmt = new Move_IC_Stmt(stmt_operator, variable, variable_name);
 
 	CHECK_INVARIANT((store_stmt != NULL), "Store statement cannot be null in Name_Ast");
-	// if (command_options.is_do_lra_selected() == false)
-	// 	variable_symbol_entry->free_register(store_register);
-	// else
-	// {
-	variable_symbol_entry->update_register(store_register);
-	store_register->reset_use_for_expr_result();
-	// }
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 	ic_list.push_back(store_stmt);
@@ -147,7 +146,7 @@ Code_For_Ast & Number_Ast<DATA_TYPE>::compile()
 
 	Register_Descriptor * result_register;
 	Tgt_Op stmt_operator;
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 
 	if (node_data_type == int_data_type){
 		stmt_operator = imm_load;
@@ -193,12 +192,31 @@ Code_For_Ast & Relational_Expr_Ast::compile()
 	if (rhs_stmt.get_icode_list().empty() == false)
 		ic_list.splice(ic_list.end(), rhs_stmt.get_icode_list());
 
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 	Register_Descriptor * result_register = machine_desc_object.get_new_register<gp_data>();
 	Register_Addr_Opd * result = new Register_Addr_Opd(result_register);
 
 	Tgt_Op stmt_operator;
 
+	// Data_Type dt = lhs_condition->get_data_type();
+
+	// switch(dt)
+	// {
+	// 	case double_data_type:
+	// 		switch(rel_op)
+	// 		{
+	// 		case less_equalto:
+	// 			stmt_operator = sle_d;
+	// 			break;
+	// 		case less_than:
+	// 			stmt_operator = slt_d;
+	// 			break;
+	// 		case equalto:
+	// 			stmt_operator = seq_d;
+	// 			break;
+	// 		}
+	// 		break;
+	// 	case int_data_type:
 	switch(rel_op)
 	{
 	case less_equalto:
@@ -220,6 +238,9 @@ Code_For_Ast & Relational_Expr_Ast::compile()
 		stmt_operator = sne;
 		break;
 	}
+			// break;
+	// }
+
 
 	Register_Addr_Opd * lhs_operand = new Register_Addr_Opd(lhs_register);
 	Register_Addr_Opd * rhs_operand = new Register_Addr_Opd(rhs_register);
@@ -248,7 +269,7 @@ Code_For_Ast & Boolean_Expr_Ast::compile()
 	Register_Addr_Opd * lhs_operand;
 	Register_Descriptor * lhs_register;
 
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 	if(ast_num_child != unary_arity){
 		Code_For_Ast & lhs_stmt = lhs_op->compile();
 		lhs_register = lhs_stmt.get_reg();
@@ -450,7 +471,7 @@ Code_For_Ast & Plus_Ast::compile()
 
 	Register_Descriptor * result_register;
 	Tgt_Op stmt_operator;
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 
 	if (node_data_type == int_data_type){
 		stmt_operator = add;
@@ -503,7 +524,7 @@ Code_For_Ast & Minus_Ast::compile()
 
 	Register_Descriptor * result_register;
 	Tgt_Op stmt_operator;
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 
 	if (node_data_type == int_data_type){
 		stmt_operator = sub;
@@ -557,7 +578,7 @@ Code_For_Ast & Mult_Ast::compile()
 
 	Register_Descriptor * result_register;
 	Tgt_Op stmt_operator;
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 
 	if (node_data_type == int_data_type){
 		stmt_operator = mult;
@@ -629,7 +650,7 @@ Code_For_Ast & Conditional_Operator_Ast::compile()
 
 	Register_Descriptor * result_register;
 	Tgt_Op stmt_operator = or_t;
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 
 	if (node_data_type == int_data_type){
 		result_register = machine_desc_object.get_new_register<gp_data>();
@@ -698,7 +719,7 @@ Code_For_Ast & Divide_Ast::compile()
 
 	Register_Descriptor * result_register;
 	Tgt_Op stmt_operator;
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 
 	if (node_data_type == int_data_type){
 		stmt_operator = divd;
@@ -744,7 +765,7 @@ Code_For_Ast & UMinus_Ast::compile()
 
 	Register_Descriptor * result_register;
 	Tgt_Op stmt_operator;
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 
 	if (node_data_type == int_data_type){
 		stmt_operator = uminus;
@@ -813,7 +834,6 @@ Call_Ast::Call_Ast(string fn_name, int line)
 		set_register(machine_desc_object.spim_register_table[v1]);
 	else if (node_data_type == double_data_type)
 		set_register(machine_desc_object.spim_register_table[f0]);
-
 }
 
 Code_For_Ast & Call_Ast::compile()
@@ -821,6 +841,7 @@ Code_For_Ast & Call_Ast::compile()
 
 	int sp_offset = 0;
 	string name = "sp";
+	list<Icode_Stmt*> sa_icode_list;
 	for(auto it = argument_list.begin(); it != argument_list.end(); it++)
 	{
 
@@ -880,25 +901,9 @@ void Call_Ast::print(ostream & file_buffer)
 	return;
 }
 
-void Call_Ast::print_assembly(ostream & file_buffer)
-{
-	for (auto it=sa_icode_list.begin(); it != sa_icode_list.end(); ++it)
-	{
-		(*it)->print_assembly(file_buffer);
-	}
-}
-
-void Call_Ast::print_icode(ostream & file_buffer)
-{
-	for (auto it=sa_icode_list.begin(); it != sa_icode_list.end(); ++it)
-	{
-		(*it)->print_icode(file_buffer);
-	}
-}
-
 Code_For_Ast & Return_Ast::compile()
 {
-
+	list<Icode_Stmt*> sa_icode_list;
 	Register_Descriptor * return_reg = NULL;
 	if(node_data_type != void_data_type){
 		if(node_data_type == int_data_type)
@@ -938,15 +943,6 @@ Code_For_Ast & Return_Ast::compile()
 	return *assign_stmt;
 }
 
-
-void Return_Ast::print_assembly(ostream & file_buffer)
-{
-	for (auto it=sa_icode_list.begin(); it != sa_icode_list.end(); ++it)
-	{
-		(*it)->print_assembly(file_buffer);
-	}
-}
-
 void Return_Ast::print(ostream & file_buffer)
 {
 	return;
@@ -954,7 +950,55 @@ void Return_Ast::print(ostream & file_buffer)
 
 Code_For_Ast & Print_Ast::compile()
 {
-	list<Icode_Stmt*> sa_icode_list;
+	list <Icode_Stmt*> sa_icode_list;
+	Register_Addr_Opd * sp_reg = new Register_Addr_Opd(machine_desc_object.spim_register_table[sp]);
+	Const_Opd<int> * rhs_operand = new Const_Opd<int>(-4);
+	string name = "sp";
+	Symbol_Table_Entry * symbol_entry = new Symbol_Table_Entry(name, int_data_type, 0, sp_ref);
+	symbol_entry->set_symbol_scope(local);
+	Mem_Addr_Opd * stack_opd = new Mem_Addr_Opd(*symbol_entry);
+	Register_Addr_Opd* reg_v0 = new Register_Addr_Opd(machine_desc_object.spim_register_table[v0]);
+	Register_Addr_Opd* reg_a0 = new Register_Addr_Opd(machine_desc_object.spim_register_table[a0]);
+	Register_Addr_Opd* reg_f12 = new Register_Addr_Opd(machine_desc_object.spim_register_table[f12]);
+
+	Compute_IC_Stmt * sub_stmt =  new Compute_IC_Stmt(imm_add, sp_reg , rhs_operand, sp_reg);
+	sa_icode_list.push_back(sub_stmt);
+	sa_icode_list.push_back(new Move_IC_Stmt(store, reg_v0, stack_opd));
+	sa_icode_list.push_back(sub_stmt);
+	sa_icode_list.push_back(new Move_IC_Stmt(store, reg_a0, stack_opd));
+	sa_icode_list.push_back( new Compute_IC_Stmt(imm_add, sp_reg ,  new Const_Opd<int>(-8), sp_reg));
+	sa_icode_list.push_back(new Move_IC_Stmt(store_d, reg_f12,  stack_opd));
+
+	Code_For_Ast & load_stmt = ast_to_print->compile();
+	if (load_stmt.get_icode_list().empty() == false)
+		sa_icode_list.splice(sa_icode_list.end(), load_stmt.get_icode_list());
+	string type_name = typeid(*ast_to_print).name();
+	Const_Opd<int> * arg;
+	if (type_name == String_Ast_Type)
+	{
+		arg = new Const_Opd<int>(4);
+	}
+	else if((type_name == Name_Ast_Type && ast_to_print->get_data_type() == int_data_type )
+		|| (type_name == Number_Ast_Int_Type))
+	{
+		arg = new Const_Opd<int>(1);
+	}
+	else if((type_name == Name_Ast_Type && ast_to_print->get_data_type() == double_data_type)
+		|| (type_name == Number_Ast_Double_Type))
+	{
+		arg = new Const_Opd<int>(3);
+	}
+	sa_icode_list.push_back(new Move_IC_Stmt(imm_load, arg, reg_v0));
+	sa_icode_list.push_back(new Label_IC_Stmt(syscall, NULL, ""));
+
+
+	sa_icode_list.push_back(new Move_IC_Stmt(load_d,  stack_opd, reg_f12));
+	sa_icode_list.push_back(new Compute_IC_Stmt(imm_add, sp_reg ,  new Const_Opd<int>(8), sp_reg));
+	sa_icode_list.push_back(new Move_IC_Stmt(load, stack_opd, reg_a0));
+	Compute_IC_Stmt* add_stmt = new Compute_IC_Stmt(imm_add, sp_reg ,  new Const_Opd<int>(4), sp_reg);
+	sa_icode_list.push_back(add_stmt);
+	sa_icode_list.push_back(new Move_IC_Stmt(load, stack_opd, reg_v0));
+	sa_icode_list.push_back(add_stmt);
 	Code_For_Ast * assign_stmt;
 	assign_stmt = new Code_For_Ast(sa_icode_list, NULL);
 	return *assign_stmt;
@@ -967,9 +1011,13 @@ void Print_Ast::print(ostream & file_buffer)
 
 Code_For_Ast & String_Ast::compile()
 {
-	list<Icode_Stmt*> sa_icode_list;
-	Code_For_Ast * assign_stmt;
-	assign_stmt = new Code_For_Ast(sa_icode_list, NULL);
+	Register_Addr_Opd* reg_a0 = new Register_Addr_Opd(machine_desc_object.spim_register_table[a0]);
+	Move_IC_Stmt * load_stmt = new Move_IC_Stmt(la, new String_Addr_Opd(label), reg_a0);
+
+	list<Icode_Stmt *> ic_list;
+	ic_list.push_back(load_stmt);
+
+	Code_For_Ast * assign_stmt = new Code_For_Ast(ic_list, machine_desc_object.spim_register_table[a0]);
 	return *assign_stmt;
 }
 

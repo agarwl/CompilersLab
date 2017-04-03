@@ -286,10 +286,8 @@ public:
 class Call_Ast: public Ast
 {
 	Procedure * procedure;
-	// Symbol_Table formal_symbol_table;
 	list<Ast* > argument_list;
 	Register_Descriptor * result_reg;
-	list<Icode_Stmt*> sa_icode_list;
 public:
 	Call_Ast(string fn_name, int line);
 	~Call_Ast();
@@ -299,14 +297,11 @@ public:
 	Code_For_Ast & compile();
 	void set_actual_param_list(list<Ast*> arguments);
 	void set_register(Register_Descriptor* reg);
-	void print_assembly(ostream & file_buffer);
-	void print_icode(ostream & file_abuffer);
 };
 
 class Return_Ast: public Ast
 {
 	Ast* ret_val;
-	list<Icode_Stmt*> sa_icode_list;
 	Data_Type fn_return_type;
 public:
 	Return_Ast(Ast * return_val, int line, Data_Type dt);
@@ -314,7 +309,6 @@ public:
 	Data_Type get_data_type();
 	Code_For_Ast & compile();
 	void print(ostream & file_buffer);
-	void print_assembly(ostream & file_buffer);
 };
 
 class String_Ast: public Ast{
@@ -326,6 +320,7 @@ class String_Ast: public Ast{
  	~String_Ast(){};
 	Data_Type get_data_type();
 	string get_value();
+	string get_label();
 	void print(ostream & file_buffer);
 	Code_For_Ast & compile();
 	void set_data_type(Data_Type dt);
@@ -337,7 +332,6 @@ public:
 	Print_Ast(Ast* ast_to_print);
 	~Print_Ast();
 	void print(ostream & file_buffer);
-	void print_assembly(ostream & file_buffer);
 	Code_For_Ast & compile();
 };
 

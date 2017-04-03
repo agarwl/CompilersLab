@@ -1,23 +1,27 @@
 
 // void main(int a, int b);
-void main(int a);
-float f(int a);
+int main(int a);
+int f( int a);
 int z;
 
 // int z;
 main(int a)
 {
-	int b,c;
-	b = 1;
-	c = 1;
-	print("fuck");
-	a = b;
-	print("fgrgfgG");
+	// int b;
+	// c = 1;
+	// print("fuck");
+	// a = b;
+	// b = 2;
+	// float b;
+	int b;
+	// print(2);
+	b = f(1);
+	// print(b);.
 	// if(2 == 3) return 1;
-	return ;
+	return 0;
 }
 
 f(int a)
 {
-	return 1.0;
+	return 1;
 }

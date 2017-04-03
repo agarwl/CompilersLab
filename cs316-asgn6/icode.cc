@@ -131,6 +131,23 @@ void Const_Opd<DATA_TYPE>::print_asm_opd(ostream & file_buffer)
 	file_buffer << num;
 }
 
+String_Addr_Opd::String_Addr_Opd(string label)
+{
+	addr = label;
+}
+String_Addr_Opd & String_Addr_Opd::operator=(const String_Addr_Opd & rhs)
+{
+	*this = rhs;
+	return *this;
+}
+void String_Addr_Opd::print_ics_opd(ostream & file_buffer)
+{
+	file_buffer << addr;
+}
+void String_Addr_Opd::print_asm_opd(ostream & file_buffer)
+{
+	file_buffer << addr;
+}
 
 Call_IC_stmt::Call_IC_stmt (string name)
 {
@@ -374,6 +391,14 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 				file_buffer << "\n";
 				break;
 
+		// case a_op_o1_o2:
+		// 		file_buffer << "\t" << op_name << " ";
+		// 		opd1->print_asm_opd(file_buffer);
+		// 		file_buffer << ", ";
+		// 		opd2->print_asm_opd(file_buffer);
+		// 		file_buffer << "\n";
+		// 		break;
+
 		default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
 					"Intermediate code format not supported");
 				break;
@@ -513,16 +538,25 @@ void Label_IC_Stmt::print_icode(ostream & file_buffer)
 
 void Label_IC_Stmt::print_assembly(ostream & file_buffer)
 {
-	CHECK_INVARIANT (!offset.empty(), "offset cannot be NULL for a label IC Stmt");
 
 	string op_name = op_desc.get_mnemonic();
 	Assembly_Format assem_format = op_desc.get_assembly_format();
-
+	Tgt_Op op = op_desc.get_op();
+	
 	switch (assem_format)
 	{
 	case a_op_st:
-			file_buffer <<"\n" + offset + ":";
-			file_buffer << "\n";
+			switch(op)
+			{
+				case label:
+					CHECK_INVARIANT (!offset.empty(), "offset cannot be NULL for a label IC Stmt");
+					file_buffer <<"\n" + offset + ":";
+					file_buffer << "\n";
+					break;
+				case syscall:
+					file_buffer <<"\t" << op_name << "\n";
+					break;
+			}
 			break;
 
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,

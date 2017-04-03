@@ -18,6 +18,7 @@ class Program
 	Symbol_Table global_symbol_table;
 	Procedure * procedure;
 	map<string, Procedure*> proc_map;
+	list<String_Ast*> string_vars;
 
 public:
 	Program();
@@ -31,8 +32,11 @@ public:
 
 	Symbol_Table_Entry & get_symbol_table_entry(string variable);
 
+	void add_string(String_Ast * string_ast);
+
 	void print_sym();
 	void print();
+	void print_string_vars(ostream & file_buffer);
 
 	bool variable_proc_name_check(string symbol);
 	bool variable_in_proc_map_check(string symbol);

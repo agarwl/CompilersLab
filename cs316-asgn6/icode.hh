@@ -182,6 +182,19 @@ public:
 	Register_Addr_Opd & operator=(const Register_Addr_Opd & rhs);
 };
 
+class String_Addr_Opd : public Ics_Opd
+{
+	string addr;
+
+public:
+	String_Addr_Opd(string label);
+	~String_Addr_Opd(){};
+	String_Addr_Opd & operator=(const String_Addr_Opd & rhs);
+	void print_ics_opd(ostream & file_buffer);
+	void print_asm_opd(ostream & file_buffer);
+
+};
+
 template <class T>
 class Const_Opd: public Ics_Opd
 {

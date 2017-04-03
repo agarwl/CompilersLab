@@ -29,6 +29,20 @@ void Program::set_global_table(Symbol_Table & new_global_table)
 	global_symbol_table.set_table_scope(global);
 };
 
+void Program::add_string(String_Ast * string_ast)
+{
+	if(string_ast != NULL)
+		string_vars.push_back(string_ast);
+}
+
+void Program::print_string_vars(ostream & file_buffer)
+{
+	for(auto it = string_vars.begin(); it != string_vars.end(); it++)
+		file_buffer << (*it)->get_label() << ":\t" << ".asciiz" << "\t\t" <<
+			"\"" << (*it)->get_value() << "\"" << endl;
+}
+
+
 Symbol_Table_Entry & Program::get_symbol_table_entry(string variable)
 {
 	if(procedure != NULL && procedure->variable_in_symbol_list_check(variable))

@@ -7,7 +7,8 @@ main()
 {
  int n,k;
  n = 5; k = n-1;
- TOH(k,10,20,30);
+ if(n < k){}
+ // TOH(k,10,20,30);
  return;
 }
 
