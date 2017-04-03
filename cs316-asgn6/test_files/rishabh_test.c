@@ -14,8 +14,9 @@ main(int a)
 	// b = 2;
 	// float b;
 	int b;
-	// print(2);
-	b = f(1);
+	b = 1;
+	print(5);
+	// b = f(1);
 	// print(b);.
 	// if(2 == 3) return 1;
 	return 0;

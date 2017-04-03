@@ -951,6 +951,9 @@ void Return_Ast::print(ostream & file_buffer)
 Code_For_Ast & Print_Ast::compile()
 {
 	list <Icode_Stmt*> sa_icode_list;
+	Code_For_Ast & load_stmt = ast_to_print->compile();
+	if (load_stmt.get_icode_list().empty() == false)
+		sa_icode_list.splice(sa_icode_list.end(), load_stmt.get_icode_list());
 	Register_Addr_Opd * sp_reg = new Register_Addr_Opd(machine_desc_object.spim_register_table[sp]);
 	Const_Opd<int> * rhs_operand = new Const_Opd<int>(-4);
 	string name = "sp";
@@ -969,9 +972,7 @@ Code_For_Ast & Print_Ast::compile()
 	sa_icode_list.push_back( new Compute_IC_Stmt(imm_add, sp_reg ,  new Const_Opd<int>(-8), sp_reg));
 	sa_icode_list.push_back(new Move_IC_Stmt(store_d, reg_f12,  stack_opd));
 
-	Code_For_Ast & load_stmt = ast_to_print->compile();
-	if (load_stmt.get_icode_list().empty() == false)
-		sa_icode_list.splice(sa_icode_list.end(), load_stmt.get_icode_list());
+	Register_Descriptor * load_register = load_stmt.get_reg();
 	string type_name = typeid(*ast_to_print).name();
 	Const_Opd<int> * arg;
 	if (type_name == String_Ast_Type)
@@ -982,11 +983,13 @@ Code_For_Ast & Print_Ast::compile()
 		|| (type_name == Number_Ast_Int_Type))
 	{
 		arg = new Const_Opd<int>(1);
+		sa_icode_list.push_back(new Move_IC_Stmt(mov, new Register_Addr_Opd(load_register), reg_a0));
 	}
 	else if((type_name == Name_Ast_Type && ast_to_print->get_data_type() == double_data_type)
 		|| (type_name == Number_Ast_Double_Type))
 	{
 		arg = new Const_Opd<int>(3);
+		sa_icode_list.push_back(new Move_IC_Stmt(move_d, new Register_Addr_Opd(load_register), reg_f12));
 	}
 	sa_icode_list.push_back(new Move_IC_Stmt(imm_load, arg, reg_v0));
 	sa_icode_list.push_back(new Label_IC_Stmt(syscall, NULL, ""));
@@ -1017,7 +1020,7 @@ Code_For_Ast & String_Ast::compile()
 	list<Icode_Stmt *> ic_list;
 	ic_list.push_back(load_stmt);
 
-	Code_For_Ast * assign_stmt = new Code_For_Ast(ic_list, machine_desc_object.spim_register_table[a0]);
+	Code_For_Ast * assign_stmt = new Code_For_Ast(ic_list, NULL);
 	return *assign_stmt;
 }
 
