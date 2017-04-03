@@ -12,9 +12,11 @@ main()
 	else
 	{
 		f = 1;
-	}
+	return;
+}
 
 	while(!(f<10))
 		f=f+1;
 
+return;
 }

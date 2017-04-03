@@ -4,4 +4,5 @@ main()
 {
 	float f,g;
 	{f==g;}
+return;
 }

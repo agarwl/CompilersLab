@@ -5,4 +5,5 @@ main()
 	int iftmp0 = 2;
 
 	a? b : iftmp0;
+return;
 }

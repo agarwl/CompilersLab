@@ -6,4 +6,5 @@ main()
  do{
   b = a;
  }while((a<b)&&(a>b));
+return;
 }

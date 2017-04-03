@@ -6,4 +6,5 @@ main()
 
 a = 1-a;
 
+return;
 }

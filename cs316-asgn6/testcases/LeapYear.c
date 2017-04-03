@@ -17,4 +17,5 @@ main()
   else
 	cntr = 0;
 
+return;
 }

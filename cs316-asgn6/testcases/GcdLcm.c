@@ -17,4 +17,5 @@ main(){
  
   gcd = a;
   lcm = (x*y)/gcd;
+return;
 }

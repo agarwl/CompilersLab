@@ -12,6 +12,7 @@ main()
     fact = fact * c;
     c = c + 1;
   }
-  return;
+  // return;
  
+return;
 }

@@ -11,7 +11,8 @@ main()
 	else
 	{
 		f = 1;
-	}
+	return;
+}
 
 	if (!(f ==0))
 	{
@@ -21,4 +22,5 @@ main()
 	{
 		g = 1;
 	}
+return;
 }

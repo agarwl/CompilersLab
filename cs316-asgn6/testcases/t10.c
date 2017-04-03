@@ -10,5 +10,6 @@ main()
 
    a = a + b + a + b;
 
+return;
 }
 

@@ -3,6 +3,8 @@ void main();
 main()
 {
 	int f;
-	if (f < 0.1){}
+	if (f < 0.1){return;
+}
 
+return;
 }

@@ -8,4 +8,5 @@ main()
 		a = a * d / e;
 	else
 		e = e + d;
+return;
 }

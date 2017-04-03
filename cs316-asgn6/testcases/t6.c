@@ -6,5 +6,6 @@ main()
 
 a = 1.0-a;
 
+return;
 }
 
