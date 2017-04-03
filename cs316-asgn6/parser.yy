@@ -325,7 +325,7 @@ argument_declaration_list:
 		CHECK_INVARIANT((decl != NULL), "Argument cannot be null");
 
 		string decl_name = decl->get_variable_name();
-		CHECK_INPUT ((program_object.variable_proc_name_check(decl_name) == false),
+		CHECK_INPUT ((program_object.variable_in_proc_map_check(decl_name) == false),
 				"Procedure name cannot be same as formal parameter name", get_line_number());
 
 		if(current_procedure != NULL)
@@ -354,7 +354,7 @@ argument_declaration_list:
 		CHECK_INVARIANT((argument_list != NULL), "argument_list cannot be null");
 
 		string decl_name = decl->get_variable_name();
-		CHECK_INPUT ((program_object.variable_proc_name_check(decl_name) == false),
+		CHECK_INPUT ((program_object.variable_in_proc_map_check(decl_name) == false),
 				"Procedure name cannot be same as formal parameter name", get_line_number());
 
 		if(current_procedure != NULL)

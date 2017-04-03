@@ -22,6 +22,10 @@ void Program::compile()
 };
 void Program::print_assembly()
 {
+	if(command_options.is_demo_mode_selected() == false)
+	{
+		command_options.create_output_buffer();
+	}
 	ostream & file_buffer = command_options.get_output_buffer();
 	Procedure * main_procedure = get_procedure("main");
 	if (main_procedure == NULL)

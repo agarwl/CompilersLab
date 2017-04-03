@@ -16,7 +16,6 @@ extern Program program_object;
 class Program
 {
 	Symbol_Table global_symbol_table;
-	Procedure * procedure;
 	map<string, Procedure*> proc_map;
 	list<String_Ast*> string_vars;
 
@@ -25,7 +24,6 @@ public:
 	~Program();
 	void delete_all();
 
-	void set_procedure(Procedure * proc, int line);
 	void add_procedure(Procedure * proc, int line);
 	bool procedure_in_proc_map(Procedure * proc);
 	void set_global_table(Symbol_Table & new_global_table);
@@ -38,7 +36,6 @@ public:
 	void print();
 	void print_string_vars(ostream & file_buffer);
 
-	bool variable_proc_name_check(string symbol);
 	bool variable_in_proc_map_check(string symbol);
 	bool variable_in_symbol_list_check(string variable);
 	void global_list_in_proc_check();

@@ -16,13 +16,8 @@ void Program::delete_all()
 {
 	for(auto it=proc_map.begin(); it != proc_map.end(); it++)
 		delete it->second;
-	command_options.remove_files();
 };
 
-void Program::set_procedure(Procedure * proc, int line)
-{
-	procedure = proc;
-};
 void Program::set_global_table(Symbol_Table & new_global_table)
 {
 	global_symbol_table = new_global_table;
@@ -45,25 +40,15 @@ void Program::print_string_vars(ostream & file_buffer)
 
 Symbol_Table_Entry & Program::get_symbol_table_entry(string variable)
 {
-	if(procedure != NULL && procedure->variable_in_symbol_list_check(variable))
-		return procedure->get_symbol_table_entry(variable);
-	else if(variable_in_symbol_list_check(variable))
-		return global_symbol_table.get_symbol_table_entry(variable);
+	return global_symbol_table.get_symbol_table_entry(variable);
 };
 
 void Program::print_sym()
 {
-	procedure->print_sym(command_options.get_symtab_buffer());
+	// FILL THIS AT END
 };
 void Program::print(){};
 
-bool Program::variable_proc_name_check(string symbol)
-{
-	if(procedure == NULL)
-		return false;
-	return symbol.compare(procedure->get_proc_name()) == 0;
-
-};
 bool Program::variable_in_symbol_list_check(string variable)
 {
 	return global_symbol_table.variable_in_symbol_list_check(variable);
