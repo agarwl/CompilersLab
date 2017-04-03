@@ -978,6 +978,8 @@ Code_For_Ast & Print_Ast::compile()
 	if (type_name == String_Ast_Type)
 	{
 		arg = new Const_Opd<int>(4);
+		sa_icode_list.push_back(new Move_IC_Stmt(la, new String_Addr_Opd(
+			((String_Ast*)ast_to_print)->get_label()), reg_a0));
 	}
 	else if((type_name == Name_Ast_Type && ast_to_print->get_data_type() == int_data_type )
 		|| (type_name == Number_Ast_Int_Type))
@@ -1014,12 +1016,8 @@ void Print_Ast::print(ostream & file_buffer)
 
 Code_For_Ast & String_Ast::compile()
 {
-	Register_Addr_Opd* reg_a0 = new Register_Addr_Opd(machine_desc_object.spim_register_table[a0]);
-	Move_IC_Stmt * load_stmt = new Move_IC_Stmt(la, new String_Addr_Opd(label), reg_a0);
 
 	list<Icode_Stmt *> ic_list;
-	ic_list.push_back(load_stmt);
-
 	Code_For_Ast * assign_stmt = new Code_For_Ast(ic_list, NULL);
 	return *assign_stmt;
 }
