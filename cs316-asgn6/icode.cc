@@ -542,26 +542,30 @@ void Label_IC_Stmt::print_assembly(ostream & file_buffer)
 	string op_name = op_desc.get_mnemonic();
 	Assembly_Format assem_format = op_desc.get_assembly_format();
 	Tgt_Op op = op_desc.get_op();
-	
+
 	switch (assem_format)
 	{
-	case a_op_st:
-			switch(op)
-			{
-				case label:
-					CHECK_INVARIANT (!offset.empty(), "offset cannot be NULL for a label IC Stmt");
-					file_buffer <<"\n" + offset + ":";
-					file_buffer << "\n";
-					break;
-				case syscall:
-					file_buffer <<"\t" << op_name << "\n";
-					break;
-			}
-			break;
+		case a_op_st:
+				switch(op)
+				{
+					case label:
+						CHECK_INVARIANT (!offset.empty(), "offset cannot be NULL for a label IC Stmt");
+						file_buffer <<"\n" + offset + ":";
+						file_buffer << "\n";
+						break;
+					case syscall:
+						file_buffer <<"\t" << op_name << "\n";
+						break;
+					case j:
+						file_buffer << "\t" << op_name << " ";
+						file_buffer << offset << "\n";
+						break;
+				}
+				break;
 
-	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
-				"Intermediate code format not supported");
-		break;
+		default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
+					"Intermediate code format not supported");
+				break;
 	}
 }
 

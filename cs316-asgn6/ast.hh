@@ -302,9 +302,9 @@ public:
 class Return_Ast: public Ast
 {
 	Ast* ret_val;
-	Data_Type fn_return_type;
+	Procedure* proc;
 public:
-	Return_Ast(Ast * return_val, int line, Data_Type dt);
+	Return_Ast(Ast * return_val,  string fn_name, int line);
 	~Return_Ast(){};
 	Data_Type get_data_type();
 	Code_For_Ast & compile();

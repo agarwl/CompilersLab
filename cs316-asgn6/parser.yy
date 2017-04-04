@@ -580,7 +580,7 @@ return_statement:
 	{
 	if(NOT_ONLY_PARSE)
 	{
-		$$ = new Return_Ast(NULL, get_line_number(), current_procedure->get_return_type());
+		$$ = new Return_Ast(NULL, current_procedure->get_proc_name(), get_line_number());
 	}
 	}
 |
@@ -589,7 +589,7 @@ return_statement:
 	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($2 != NULL), "return argument can't be NULL")
-		$$ = new Return_Ast($2, get_line_number(), current_procedure->get_return_type());
+		$$ = new Return_Ast($2, current_procedure->get_proc_name(), get_line_number());
 	}
 	}
 ;

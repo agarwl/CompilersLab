@@ -905,6 +905,7 @@ Code_For_Ast & Return_Ast::compile()
 {
 	list<Icode_Stmt*> sa_icode_list;
 	Register_Descriptor * return_reg = NULL;
+	machine_desc_object.clear_local_register_mappings();
 	if(node_data_type != void_data_type){
 		if(node_data_type == int_data_type)
 			return_reg = machine_desc_object.spim_register_table[v1];
@@ -936,6 +937,7 @@ Code_For_Ast & Return_Ast::compile()
 			sa_icode_list = load_stmt.get_icode_list();
 
 		sa_icode_list.push_back(store_stmt);
+		sa_icode_list.push_back(new Label_IC_Stmt(j, NULL, "epilogue_" + proc->get_proc_name()));
 	}
 
 	Code_For_Ast * assign_stmt;

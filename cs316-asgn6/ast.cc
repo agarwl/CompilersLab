@@ -729,10 +729,11 @@ void Call_Ast::set_register(Register_Descriptor* reg)
 	result_reg = reg;
 }
 
-Return_Ast::Return_Ast(Ast * return_val, int line, Data_Type dt)
+Return_Ast::Return_Ast(Ast * return_val,  string function_name, int line)
 {
 	lineno = line;
-	fn_return_type = dt;
+	proc = program_object.get_procedure(function_name);
+	Data_Type fn_return_type = proc->get_return_type();
 	if(return_val == NULL)
 		node_data_type = void_data_type;
 	else

@@ -42,7 +42,6 @@ void Procedure:: print_prologue(ostream & file_buffer)
 void Procedure:: print_epilogue(ostream & file_buffer)
 {
 	string label = "epilogue_" + name;
-	file_buffer << "\t" << "j " << label << '\n';
 	file_buffer << "\n# Epilogue Begins\n";
 	file_buffer << label << ":\n";
 	file_buffer << "\t" << "add $sp, $sp, " << 8 - local_symbol_table.get_size() <<  "\n";
