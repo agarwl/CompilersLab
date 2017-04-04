@@ -1,0 +1,45 @@
+Semantic checks to lookout for:
+
+Function Declarations & Function Definitions
+--------------------------------------------
+1) Two procedures with the same name are not allowed
+2) A procedure should have same type of return value (int / float) except that a void return can exist along with either int or
+   float return (i.e. a procedure may be declared to be an int/float but may not return a value)
+3) Return type in the procedure prototype and the return value in the procedure definition should match.
+4) Number, data types and names of formal parameters in procedure's prototype and its definition should match.
+5) Formal parameter names and the procedure's name should be different
+6) Formal parameters of the same procedure should have distinct names
+7) Formal parameter names and local variable names in the same procedure should be distinct
+8) Every function definition must contain a return statement at the end. Also, multiple return statements are allowed.
+9) As before, local variable declaration are to be made at the beginning of the function definition and not in between.
+10) Function call names and local variable names should be distince inside a function definition.
+    (http://moodle.iitb.ac.in/mod/forum/discuss.php?d=56030)
+
+Function calls
+--------------
+1) Actual and formal parameters data types should be same
+2) Function calls cannot be used in combination with arithmetic expressions anywhere. (supporting this is a bonus)
+3) Called procedure declaration and definition should both be present
+4) Number of actual and formal parameters should match
+5) Called procedure's definition and prototype should be present in the program
+6) Arguments provided to a function call must be arithmetic expressions. In case result of another function call is to be used as an argument, store it in a temporary local variable
+7) Function calls can be of two types:
+   a(); // OR
+   b = a();
+
+
+Other features to be supported
+------------------------------
+1) Print statement to be supported. The syntax for print statement should be:
+   print(variable); or print(arithmetic_expression); or print(constant); or print(string);
+   Function calls are not allowed inside print.
+2) Special care needs to be taken while implementing floating comparison operations since the MIPS floating comparison instructions are different than integer comparison instructions.
+
+
+Revision
+--------
+1) Note that this time, the errors should match exactly for ASTs. A rough outline how error checking works:
+   If there is a type mismatch in an arithmetic AST, it is assigned int data type.
+   Relational ASTs and Boolean ASTs are of int data type.
+   Function Call ASTs are of the return type data type.
+2) As before, all the global variables need to be declared collectively either at the beginning or before function definitions.
