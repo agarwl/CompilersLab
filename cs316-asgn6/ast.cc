@@ -731,7 +731,7 @@ void Call_Ast::set_actual_param_list(list<Ast*> arguments)
 		CHECK_INPUT((*it1)->get_data_type() == (*it2)->get_data_type(),
 		"Actual and formal parameters data types are not matching",lineno);
 	}
-	CHECK_INPUT(arguments.size() != symbol_entry_table.size(),
+	CHECK_INPUT(arguments.size() == symbol_entry_table.size(),
 		"Actual and formal parameter count do not match", lineno);
 
 	argument_list = arguments;
@@ -801,7 +801,3 @@ Print_Ast::~Print_Ast()
 {
 	delete ast_to_print;
 }
-// void Print_Ast::print_assembly(ostream & file_buffer)
-// {
-
-// }
