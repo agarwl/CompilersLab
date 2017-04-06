@@ -15,7 +15,6 @@ using namespace std;
 #include "program.hh"
 
 const string String_Ast_Type = typeid(String_Ast).name();
-const string Name_Ast_Type = typeid(Name_Ast).name();
 const string Number_Ast_Double_Type = typeid(Number_Ast<double>).name();
 const string Number_Ast_Int_Type = typeid(Number_Ast<int>).name();
 
@@ -1001,14 +1000,12 @@ Code_For_Ast & Print_Ast::compile()
 		sa_icode_list.push_back(new Move_IC_Stmt(la, new String_Addr_Opd(
 			((String_Ast*)ast_to_print)->get_label()), reg_a0));
 	}
-	else if((type_name == Name_Ast_Type && ast_to_print->get_data_type() == int_data_type )
-		|| (type_name == Number_Ast_Int_Type))
+	else if(ast_to_print->get_data_type() == int_data_type || (type_name == Number_Ast_Int_Type))
 	{
 		arg = new Const_Opd<int>(1);
 		sa_icode_list.push_back(new Move_IC_Stmt(mov, new Register_Addr_Opd(load_register), reg_a0));
 	}
-	else if((type_name == Name_Ast_Type && ast_to_print->get_data_type() == double_data_type)
-		|| (type_name == Number_Ast_Double_Type))
+	else if(ast_to_print->get_data_type() == double_data_type || (type_name == Number_Ast_Double_Type))
 	{
 		arg = new Const_Opd<int>(3);
 		sa_icode_list.push_back(new Move_IC_Stmt(move_d, new Register_Addr_Opd(load_register), reg_f12));
