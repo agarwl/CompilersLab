@@ -15,6 +15,7 @@ Procedure::Procedure(Data_Type proc_return_type, string proc_name, int line)
 	return_type = proc_return_type;
 	name = proc_name;
 	lineno = line;
+	is_called = is_defined = false;
 
 };
 Procedure::~Procedure()
@@ -77,7 +78,17 @@ bool Procedure::variable_in_formal_list_check(string variable)
 	return formal_symbol_table.variable_in_formal_list_check(variable);
 }
 
-void check_formal_table(Symbol_Table & table)
+void Procedure::check_formal_table(Symbol_Table & table)
 {
-	return;
+	formal_symbol_table == table;
+}
+
+void Procedure::set_is_called()
+{
+	is_called = true;
+}
+
+void Procedure::set_is_defined()
+{
+	is_defined = true;
 }

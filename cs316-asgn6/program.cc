@@ -71,7 +71,7 @@ void Program::add_procedure(Procedure * procedure, int line)
 {
 	if(procedure != NULL){
 		string proc_name = procedure->get_proc_name();
-		CHECK_INPUT_AND_ABORT(!(proc_map.count(proc_name)), "Overloading of the procedure is not allowed", line);
+		CHECK_INPUT(!(proc_map.count(proc_name)), "Overloading of the procedure is not allowed", line);
 		proc_map[proc_name] =  procedure;
 	}
 }
@@ -83,7 +83,9 @@ bool Program::procedure_in_proc_map(string & proc_name)
 
 Procedure* Program::get_procedure(string proc_name)
 {
+	Procedure * proc = NULL;
 	if(procedure_in_proc_map(proc_name))
-		return proc_map[proc_name];
-	return NULL;
+		proc =  proc_map[proc_name];
+	CHECK_INPUT(proc != NULL, "Procedure corresponding to the name is not found", -1);
+	return proc;
 }

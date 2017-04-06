@@ -20,8 +20,9 @@ class Procedure
 	Symbol_Table local_symbol_table;
 	Symbol_Table formal_symbol_table;
 	Sequence_Ast * sequence_ast;
-
 	int lineno;
+	bool is_called;
+	bool is_defined;
 
 public:
 	Procedure(Data_Type proc_return_type, string proc_name, int line);
@@ -44,6 +45,9 @@ public:
 	void compile();
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);
+
+	void set_is_called();
+	void set_is_defined();
 
 private:
 	void print_prologue(ostream & file_buffer);

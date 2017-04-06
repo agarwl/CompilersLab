@@ -172,11 +172,12 @@ procedure_declaration:
 
 		CHECK_INPUT ((program_object.variable_in_symbol_list_check(proc_name) == false),
 			"Procedure name cannot be same as global variable", get_line_number());
-
 		Symbol_Table * formal_table = $4;
 		if(formal_table == NULL)
 			formal_table = new Symbol_Table();
 		procedure->set_formal_list(*formal_table);
+		CHECK_INPUT(procedure->variable_in_formal_list_check(proc_name) == false,
+			"Procedure name cannot be same as formal parameter name", get_line_number());
 		program_object.add_procedure(procedure, get_line_number());
 	}
 	}
@@ -190,8 +191,6 @@ procedure_declaration:
 
 		string proc_name = *$2;
 		Procedure * procedure = new Procedure(void_data_type, proc_name, get_line_number());
-		// if(proc_name == "main")
-		// 	current_procedure = procedure;
 
 		CHECK_INPUT ((program_object.variable_in_symbol_list_check(proc_name) == false),
 			"Procedure name cannot be same as global variable", get_line_number());
@@ -200,6 +199,8 @@ procedure_declaration:
 		if(formal_table == NULL)
 			formal_table = new Symbol_Table();
 		procedure->set_formal_list(*formal_table);
+		CHECK_INPUT(procedure->variable_in_formal_list_check(proc_name) == false,
+			"Procedure name cannot be same as formal parameter name", get_line_number());
 		program_object.add_procedure(procedure, get_line_number());
 	}
 	}
@@ -224,14 +225,29 @@ return_data_type:
 ;
 
 procedure_definition:
-	NAME '(' optional_argument_list ')'
+	NAME '(' 
 	{
 	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($1 != NULL), "Procedure name cannot be null");
 		string proc_name = *$1;
 		current_procedure = program_object.get_procedure(proc_name);
-		CHECK_INPUT(current_procedure != NULL, "Procedure corresponding to the name is not found", -1);
+		CHECK_INVARIANT(current_procedure != NULL, 
+			"Function prototype of the called function cannot be null");
+		current_procedure->set_is_defined();
+	}
+	}
+
+	optional_argument_list ')'
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		Symbol_Table * formal_table = $4;
+		if(formal_table == NULL)
+			formal_table = new Symbol_Table();
+		CHECK_INPUT(formal_table->variable_in_formal_list_check(current_procedure->get_proc_name()) 
+			== false, "Procedure name cannot be same as formal parameter name", get_line_number());
+		current_procedure->check_formal_table(*formal_table);
 	}
 	}
 
@@ -241,7 +257,7 @@ procedure_definition:
 	{
 		CHECK_INVARIANT((current_procedure != NULL), "Procedure prototype cannot be null");
 
-		Symbol_Table * local_table = $7;
+		Symbol_Table * local_table = $8;
 
 		if (local_table == NULL)
 			local_table = new Symbol_Table();
@@ -255,11 +271,11 @@ procedure_definition:
 	{
 	if(NOT_ONLY_PARSE)
 	{
-		Sequence_Ast* seq = $9;
+		Sequence_Ast* seq = $10;
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 		CHECK_INVARIANT((seq != NULL), "statement list cannot be null");
 
-		Return_Ast * return_stmt = $10;
+		Return_Ast * return_stmt = $11;
 		seq->ast_push_back(return_stmt);
 		current_procedure->set_sequence_ast(*seq);
 	}
@@ -324,18 +340,13 @@ argument_declaration_list:
 
 		CHECK_INVARIANT((decl != NULL), "Argument cannot be null");
 
-		string decl_name = decl->get_variable_name();
-		CHECK_INPUT ((program_object.variable_in_proc_map_check(decl_name) == false),
-				"Procedure name cannot be same as formal parameter name", get_line_number());
+		string decl_name = decl->get_variable_name();		
 
 		if(current_procedure != NULL)
 		{
 			CHECK_INPUT((current_procedure->get_proc_name() != decl_name),
-				"Procedure name cannot be same as the formal parameter name", get_line_number());
+				"Formal parameter list cannot be same as function name", get_line_number());
 		}
-
-		// CHECK_INPUT((program_object.variable_in_symbol_list_check(decl_name) == false),
-		// 			"Formal parameter and local variable name cannot be same", get_line_number());
 
 		argument_list->push_symbol(decl);
 
@@ -354,20 +365,15 @@ argument_declaration_list:
 		CHECK_INVARIANT((argument_list != NULL), "argument_list cannot be null");
 
 		string decl_name = decl->get_variable_name();
-		CHECK_INPUT ((program_object.variable_in_proc_map_check(decl_name) == false),
-				"Procedure name cannot be same as formal parameter name", get_line_number());
 
 		if(current_procedure != NULL)
 		{
 			CHECK_INPUT((current_procedure->get_proc_name() != decl_name),
-				"Procedure name cannot be same as the formal parameter name", get_line_number());
+				"Formal parameter list cannot be same as function name", get_line_number());
 		}
 
 		CHECK_INPUT((argument_list->variable_in_formal_list_check(decl_name) == false),
 					"Formal Parameter declared twice", get_line_number());
-
-		// CHECK_INPUT((program_object.variable_in_symbol_list_check(decl_name) == false),
-		// 			"Formal parameter and local variable name cannot be same", get_line_number());
 
 		argument_list->push_symbol(decl);
 
@@ -833,7 +839,10 @@ function_call_statement:
 	if(NOT_ONLY_PARSE)
 	{
 		string fn_name = *$1;
-		// CHECK_INVARIANT()
+
+		Procedure* procedure = program_object.get_procedure(fn_name);
+		CHECK_INVARIANT((procedure != NULL),"Function prototype of the called function cannot be null");
+
 		Call_Ast * function_call = new Call_Ast(fn_name, get_line_number());
 
 		list<Ast*> *argument_list = $3;
