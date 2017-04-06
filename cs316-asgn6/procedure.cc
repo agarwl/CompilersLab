@@ -95,5 +95,15 @@ void Procedure::set_is_defined()
 
 bool Procedure::check_proc_defined_and_called()
 {
-	return is_defined == is_called;
+	return  (!is_called || is_defined);
+}
+
+string Procedure::get_variable_in_formal_list(int position)
+{
+	return formal_symbol_table.get_variable_in_formal_list(position);
+}
+
+Symbol_Table & Procedure::get_formal_table()
+{
+	return formal_symbol_table;
 }

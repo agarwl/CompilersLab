@@ -34,6 +34,9 @@ public:
 	Data_Type get_return_type();
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 	void check_formal_table(Symbol_Table & table);
+	string get_variable_in_formal_list(int position);
+
+	Symbol_Table & get_formal_table();
 
 	void print(ostream & file_buffer);
 	void print_sym(ostream & file_buffer);

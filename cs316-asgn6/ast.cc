@@ -722,6 +722,18 @@ Data_Type Call_Ast::get_data_type()
 
 void Call_Ast::set_actual_param_list(list<Ast*> arguments)
 {
+	Symbol_Table & formal_table = procedure->get_formal_table();
+	list<Symbol_Table_Entry *> & symbol_entry_table = formal_table.get_table();
+	auto it1 = symbol_entry_table.begin();
+	auto it2 = arguments.begin(); 
+	for(;it1 != symbol_entry_table.end() && it2 != argument_list.end(); it1++, it2++)
+	{
+		CHECK_INPUT((*it1)->get_data_type() == (*it2)->get_data_type(),
+		"Actual and formal parameters data types are not matching",lineno);
+	}
+	CHECK_INPUT(arguments.size() != symbol_entry_table.size(),
+		"Actual and formal parameter count do not match", lineno);
+
 	argument_list = arguments;
 }
 void Call_Ast::set_register(Register_Descriptor* reg)
@@ -738,7 +750,8 @@ Return_Ast::Return_Ast(Ast * return_val,  string function_name, int line)
 		node_data_type = void_data_type;
 	else
 		node_data_type = return_val->get_data_type();
-	CHECK_INPUT_AND_ABORT(fn_return_type == node_data_type, "Two or more types of return values", lineno);
+	CHECK_INPUT((fn_return_type == node_data_type) || 
+		(node_data_type == void_data_type), "Two or more types of return values", lineno);
 	ret_val = return_val;
 }
 

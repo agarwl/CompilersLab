@@ -167,7 +167,6 @@ procedure_declaration:
 	{
 		// CHECK_INVARIANT()
 		CHECK_INVARIANT(($2 != NULL), "Procedure name cannot be null");
-		// CHECK_INVARIANT((*$2 == "main"), "Procedure name must be main in declaration");
 
 		string proc_name = *$2;
 		Procedure * procedure = new Procedure($1, proc_name, get_line_number());
@@ -189,7 +188,6 @@ procedure_declaration:
 	if(NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($2 != NULL), "Procedure name cannot be null");
-		// CHECK_INVARIANT((*$2 == "main"), "Procedure name must be main in declaration");
 
 		string proc_name = *$2;
 		Procedure * procedure = new Procedure(void_data_type, proc_name, get_line_number());
@@ -849,7 +847,8 @@ function_call_statement:
 
 		list<Ast*> *argument_list = $3;
 		if(argument_list == NULL)
-			argument_list = new list<Ast*>();
+			argument_list = new list<Ast*>();		
+
 		function_call->set_actual_param_list(*argument_list);
 		procedure->set_is_called();
 		$$ = function_call;
