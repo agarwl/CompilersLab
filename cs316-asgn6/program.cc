@@ -89,3 +89,13 @@ Procedure* Program::get_procedure(string proc_name)
 	CHECK_INPUT(proc != NULL, "Procedure corresponding to the name is not found", -1);
 	return proc;
 }
+
+bool Program::check_proc_defined_and_called()
+{
+	for(auto it=proc_map.begin(); it != proc_map.end(); it++)
+	{
+		if(!(it->second->check_proc_defined_and_called()))
+			return false;
+	}
+	return true;
+}

@@ -21,8 +21,7 @@ class Procedure
 	Symbol_Table formal_symbol_table;
 	Sequence_Ast * sequence_ast;
 	int lineno;
-	bool is_called;
-	bool is_defined;
+	bool is_called, is_defined;
 
 public:
 	Procedure(Data_Type proc_return_type, string proc_name, int line);
@@ -48,6 +47,7 @@ public:
 
 	void set_is_called();
 	void set_is_defined();
+	bool check_proc_defined_and_called();
 
 private:
 	void print_prologue(ostream & file_buffer);

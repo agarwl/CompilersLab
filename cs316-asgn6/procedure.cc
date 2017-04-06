@@ -92,3 +92,8 @@ void Procedure::set_is_defined()
 {
 	is_defined = true;
 }
+
+bool Procedure::check_proc_defined_and_called()
+{
+	return is_defined == is_called;
+}

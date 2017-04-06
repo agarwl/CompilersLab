@@ -99,6 +99,8 @@ program:
 		// Procedure * main_procedure = program_object.get_procedure("main");
 		// program_object.set_procedure(current_procedure, get_line_number());
 		program_object.global_list_in_proc_check();
+		CHECK_INPUT(program_object.check_proc_defined_and_called(), 
+			"Called procedure is not defined", -1);
 	}
 	}
 ;
@@ -849,6 +851,7 @@ function_call_statement:
 		if(argument_list == NULL)
 			argument_list = new list<Ast*>();
 		function_call->set_actual_param_list(*argument_list);
+		procedure->set_is_called();
 		$$ = function_call;
 	}
 	}

@@ -37,6 +37,8 @@ public:
 	void print();
 	void print_string_vars(ostream & file_buffer);
 
+	bool check_proc_defined_and_called();
+
 	bool variable_in_proc_map_check(string symbol);
 	bool variable_in_symbol_list_check(string variable);
 	void global_list_in_proc_check();
