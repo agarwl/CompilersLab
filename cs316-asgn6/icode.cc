@@ -351,10 +351,12 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 
 void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 {
-	CHECK_INVARIANT (result, "Result cannot be NULL for a compute IC Stmt");
 
 	string op_name = op_desc.get_mnemonic();
 	Assembly_Format assem_format = op_desc.get_assembly_format();
+
+	if(assem_format != a_op_o1_o2)
+		CHECK_INVARIANT (result, "Result cannot be NULL for a compute IC Stmt");
 
 	switch (assem_format)
 	{
@@ -394,13 +396,13 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 				file_buffer << "\n";
 				break;
 
-		// case a_op_o1_o2:
-		// 		file_buffer << "\t" << op_name << " ";
-		// 		opd1->print_asm_opd(file_buffer);
-		// 		file_buffer << ", ";
-		// 		opd2->print_asm_opd(file_buffer);
-		// 		file_buffer << "\n";
-		// 		break;
+		case a_op_o1_o2:
+				file_buffer << "\t" << op_name << " ";
+				opd1->print_asm_opd(file_buffer);
+				file_buffer << ", ";
+				opd2->print_asm_opd(file_buffer);
+				file_buffer << "\n";
+				break;
 
 		default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
 					"Intermediate code format not supported");
@@ -562,6 +564,12 @@ void Label_IC_Stmt::print_assembly(ostream & file_buffer)
 					case j:
 						file_buffer << "\t" << op_name << " ";
 						file_buffer << offset << "\n";
+						break;
+					case bc1t:
+					case bc1f:
+						CHECK_INVARIANT (!offset.empty(), "offset cannot be NULL for a label IC Stmt");
+						file_buffer << "\t" << op_name;
+						file_buffer << " " << offset << "\n";
 						break;
 				}
 				break;

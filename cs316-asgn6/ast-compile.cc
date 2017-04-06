@@ -198,55 +198,73 @@ Code_For_Ast & Relational_Expr_Ast::compile()
 
 	Tgt_Op stmt_operator;
 
-	// Data_Type dt = lhs_condition->get_data_type();
+	Data_Type dt = lhs_condition->get_data_type();
 
-	// switch(dt)
-	// {
-	// 	case double_data_type:
-	// 		switch(rel_op)
-	// 		{
-	// 		case less_equalto:
-	// 			stmt_operator = sle_d;
-	// 			break;
-	// 		case less_than:
-	// 			stmt_operator = slt_d;
-	// 			break;
-	// 		case equalto:
-	// 			stmt_operator = seq_d;
-	// 			break;
-	// 		}
-	// 		break;
-	// 	case int_data_type:
-	switch(rel_op)
+	switch(dt)
 	{
-	case less_equalto:
-		stmt_operator = sle;
-		break;
-	case less_than:
-		stmt_operator = slt;
-		break;
-	case greater_than:
-		stmt_operator = sgt;
-		break;
-	case greater_equalto:
-		stmt_operator = sge;
-		break;
-	case equalto:
-		stmt_operator = seq;
-		break;
-	case not_equalto:
-		stmt_operator = sne;
-		break;
+		case double_data_type:
+			switch(rel_op)
+			{
+			case greater_than:
+			case less_equalto:
+				stmt_operator = sle_d;
+				break;
+			case greater_equalto:
+			case less_than:
+				stmt_operator = slt_d;
+				break;
+			case not_equalto:
+			case equalto:
+				stmt_operator = seq_d;
+				break;
+			}
+			break;
+		case int_data_type:
+			switch(rel_op)
+			{
+			case less_equalto:
+				stmt_operator = sle;
+				break;
+			case less_than:
+				stmt_operator = slt;
+				break;
+			case greater_than:
+				stmt_operator = sgt;
+				break;
+			case greater_equalto:
+				stmt_operator = sge;
+				break;
+			case equalto:
+				stmt_operator = seq;
+				break;
+			case not_equalto:
+				stmt_operator = sne;
+				break;
+			}
+			break;
 	}
-			// break;
-	// }
 
 
 	Register_Addr_Opd * lhs_operand = new Register_Addr_Opd(lhs_register);
 	Register_Addr_Opd * rhs_operand = new Register_Addr_Opd(rhs_register);
-
-	Compute_IC_Stmt * add_stmt = new Compute_IC_Stmt(stmt_operator, lhs_operand, rhs_operand, result);
-	ic_list.push_back(add_stmt);
+	if(dt == int_data_type)
+	{
+		Compute_IC_Stmt * add_stmt = new Compute_IC_Stmt(stmt_operator, lhs_operand, rhs_operand, result);
+		ic_list.push_back(add_stmt);
+	}
+	else
+	{
+		ic_list.push_back(new Move_IC_Stmt(imm_load, new Const_Opd<int>(0), result));
+		ic_list.push_back(new Compute_IC_Stmt(stmt_operator, lhs_operand, rhs_operand, NULL));
+		string myLabel1 = "label" + to_string(labelCounter++);
+		ic_list.push_back(new Label_IC_Stmt(bc1f, NULL, myLabel1));
+		ic_list.push_back(new Move_IC_Stmt(imm_load, new Const_Opd<int>(1), result));
+		ic_list.push_back(new Label_IC_Stmt(label, NULL, myLabel1));
+		if(rel_op == greater_than || rel_op == greater_equalto || rel_op == not_equalto )
+		{
+			ic_list.push_back(new Compute_IC_Stmt(not_t, result, new Const_Opd<int>(1), result));
+		}
+	}
 
 	Code_For_Ast * assign_stmt;
 	if (ic_list.empty() == false)
