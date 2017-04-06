@@ -937,8 +937,8 @@ Code_For_Ast & Return_Ast::compile()
 			sa_icode_list = load_stmt.get_icode_list();
 
 		sa_icode_list.push_back(store_stmt);
-		sa_icode_list.push_back(new Label_IC_Stmt(j, NULL, "epilogue_" + proc->get_proc_name()));
 	}
+	sa_icode_list.push_back(new Label_IC_Stmt(j, NULL, "epilogue_" + proc->get_proc_name()));
 
 	Code_For_Ast * assign_stmt;
 	assign_stmt = new Code_For_Ast(sa_icode_list, return_reg);

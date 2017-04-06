@@ -161,7 +161,10 @@ void Call_IC_stmt::print_icode(ostream & file_buffer)
 }
 void Call_IC_stmt::print_assembly(ostream & file_buffer)
 {
-	file_buffer << "\t" <<  "jal " << fn_name << endl;
+	if(fn_name == "main")
+		file_buffer << "\t" <<  "jal " << fn_name  << endl;
+	else
+		file_buffer << "\t" <<  "jal " << fn_name << "_"  << endl;
 }
 
 

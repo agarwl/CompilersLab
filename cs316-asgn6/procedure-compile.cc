@@ -25,9 +25,12 @@ void Procedure:: print_assembly(ostream & file_buffer)
 
 void Procedure:: print_prologue(ostream & file_buffer)
 {
+	string fn_name =  name;
+	if(name != "main")
+		fn_name += "_";
 	file_buffer << "\n\t" << ".text" << "\t\t\t" << "# The .text assembler directive indicates\n";
-	file_buffer << "\t" << ".globl " << name << "\t\t" << "# The following is the code (as oppose to data)\n";
-	file_buffer << name << ":\t\t\t\t" << "# .globl makes main know to the\n";
+	file_buffer << "\t" << ".globl " << fn_name << "\t\t" << "# The following is the code (as oppose to data)\n";
+	file_buffer << fn_name << ":\t\t\t\t" << "# .globl makes main know to the\n";
 	file_buffer << "\t\t\t\t"  << "# outside of the program.\n";
 	file_buffer << "# Prologue begins\n" ;
 	file_buffer << "\t" << "sw $ra, 0($sp)"	<< "\t\t" << "# Save the return address\n";
