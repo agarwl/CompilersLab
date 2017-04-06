@@ -51,6 +51,7 @@ public:
 	void set_is_called();
 	void set_is_defined();
 	bool check_proc_defined_and_called();
+	bool check_defined();
 
 private:
 	void print_prologue(ostream & file_buffer);

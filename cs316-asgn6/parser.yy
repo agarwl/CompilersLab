@@ -96,8 +96,8 @@ program:
 	{
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 
-		program_object.global_list_in_proc_check();
-		CHECK_INPUT(program_object.variable_in_proc_map_check("main"), "Procedure main is not defined", -1);
+		Procedure * main_procedure = program_object.get_procedure("main");
+		CHECK_INPUT(main_procedure->check_defined(),"Procedure main is not defined", -1);
 		CHECK_INPUT(program_object.check_proc_defined_and_called(),"Called procedure is not defined", -1);
 	}
 	}
@@ -232,6 +232,8 @@ procedure_definition:
 		current_procedure = program_object.get_procedure(proc_name);
 		CHECK_INVARIANT(current_procedure != NULL,
 			"Function prototype of the called function cannot be null");
+		CHECK_INPUT(program_object.variable_in_symbol_list_check(proc_name) == false,
+			"Procedure name cannot be same as global variable", get_line_number());
 		current_procedure->set_is_defined();
 	}
 	}

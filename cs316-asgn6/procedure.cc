@@ -16,6 +16,7 @@ Procedure::Procedure(Data_Type proc_return_type, string proc_name, int line)
 	name = proc_name;
 	lineno = line;
 	is_called = is_defined = false;
+	sequence_ast = NULL;
 
 };
 Procedure::~Procedure()
@@ -91,6 +92,11 @@ void Procedure::set_is_called()
 void Procedure::set_is_defined()
 {
 	is_defined = true;
+}
+
+bool Procedure::check_defined()
+{
+	return is_defined;
 }
 
 bool Procedure::check_proc_defined_and_called()
