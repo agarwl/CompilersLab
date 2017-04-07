@@ -16,6 +16,7 @@ void Program::compile()
 	Procedure * main_procedure = get_procedure("main");
 	for(auto it = proc_map.begin(); it != proc_map.end(); it++)
 	{
+		machine_desc_object.clear_local_register_mappings();
 		(it->second)->compile();
 	}
 	print_assembly();
@@ -35,10 +36,10 @@ void Program::print_assembly()
 		global_symbol_table.print_assembly(file_buffer);
 		print_string_vars(file_buffer);
 	}
-	main_procedure->print_assembly(file_buffer);
+	// main_procedure->print_assembly(file_buffer);
 	for(auto it = proc_map.begin(); it != proc_map.end(); it++)
 	{
-		if(it->first != "main")
+		// if(it->first != "main")
 			(it->second)->print_assembly(file_buffer);
 	}
 };

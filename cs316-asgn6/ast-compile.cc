@@ -908,6 +908,7 @@ Code_For_Ast & Call_Ast::compile()
 	sa_icode_list.push_back(new Call_IC_stmt(procedure->get_proc_name()));
 	sa_icode_list.push_back(new Compute_IC_Stmt(add, sp_reg, rhs_operand , sp_reg));
 
+	machine_desc_object.clear_local_register_mappings();
 	Code_For_Ast * assign_stmt;
 	assign_stmt = new Code_For_Ast(sa_icode_list, result_reg);
 	return *assign_stmt;
@@ -922,7 +923,6 @@ Code_For_Ast & Return_Ast::compile()
 {
 	list<Icode_Stmt*> sa_icode_list;
 	Register_Descriptor * return_reg = NULL;
-	machine_desc_object.clear_local_register_mappings();
 	if(node_data_type != void_data_type){
 		if(node_data_type == int_data_type)
 			return_reg = machine_desc_object.spim_register_table[v1];
