@@ -5,13 +5,13 @@ int f( int a);
 // int f;
 
 // // int z;
-// main()
-// {
+main()
+{
 // 	// int b;
 // 	// c = 1;
 // 	// print("fuck");
 // 	// a = b;
-// 	// f(1);
+	f(1);
 // 	 // = 2;
 
 // 	// float b;
@@ -21,8 +21,8 @@ int f( int a);
 // 	// b = f(1);
 // 	// print(ffb);.
 // 	// if(2 == 3) return 1;
-// 	return ;
-// }
+	return ;
+}
 
 f(int a)
 {

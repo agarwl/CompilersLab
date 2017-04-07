@@ -859,6 +859,7 @@ Code_For_Ast & Call_Ast::compile()
 	int sp_offset = 0;
 	string name = "sp";
 	list<Icode_Stmt*> sa_icode_list;
+	Tgt_Op stmt_operator;
 	for(auto it = argument_list.begin(); it != argument_list.end(); it++)
 	{
 
@@ -876,7 +877,6 @@ Code_For_Ast & Call_Ast::compile()
 		symbol_entry->set_data_type(node_data_type);
 		symbol_entry->set_start_offset(sp_offset);
 		Mem_Addr_Opd * variable_name = new Mem_Addr_Opd(*symbol_entry);
-		Tgt_Op stmt_operator;
 		if (node_data_type == int_data_type){
 			stmt_operator = store;
 		}
@@ -901,16 +901,34 @@ Code_For_Ast & Call_Ast::compile()
 			sa_icode_list.splice(sa_icode_list.end(), ic_list);
 	}
 	Register_Addr_Opd * sp_reg = new Register_Addr_Opd(machine_desc_object.spim_register_table[sp]);
-	Const_Opd<int> * rhs_operand = new Const_Opd<int>(-sp_offset);
-	Compute_IC_Stmt * sub_stmt =  new Compute_IC_Stmt(sub, sp_reg , rhs_operand, sp_reg);
-	if(sub_stmt != NULL)
-		sa_icode_list.push_back(sub_stmt);
+	Const_Opd<int> * rhs_operand;
+	if(sp_offset != 0){
+		rhs_operand = new Const_Opd<int>(-sp_offset);
+		Compute_IC_Stmt * sub_stmt =  new Compute_IC_Stmt(sub, sp_reg , rhs_operand, sp_reg);
+		if(sub_stmt != NULL)
+			sa_icode_list.push_back(sub_stmt);
+	}
 	sa_icode_list.push_back(new Call_IC_stmt(procedure->get_proc_name()));
-	sa_icode_list.push_back(new Compute_IC_Stmt(add, sp_reg, rhs_operand , sp_reg));
+
+	if(sp_offset != 0)
+		sa_icode_list.push_back(new Compute_IC_Stmt(add, sp_reg, rhs_operand , sp_reg));
+
+	Register_Descriptor * result_register;
+	if(node_data_type == int_data_type){
+		stmt_operator = mov;
+		result_register = machine_desc_object.get_new_register<gp_data>();
+	}
+	else if(node_data_type == double_data_type ){
+		stmt_operator = move_d;
+		result_register = machine_desc_object.get_new_register<float_reg>();
+	}
+	if(node_data_type != void_data_type)
+		sa_icode_list.push_back(new Move_IC_Stmt(stmt_operator, new Register_Addr_Opd(result_reg),
+		 new Register_Addr_Opd(result_register)));
 
 	machine_desc_object.clear_local_register_mappings();
 	Code_For_Ast * assign_stmt;
-	assign_stmt = new Code_For_Ast(sa_icode_list, result_reg);
+	assign_stmt = new Code_For_Ast(sa_icode_list, result_register);
 	return *assign_stmt;
 };
 
