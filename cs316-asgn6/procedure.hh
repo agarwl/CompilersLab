@@ -36,6 +36,9 @@ public:
 	void check_formal_table(Symbol_Table & table);
 	string get_variable_in_formal_list(int position);
 
+	list<Symbol_Table_Entry*> get_symbol_entries();
+	int get_formal_symbol_table_size();
+
 	Symbol_Table & get_formal_table();
 
 	void print(ostream & file_buffer);

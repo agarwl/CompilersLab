@@ -43,7 +43,6 @@ void Procedure::set_formal_list(Symbol_Table & formal_list)
 {
 	formal_symbol_table = formal_list;
 	formal_symbol_table.set_table_scope(formal);
-	formal_symbol_table.set_start_offset_of_first_symbol(OFFSET_FOR_RA_AND_FP);
 	formal_symbol_table.assign_offsets();
 }
 
@@ -112,4 +111,29 @@ string Procedure::get_variable_in_formal_list(int position)
 Symbol_Table & Procedure::get_formal_table()
 {
 	return formal_symbol_table;
+}
+
+list<Symbol_Table_Entry*> Procedure::get_symbol_entries()
+{
+	list<Symbol_Table_Entry*> symbol_entry_list;
+	list<Symbol_Table_Entry*> & table = formal_symbol_table.get_table();
+	string name;
+	Data_Type dt;
+	int lineno, offset;
+	for(auto it = table.begin(); it != table.end(); it++)
+	{
+		name = (*it)->get_variable_name();
+		dt = (*it)->get_data_type();
+		lineno = (*it)->get_lineno();
+		Symbol_Table_Entry* s = new Symbol_Table_Entry(name, dt, lineno, sp_ref);
+		s->set_start_offset(offset);
+		s->set_symbol_scope(formal);
+		symbol_entry_list.push_back(s);
+	}
+	return symbol_entry_list;
+}
+
+int Procedure::get_formal_symbol_table_size()
+{
+	return formal_symbol_table.get_size();
 }
