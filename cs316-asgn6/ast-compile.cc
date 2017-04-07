@@ -867,7 +867,7 @@ Code_For_Ast & Call_Ast::compile()
 
 		Register_Descriptor * load_register = load_stmt.get_reg();
 		CHECK_INVARIANT(load_register, "Load register cannot be null in Call_Ast");
-		load_register->set_use_for_expr_result();
+		// load_register->set_use_for_expr_result();
 
 		Register_Addr_Opd * variable = new Register_Addr_Opd(load_register);
 
@@ -1021,6 +1021,8 @@ Code_For_Ast & Print_Ast::compile()
 	sa_icode_list.push_back(add_stmt);
 	sa_icode_list.push_back(new Move_IC_Stmt(load, stack_opd, reg_v0));
 	sa_icode_list.push_back(add_stmt);
+	if(load_register != NULL)
+		load_register->reset_use_for_expr_result();
 	Code_For_Ast * assign_stmt;
 	assign_stmt = new Code_For_Ast(sa_icode_list, NULL);
 	return *assign_stmt;
