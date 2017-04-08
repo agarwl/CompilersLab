@@ -2,19 +2,19 @@ void nonrecurfn(int n);
 void recurfn(int number);
 int recurfactorial(int n);
 int nonrecurfactorial(int n);
-void main(); 
+void main();
 
 main()
 {
   int number;
   int fact;
   fact = 1;
-  number = 5; 
-  
+  number = 5;
+
   print("Printing functionality to be supported to.\n");
   print(fact);
 
-  nonrecurfn(number); 
+  nonrecurfn(number);
   recurfn(number);
   return;
 }
@@ -25,7 +25,7 @@ recurfn(int number)
   fact = recurfactorial(number);
   return;
 }
- 
+
 recurfactorial(int n)
 {
   int result ;
@@ -58,7 +58,7 @@ nonrecurfactorial(int n)
 nonrecurfn(int n)
 {
   int f;
-  if (n < 0){ 
+  if (n < 0){
    }
   else
   {

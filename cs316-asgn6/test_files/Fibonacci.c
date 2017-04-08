@@ -8,7 +8,7 @@ main()
 {
     prev_number=0;
     number=1;
-    size = 20;
+    size = 5;
     i = 1;
     fibonacci (prev_number,number);
     return ;
@@ -24,8 +24,13 @@ fibonacci (int prev_number, int number)
       next_num=prev_number+number;
       prev_number=number;
       number=next_num;
-      i = i+1; 
-      fibonacci (prev_number,number); 
+      i = i+1;
+      print("f(");
+      print(i);
+      print(") = ");
+      print(next_num);
+      print("\n");
+      fibonacci (prev_number,number);
     }
     return 0;
 }

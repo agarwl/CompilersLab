@@ -125,6 +125,7 @@ list<Symbol_Table_Entry*> Procedure::get_symbol_entries()
 		name = (*it)->get_variable_name();
 		dt = (*it)->get_data_type();
 		lineno = (*it)->get_lineno();
+		offset = (*it)->get_start_offset();
 		Symbol_Table_Entry* s = new Symbol_Table_Entry(name, dt, lineno, sp_ref);
 		s->set_start_offset(offset);
 		s->set_symbol_scope(formal);

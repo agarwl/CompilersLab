@@ -1,22 +1,22 @@
 int gcd(int x, int y);
 int main();
- 
+
 main() {
   int x, y, hcf, lcm;
   x = 14;
-  y = 36; 
- 
+  y = 36;
+
   hcf = gcd(x, y);
-  lcm = (x*y)/hcf;
- 
+  print("lcm: ");
+  print( (x*y)/hcf);
   return 0;
 }
- 
+
 gcd(int x, int y) {
   if (x == 0) {
     return y;
   }
- 
+
   while (y != 0) {
     if (x > y) {
       x = x - y;
@@ -25,6 +25,8 @@ gcd(int x, int y) {
       y = y - x;
     }
   }
- 
+  print("gcd ");
+  print(x);
+  print("\n");
   return x;
 }
