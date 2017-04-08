@@ -666,21 +666,24 @@ Code_For_Ast & Conditional_Operator_Ast::compile()
 		ic_list.splice(ic_list.end(), lhs_stmt.get_icode_list());
 
 	Register_Descriptor * result_register;
-	Tgt_Op stmt_operator = or_t;
+	Tgt_Op stmt_operator;// = or_t;
 	// machine_desc_object.clear_local_register_mappings();
 
 	if (node_data_type == int_data_type){
 		result_register = machine_desc_object.get_new_register<gp_data>();
+		stmt_operator = mov;
 	}
 	else{
 		result_register = machine_desc_object.get_new_register<float_reg>();
+		stmt_operator = move_d;
 	}
 
 	Register_Addr_Opd * result = new Register_Addr_Opd(result_register);
 	Register_Addr_Opd * lhs_operand = new Register_Addr_Opd(lhs_register);
 	Register_Addr_Opd * rhs_operand = new Register_Addr_Opd(rhs_register);
 
-	Compute_IC_Stmt* add_stmt = new Compute_IC_Stmt(stmt_operator, lhs_operand, zero_opd, result);
+	// Compute_IC_Stmt* add_stmt = new Compute_IC_Stmt(stmt_operator, lhs_operand, zero_opd, result);
+	Move_IC_Stmt* add_stmt = new Move_IC_Stmt(stmt_operator, lhs_operand, result);
 	ic_list.push_back(add_stmt);
 
 	Control_Flow_IC_Stmt * goto_stmt = new Control_Flow_IC_Stmt(if_stmt_operator, NULL, NULL, myLabel2);
